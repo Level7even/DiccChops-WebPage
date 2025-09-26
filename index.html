@@ -33,37 +33,16 @@
     </section>
 
     <!-- Server Section -->
-    <section id="server" class="section server">
-      <h2>Up And Up Server</h2>
-      <p>This is the server page. More details will be added soon.</p>
-      <button>Join Server</button>
-    </section>
+    <section id="server" class="section server"></section>
 
     <!-- About Section -->
-    <section id="about" class="section about">
-      <h2>About This Site</h2>
-      <p>This site is a futuristic playground where I share projects, ideas, and updates. Stay tuned!</p>
-    </section>
+    <section id="about" class="section about"></section>
 
     <!-- Newsletter Section -->
-    <section id="newsletter" class="section newsletter">
-      <h2>Subscribe to Dicc-News</h2>
-      <p>Stay updated with the latest news and updates.</p>
-      <div class="newsletter-form">
-        <input type="email" placeholder="Enter your email" required>
-        <button>Subscribe</button>
-      </div>
-    </section>
+    <section id="newsletter" class="section newsletter"></section>
 
     <!-- Contact Section -->
-    <section id="contact" class="section contact">
-      <h2>Contact Me</h2>
-      <div class="social-links">
-        <a href="https://x.com/DiccChops" target="_blank"><i class="fab fa-x-twitter"></i> @DiccChops</a>
-        <a href="https://www.youtube.com/@DiccChops" target="_blank"><i class="fab fa-youtube"></i> @DiccChops</a>
-        <a href="https://sketchfab.com/DiccChops" target="_blank"><i class="fab fa-sketchfab"></i> @DiccChops</a>
-      </div>
-    </section>
+    <section id="contact" class="section contact"></section>
 
   </main>
 
@@ -142,6 +121,17 @@
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
+      async function loadSection(sectionId, filePath) {
+    const response = await fetch(filePath);
+    const content = await response.text();
+    document.getElementById(sectionId).innerHTML = content;
+  }
+
+  // Load all sections dynamically
+  loadSection('server', './sections/UpandUp.html');
+  loadSection('about', './sections/About.html');
+  loadSection('newsletter', './sections/Newsletter.html');
+  loadSection('contact', './sections/Contact.html');
   </script>
 </body>
 </html>
