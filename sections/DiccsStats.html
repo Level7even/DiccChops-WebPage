@@ -3,30 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <title>Dicc's Steam Stats</title>
-  
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .stats-section {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 15px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    }
+
+    .stats-section h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #00f9ff;
+    }
+
+    #steam-stats img.avatar {
+      width: 100px;
+      border-radius: 50%;
+      display: block;
+      margin: 0 auto 15px auto;
+    }
+
+    #steam-stats div.game {
+      padding: 8px 12px;
+      margin: 6px 0;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+
+    #steam-stats div.game:hover {
+      background: rgba(0,249,255,0.2);
+    }
+
+    #steam-stats a {
+      color: #00f9ff;
+      text-decoration: none;
+      margin-left: 10px;
+    }
+
+    #steam-stats a:hover {
+      text-decoration: underline;
+    }
+
+    strong {
+      color: #FFD700;
+    }
+  </style>
 </head>
 <body>
 
 <div class="stats-section">
   <h2>Dicc's Steam Stats</h2>
-  <div id="steam-stats">Loading stats...</div>
+  <div id="steam-stats"></div>
 </div>
 
 <script>
 async function fetchSteamStats() {
   const steamProfileUrl = 'https://steamcommunity.com/profiles/76561198278902890?xml=1';
+  const proxyUrl = 'https://thingproxy.freeboard.io/fetch/';
 
   try {
-    // Use AllOrigins proxy to bypass CORS
-    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(steamProfileUrl)}`);
-    const data = await res.json();
+    const res = await fetch(proxyUrl + steamProfileUrl);
+    const text = await res.text();
 
     // Parse XML
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+    const xmlDoc = parser.parseFromString(text, "text/xml");
 
-    const steamName = xmlDoc.querySelector("steamID").textContent;
-    const avatar = xmlDoc.querySelector("avatarFull").textContent;
+    const steamName = xmlDoc.querySelector("steamID")?.textContent || 'Unknown';
+    const avatar = xmlDoc.querySelector("avatarFull")?.textContent || '';
     const memberSince = xmlDoc.querySelector("memberSince")?.textContent || 'N/A';
 
     const statsDiv = document.getElementById('steam-stats');
@@ -38,14 +94,24 @@ async function fetchSteamStats() {
     `;
 
     const games = xmlDoc.querySelectorAll("mostPlayedGame");
-    games.forEach(game => {
-      const gameName = game.querySelector("gameName").textContent;
-      const gameLink = game.querySelector("gameLink").textContent;
-      const hours = game.querySelector("hoursOnRecord")?.textContent || '0';
+    if (games.length === 0) {
       const div = document.createElement('div');
-      div.innerHTML = `<strong>${gameName}</strong> - ${hours} hrs <a href="${gameLink}" target="_blank">View</a>`;
+      div.textContent = 'No games found or profile is private.';
       statsDiv.appendChild(div);
-    });
+    } else {
+      games.forEach(game => {
+        const gameNameElem = game.querySelector("gameName");
+        const gameLinkElem = game.querySelector("gameLink");
+        const hoursElem = game.querySelector("hoursOnRecord");
+        const gameName = gameNameElem ? gameNameElem.textContent : 'Unknown';
+        const gameLink = gameLinkElem ? gameLinkElem.textContent : '#';
+        const hours = hoursElem ? hoursElem.textContent : '0';
+        const div = document.createElement('div');
+        div.classList.add('game');
+        div.innerHTML = `<strong>${gameName}</strong> - ${hours} hrs <a href="${gameLink}" target="_blank">View</a>`;
+        statsDiv.appendChild(div);
+      });
+    }
 
   } catch(err) {
     console.error(err);
