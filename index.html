@@ -6,25 +6,35 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Welcome to DiccChops</h1>
-    <nav>
-      <a href="./pages/Up And Up Server/UpAndUpServer.html">Up And Up Server</a>
-      <a href="./pages/About/about.html">About</a>
-      <a href="./pages/Contact/contact.html">Contact</a>
-    </nav>
+  <!-- 3D Background -->
+  <canvas id="bg"></canvas>
+
+  <header class="site-header">
+    <div class="inner">
+      <div class="site-brand">
+        <h1 class="brand-title">DiccChops</h1>
+        <span class="tagline">Futuristic Playground</span>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html" class="active">Home</a>
+        <a href="./pages/Up And Up Server/UpAndUpServer.html">Up And Up Server</a>
+        <a href="./pages/About/about.html">About</a>
+        <a href="./pages/Contact/contact.html">Contact</a>
+      </nav>
+    </div>
   </header>
 
   <main>
     <h2>Hello Everyone!</h2>
     <p>Welcome to my site.</p>
-    <button id="clickMe">Click Me</button>
   </main>
 
   <footer>
     <p>© 2025 DiccChops</p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/examples/js/loaders/FBXLoader.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
