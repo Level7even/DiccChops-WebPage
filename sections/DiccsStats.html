@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dicc's Steam Stats</title>
+  
+</head>
+<body>
+
+<div class="stats-section">
+  <h2>Dicc's Steam Stats</h2>
+  <div id="steam-stats">Loading stats...</div>
+</div>
+
+<script>
+async function fetchSteamStats() {
+  const steamProfileUrl = 'https://steamcommunity.com/profiles/76561198278902890?xml=1';
+
+  try {
+    // Use AllOrigins proxy to bypass CORS
+    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(steamProfileUrl)}`);
+    const data = await res.json();
+
+    // Parse XML
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+
+    const steamName = xmlDoc.querySelector("steamID").textContent;
+    const avatar = xmlDoc.querySelector("avatarFull").textContent;
+    const memberSince = xmlDoc.querySelector("memberSince")?.textContent || 'N/A';
+
+    const statsDiv = document.getElementById('steam-stats');
+    statsDiv.innerHTML = `
+      <img src="${avatar}" class="avatar">
+      <div><strong>${steamName}</strong></div>
+      <div>Member Since: ${memberSince}</div>
+      <h3>Most Played Games:</h3>
+    `;
+
+    const games = xmlDoc.querySelectorAll("mostPlayedGame");
+    games.forEach(game => {
+      const gameName = game.querySelector("gameName").textContent;
+      const gameLink = game.querySelector("gameLink").textContent;
+      const hours = game.querySelector("hoursOnRecord")?.textContent || '0';
+      const div = document.createElement('div');
+      div.innerHTML = `<strong>${gameName}</strong> - ${hours} hrs <a href="${gameLink}" target="_blank">View</a>`;
+      statsDiv.appendChild(div);
+    });
+
+  } catch(err) {
+    console.error(err);
+    document.getElementById('steam-stats').innerHTML = 'Failed to load Steam stats.';
+  }
+}
+
+fetchSteamStats();
+</script>
+
+</body>
+</html>
