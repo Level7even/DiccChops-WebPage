@@ -20,28 +20,43 @@
         <a href="#server">Up And Up Server</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
+        <a href="#newsletter">Newsletter</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <section id="home">
+    <!-- Home Section -->
+    <section id="home" class="section home">
       <h2>Welcome</h2>
       <p>Hello everyone! Welcome to my futuristic playground.</p>
     </section>
 
-    <section id="server">
+    <!-- Server Section -->
+    <section id="server" class="section server">
       <h2>Up And Up Server</h2>
       <p>This is the server page. More details will be added soon.</p>
       <button>Join Server</button>
     </section>
 
-    <section id="about">
+    <!-- About Section -->
+    <section id="about" class="section about">
       <h2>About This Site</h2>
       <p>This site is a futuristic playground where I share projects, ideas, and updates. Stay tuned!</p>
     </section>
 
-    <section id="contact">
+    <!-- Newsletter Section -->
+    <section id="newsletter" class="section newsletter">
+      <h2>Subscribe to Dicc-News</h2>
+      <p>Stay updated with the latest news and updates.</p>
+      <div class="newsletter-form">
+        <input type="email" placeholder="Enter your email" required>
+        <button>Subscribe</button>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section contact">
       <h2>Contact Me</h2>
       <div class="social-links">
         <a href="https://x.com/DiccChops" target="_blank"><i class="fab fa-x-twitter"></i> @DiccChops</a>
@@ -49,6 +64,7 @@
         <a href="https://sketchfab.com/DiccChops" target="_blank"><i class="fab fa-sketchfab"></i> @DiccChops</a>
       </div>
     </section>
+
   </main>
 
   <footer>
@@ -88,7 +104,6 @@
     const originalVertices = geometry.attributes.position.array.slice();
 
     let mouseX=0, mouseY=0;
-    let targetX=0, targetY=0;
     const halfX = window.innerWidth/2;
     const halfY = window.innerHeight/2;
     document.addEventListener('mousemove', e=>{
@@ -101,10 +116,8 @@
       requestAnimationFrame(animate);
       const time = clock.getElapsedTime();
 
-      targetX = mouseX*Math.PI;
-      targetY = mouseY*Math.PI;
-      blob.rotation.y += (targetX - blob.rotation.y)*0.05;
-      blob.rotation.x += (targetY - blob.rotation.x)*0.05;
+      blob.rotation.y += (mouseX*Math.PI - blob.rotation.y)*0.05;
+      blob.rotation.x += (mouseY*Math.PI - blob.rotation.x)*0.05;
 
       const pos = geometry.attributes.position.array;
       for(let i=0;i<pos.length;i+=3){
