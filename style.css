@@ -68,7 +68,7 @@ nav.main-nav a:hover { color:#FFD700; background: rgba(255,255,255,0.05); }
 .about { min-height: 60vh; }
 .stats { min-height: 50vh; }
 .newsletter { min-height: 50vh; }
-.contact { min-height: 0; }
+.contact { min-height: auto; }
 
 
 h2 { font-size:2rem; margin-bottom:1rem; }
