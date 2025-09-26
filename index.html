@@ -2,9 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>DiccChops</title>
+  <title >DiccChops</title>
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./icon.png">
+   <link rel="apple-touch-icon" sizes="180x180" href="./icon.png">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css">
+  <style>
+    body, html { margin: 0; padding: 0; overflow-x: hidden; }
+    canvas#bg { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
+    .section { min-height: 100vh; padding: 100px 20px; color: #fff; }
+  </style>
 </head>
 <body>
   <canvas id="bg"></canvas>
@@ -27,37 +36,26 @@
   </header>
 
   <main>
-    <!-- Home Section -->
     <section id="home" class="section home">
       <h2>Welcome</h2>
       <p>Hello everyone! Welcome to my futuristic playground.</p>
     </section>
-
-    <!-- Server Section -->
     <section id="server" class="section server"></section>
-
-    <!-- About Section -->
     <section id="about" class="section about"></section>
-
-    <!-- Dicc's Stat's Section -->
     <section id="stats" class="section stats"></section>
-    
-    <!-- Newsletter Section -->
     <section id="newsletter" class="section newsletter"></section>
-
-    <!-- Contact Section -->
     <section id="contact" class="section contact"></section>
-
   </main>
 
   <footer>
     <p>© 2025 DiccChops</p>
   </footer>
 
-  <!-- Three.js Blob Background -->
+  <!-- Three.js Blob Background and Dynamic Sections -->
   <script type="module">
     import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
 
+    // Scene Setup
     const canvas = document.getElementById("bg");
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a0a);
@@ -74,6 +72,7 @@
     dirLight.position.set(5,5,5);
     scene.add(dirLight);
 
+    // Blob Geometry
     const geometry = new THREE.SphereGeometry(1, 64, 64);
     const material = new THREE.MeshStandardMaterial({
       color: 0x00ffff,
@@ -83,9 +82,9 @@
     });
     const blob = new THREE.Mesh(geometry, material);
     scene.add(blob);
-
     const originalVertices = geometry.attributes.position.array.slice();
 
+    // Mouse tracking
     let mouseX=0, mouseY=0;
     const halfX = window.innerWidth/2;
     const halfY = window.innerHeight/2;
@@ -94,14 +93,17 @@
       mouseY = (e.clientY-halfY)/halfY;
     });
 
+    // Animation
     const clock = new THREE.Clock();
     function animate(){
       requestAnimationFrame(animate);
       const time = clock.getElapsedTime();
 
+      // Blob rotation
       blob.rotation.y += (mouseX*Math.PI - blob.rotation.y)*0.05;
       blob.rotation.x += (mouseY*Math.PI - blob.rotation.x)*0.05;
 
+      // Blob vertex animation
       const pos = geometry.attributes.position.array;
       for(let i=0;i<pos.length;i+=3){
         const ox = originalVertices[i];
@@ -113,30 +115,43 @@
       }
       geometry.attributes.position.needsUpdate = true;
 
+      // Blob scale with mouse
       const scale = 1 + mouseY*0.5;
       blob.scale.set(scale, scale, scale);
+
+      // Blob color based on scroll
+      const scrollFraction = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      const hue = scrollFraction * 360; // 0 - 360 degrees
+      blob.material.color.setHSL(hue/360, 0.7, 0.5);
 
       renderer.render(scene, camera);
     }
     animate();
 
+    // Handle window resize
     window.addEventListener('resize', ()=>{
       camera.aspect = window.innerWidth/window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
-      async function loadSection(sectionId, filePath) {
-    const response = await fetch(filePath);
-    const content = await response.text();
-    document.getElementById(sectionId).innerHTML = content;
-  }
 
-  // Load all sections dynamically
-  loadSection('server', './sections/UpandUp.html');
-  loadSection('about', './sections/about.html');
-  loadSection('stats', './sections/DiccsStats.html');
-  loadSection('newsletter', './sections/newsletter.html');
-  loadSection('contact', './sections/contact.html');
+    // Dynamic Section Loader
+    async function loadSection(sectionId, filePath) {
+      try {
+        const response = await fetch(filePath);
+        const content = await response.text();
+        document.getElementById(sectionId).innerHTML = content;
+      } catch(err) {
+        console.error('Error loading section', sectionId, err);
+      }
+    }
+
+    // Load all sections
+    loadSection('server', './sections/UpandUp.html');
+    loadSection('about', './sections/about.html');
+    loadSection('stats', './sections/DiccsStats.html');
+    loadSection('newsletter', './sections/newsletter.html');
+    loadSection('contact', './sections/contact.html');
 
   </script>
 </body>
