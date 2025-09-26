@@ -1,19 +1,18 @@
-// Canvas
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
+
 const canvas = document.getElementById("bg");
 
-// Scene
+// Scene & Camera
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0a0a0a);
 
-// Camera
 const camera = new THREE.PerspectiveCamera(
-  45,
+  75,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
 );
-camera.position.set(0, 1.5, 5);
-camera.lookAt(0, 0, 0);
+camera.position.z = 3;
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -21,44 +20,50 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 // Lights
-scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
 directionalLight.position.set(5, 5, 5);
 scene.add(directionalLight);
 
-const pointLight = new THREE.PointLight(0x00ffff, 0.5, 15);
-pointLight.position.set(2, 2, 2);
-scene.add(pointLight);
-
-// Sphere
-const geometry = new THREE.SphereGeometry(1, 64, 64);
+// Cube
+const geometry = new THREE.BoxGeometry(1.2, 1.2, 1.2);
 const material = new THREE.MeshStandardMaterial({
   color: 0x00ffff,
-  roughness: 0.2,
   metalness: 0.8,
+  roughness: 0.2,
 });
-const sphere = new THREE.Mesh(geometry, material);
-scene.add(sphere);
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
 
-// Animate
-let t = 0;
+// Mouse movement variables
+let mouseX = 0, mouseY = 0;
+let targetX = 0, targetY = 0;
+const windowHalfX = window.innerWidth / 2;
+const windowHalfY = window.innerHeight / 2;
+
+document.addEventListener('mousemove', (event) => {
+  mouseX = (event.clientX - windowHalfX) / windowHalfX;
+  mouseY = (event.clientY - windowHalfY) / windowHalfY;
+});
+
+// Animation loop
 function animate() {
   requestAnimationFrame(animate);
 
-  sphere.rotation.y += 0.003;
-  sphere.rotation.x += 0.0015;
-
-  t += 0.03;
-  pointLight.intensity = 0.3 + Math.sin(t) * 0.2;
-  scene.rotation.y = Math.sin(t * 0.05) * 0.01;
+  // Rotate cube based on mouse movement
+  targetX = mouseX * Math.PI;  // full rotation range
+  targetY = mouseY * Math.PI;
+  cube.rotation.y += (targetX - cube.rotation.y) * 0.05;
+  cube.rotation.x += (targetY - cube.rotation.x) * 0.05;
 
   renderer.render(scene, camera);
 }
 animate();
 
-// Resize
-window.addEventListener("resize", () => {
+// Handle resize
+window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
