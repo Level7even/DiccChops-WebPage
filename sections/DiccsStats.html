@@ -50,27 +50,23 @@
       gallery.innerHTML = ''; // clear “Loading models...” text
 
       try {
-        const res = await fetch('https://sketchfab.com/DiccChops/models');
-        const html = await res.text();
+        // Replace 'YOUR_API_TOKEN' with your Sketchfab API token
+        const res = await fetch('https://api.sketchfab.com/v3/users/DiccChops/models?sort=-published', {
+          headers: {
+            // Remove the Authorization header if you want only public models and don't have a token
+            // 'Authorization': 'Token YOUR_API_TOKEN'
+          }
+        });
+        const data = await res.json();
 
-        // find all model links via regex
-        // pattern to catch “sketchfab.com/models/…” in the HTML
-        const regex = /sketchfab\.com\/3d-models\/[a-z0-9-]+-([a-zA-Z0-9]{32})/g;
-        const ids = new Set();
-        let match;
-        while ((match = regex.exec(html)) !== null) {
-          ids.add(match[1]);
-        }
-
-        if (ids.size === 0) {
+        if (!data.results || data.results.length === 0) {
           gallery.innerHTML = '<p class="error">No public models found.</p>';
           return;
         }
 
-        // Embed each model
-        ids.forEach(id => {
+        data.results.forEach(model => {
           const iframe = document.createElement('iframe');
-          iframe.src = `https://sketchfab.com/models/${id}/embed`;
+          iframe.src = `https://sketchfab.com/models/${model.uid}/embed`;
           iframe.allow = "autoplay; fullscreen; xr-spatial-tracking";
           iframe.allowFullscreen = true;
           gallery.appendChild(iframe);
