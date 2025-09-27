@@ -67,10 +67,28 @@ nav.main-nav a:hover { color:#FFD700; background: rgba(255,255,255,0.05); }
 .home { min-height: 80vh; }
 .server { min-height: 70vh; }
 .about { min-height: 60vh; }
-.stats { min-height: 50vh; }
+.stats {   display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: center;
+  position: relative;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  margin: 40px auto;
+  max-width: 900px;
+  min-height: auto;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  padding: 80px 20px 40px; }
 .newsletter { min-height: 50vh; }
-.contact { min-height: auto; }
-
+/* Removed min-height from contact section */
+#contact.section {
+    min-height: auto !important;
+    height: auto !important;
+    padding: 40px 20px !important;
+    max-height: 300px;
+}
 
 h2 { font-size:2rem; margin-bottom:1rem; }
 p { font-size:1.1rem; max-width: 700px; margin:auto; }

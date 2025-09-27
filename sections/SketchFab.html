@@ -1,295 +1,246 @@
-<!-- sections/SketchFab.html -->
-<div class="sketchfab-container">
-  <h2>Dicc's SketchFab</h2>
-  <p>Interactive 3D Environment</p>
-  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple 3D Model Viewer</title>
+    <!-- sections/Simple3DModelViewer.html -->
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Prevent scrollbars due to canvas */
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        .model-viewer-container {
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h2 {
+            color: #00aaff;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .canvas-container {
+            width: 80%; /* Adjust as needed */
+            max-width: 900px; /* Max width for larger screens */
+            height: 60%; /* Adjust as needed */
+            min-height: 400px; /* Minimum height */
+            margin: 0 auto; /* Center the container */
+            border: 2px solid rgba(0, 170, 255, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #333; /* Canvas background */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            position: relative; /* For loader */
+        }
+
+        #model-viewer-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Loader styles (Optional) */
+        #loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #loader::after {
+            content: '';
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #00aaff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-top: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="model-viewer-container">
+  <h2>My 3D Model Viewer</h2>
   <div class="canvas-container">
-    <canvas id="sketchfab-canvas"></canvas>
-  </div>
-  
-  <div class="controls">
-    <button id="toggle-lights">Toggle Lights</button>
-    <button id="reset-camera">Reset Camera</button>
-    <button id="change-sphere-color">Change Sphere Color</button>
+    <canvas id="model-viewer-canvas"></canvas>
+    <div id="loader">Loading Model...</div>
   </div>
 </div>
 
-<style>
-.sketchfab-container {
-  padding: 20px;
-  text-align: center;
-  color: white;
-}
-
-.canvas-container {
-  width: 100%;
-  height: 500px;
-  margin: 20px 0;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-#sketchfab-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.controls {
-  margin-top: 20px;
-}
-
-.controls button {
-  background: rgba(0, 170, 255, 0.3);
-  border: 1px solid rgba(0, 170, 255, 0.5);
-  color: white;
-  padding: 10px 15px;
-  margin: 0 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.controls button:hover {
-  background: rgba(0, 170, 255, 0.5);
-  transform: translateY(-2px);
-}
-
-h2 {
-  color: #00aaff;
-  margin-bottom: 10px;
-}
-
-p {
-  opacity: 0.8;
-  margin-bottom: 20px;
-}
-</style>
-
 <script type="module">
-// Import Three.js
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+// Import FBXLoader instead of GLTFLoader
+import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/FBXLoader.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 
-// Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', function() {
-  initSketchFab();
-});
+function init() {
+  const canvas = document.getElementById('model-viewer-canvas');
+  const loaderElement = document.getElementById('loader');
 
-function initSketchFab() {
-  console.log('Initializing SketchFab 3D scene...');
-  
-  // Scene setup
-  const canvas = document.getElementById('sketchfab-canvas');
   if (!canvas) {
     console.error('Canvas element not found!');
+    if(loaderElement) loaderElement.textContent = "Error: Canvas not found.";
     return;
   }
-  
+
+  const container = canvas.parentElement;
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+
+  // Scene
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x222222);
-  
-  // Camera setup
-  const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-  camera.position.set(0, 5, 10);
-  camera.lookAt(0, 0, 0);
-  
-  // Renderer setup
-  const renderer = new THREE.WebGLRenderer({ 
-    canvas: canvas, 
+  scene.background = new THREE.Color(0x282c34); // Dark bluish-grey background
+
+  // Camera
+  const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+  camera.position.set(0, 2, 5); // Initial camera position, might need adjustment per model
+
+  // Renderer
+  const renderer = new THREE.WebGLRenderer({
+    canvas: canvas,
     antialias: true,
-    alpha: true 
   });
-  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+  renderer.setSize(width, height);
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  
-  console.log('Renderer created, setting up scene...');
-  
-  // Create a room (a large box with inverted normals)
-  const roomGeometry = new THREE.BoxGeometry(20, 10, 20);
-  const roomMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x444444, 
-    side: THREE.BackSide, // This makes the inside visible
-    roughness: 0.7,
-    metalness: 0.3
-  });
-  const room = new THREE.Mesh(roomGeometry, roomMaterial);
-  room.receiveShadow = true;
-  scene.add(room);
-  console.log('Room created');
-  
-  // Add a floor with a different material
-  const floorGeometry = new THREE.PlaneGeometry(20, 20);
-  const floorMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x333333, 
-    roughness: 0.8,
-    metalness: 0.2
-  });
-  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -5;
-  floor.receiveShadow = true;
-  scene.add(floor);
-  console.log('Floor created');
-  
-  // Add a test sphere in the center
-  const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
-  const sphereMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x00aaff,
-    roughness: 0.2,
-    metalness: 0.8
-  });
-  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  sphere.castShadow = true;
-  sphere.receiveShadow = true;
-  scene.add(sphere);
-  console.log('Sphere created at center');
-  
-  // Add lighting
-  const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+  // FBX models often don't require sRGBEncoding directly on the renderer if their textures are already in sRGB.
+  // You might need to re-enable or adjust this based on your FBX export settings.
+  // renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; // Enhances visual quality
+  renderer.toneMappingExposure = 1.0; // Adjust exposure if needed
+  renderer.shadowMap.enabled = true; // Enable shadow maps for the renderer
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Softer shadows
+
+  // Lights
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.7); // Softer ambient light
   scene.add(ambientLight);
-  
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(5, 10, 7);
-  directionalLight.castShadow = true;
-  directionalLight.shadow.mapSize.width = 2048;
-  directionalLight.shadow.mapSize.height = 2048;
+
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  directionalLight.position.set(3, 5, 2);
+  directionalLight.castShadow = true; // Enable shadows for this light
+  directionalLight.shadow.mapSize.width = 1024;
+  directionalLight.shadow.mapSize.height = 1024;
   directionalLight.shadow.camera.near = 0.5;
   directionalLight.shadow.camera.far = 50;
+  directionalLight.shadow.camera.left = -10;
+  directionalLight.shadow.camera.right = 10;
+  directionalLight.shadow.camera.top = 10;
+  directionalLight.shadow.camera.bottom = -10;
   scene.add(directionalLight);
-  
-  // Add a point light for additional illumination
-  const pointLight = new THREE.PointLight(0x00aaff, 0.5, 10);
-  pointLight.position.set(-3, 3, -3);
-  pointLight.castShadow = true;
-  scene.add(pointLight);
-  
-  console.log('Lights added to scene');
-  
-  // Add grid helper for reference
-  const gridHelper = new THREE.GridHelper(20, 20, 0x444444, 0x222222);
-  gridHelper.position.y = -5;
-  scene.add(gridHelper);
-  
-  // Add axes helper for reference
-  const axesHelper = new THREE.AxesHelper(5);
-  scene.add(axesHelper);
-  
-  // Mouse controls
-  let isMouseDown = false;
-  let previousMousePosition = {
-    x: 0,
-    y: 0
-  };
-  
-  canvas.addEventListener('mousedown', function(e) {
-    isMouseDown = true;
-    previousMousePosition = {
-      x: e.clientX,
-      y: e.clientY
-    };
+
+  // Add a simple ground plane for shadows
+  const planeGeometry = new THREE.PlaneGeometry(100, 100);
+  const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.8, metalness: 0.1 });
+  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  plane.rotation.x = -Math.PI / 2;
+  plane.position.y = -0.5; // Adjust based on your model's scale
+  plane.receiveShadow = true;
+  scene.add(plane);
+
+
+  // Orbit Controls (for user interaction)
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; // Smoother controls
+  controls.dampingFactor = 0.05;
+  controls.screenSpacePanning = false;
+  controls.minDistance = 0.5; // Minimum zoom
+  controls.maxDistance = 100; // Maximum zoom
+  controls.target.set(0, 1, 0); // Point controls at a reasonable center for common models
+  controls.update();
+
+  // FBX Loader
+  const loader = new FBXLoader();
+
+  // *** IMPORTANT: REPLACE THIS URL with your model's URL ***
+  const modelUrl = './models/background.fbx'; // Ensure this path is correct relative to your HTML file
+
+  loader.load(
+    modelUrl,
+    function (fbx) { // The loaded object is directly the FBX model, not a GLTF scene wrapper
+      if(loaderElement) loaderElement.style.display = 'none'; // Hide loader
+      scene.add(fbx); // Add the loaded FBX object to the scene
+      console.log('Model loaded successfully:', modelUrl, fbx);
+
+      // Optional: Adjust camera to auto-frame the loaded model
+      const box = new THREE.Box3().setFromObject(fbx); // Use fbx directly
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const fov = camera.fov * (Math.PI / 180);
+      let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+      cameraZ *= 1.5; // Add some padding
+      camera.position.set(center.x, center.y, center.z + cameraZ);
+      controls.target.set(center.x, center.y, center.z);
+      controls.update();
+
+      // Enable shadows for the loaded model if it has mesh children
+      fbx.traverse((node) => {
+        if (node.isMesh) {
+          node.castShadow = true;
+          node.receiveShadow = true;
+        }
+      });
+    },
+    function (xhr) {
+      // Update loader progress
+      if (loaderElement) {
+        loaderElement.textContent = `Loading Model: ${Math.round(xhr.loaded / xhr.total * 100)}%`;
+      }
+      console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    },
+    function (error) {
+      console.error('An error occurred while loading the FBX model:', error);
+      if(loaderElement) loaderElement.textContent = "Error loading model. Check console.";
+    }
+  );
+
+  // Handle window resizing
+  window.addEventListener('resize', () => {
+    const newWidth = container.clientWidth;
+    const newHeight = container.clientHeight;
+    camera.aspect = newWidth / newHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(newWidth, newHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
   });
-  
-  canvas.addEventListener('mouseup', function() {
-    isMouseDown = false;
-  });
-  
-  canvas.addEventListener('mousemove', function(e) {
-    if (!isMouseDown) return;
-    
-    const deltaMove = {
-      x: e.clientX - previousMousePosition.x,
-      y: e.clientY - previousMousePosition.y
-    };
-    
-    // Rotate camera around the center
-    const theta = Math.atan2(camera.position.x, camera.position.z);
-    const phi = Math.atan2(Math.sqrt(camera.position.x*camera.position.x + camera.position.z*camera.position.z), camera.position.y);
-    
-    const radius = Math.sqrt(
-      camera.position.x * camera.position.x +
-      camera.position.y * camera.position.y +
-      camera.position.z * camera.position.z
-    );
-    
-    let newTheta = theta - deltaMove.x * 0.01;
-    let newPhi = phi - deltaMove.y * 0.01;
-    
-    // Prevent flipping
-    newPhi = Math.max(0.1, Math.min(Math.PI - 0.1, newPhi));
-    
-    camera.position.x = radius * Math.sin(newPhi) * Math.sin(newTheta);
-    camera.position.y = radius * Math.cos(newPhi);
-    camera.position.z = radius * Math.sin(newPhi) * Math.cos(newTheta);
-    
-    camera.lookAt(0, 0, 0);
-    
-    previousMousePosition = {
-      x: e.clientX,
-      y: e.clientY
-    };
-  });
-  
-  // Add wheel event for zooming
-  canvas.addEventListener('wheel', function(e) {
-    e.preventDefault();
-    
-    // Zoom in/out based on wheel direction
-    const zoomFactor = 0.1;
-    const direction = e.deltaY > 0 ? 1 : -1;
-    
-    // Move camera along the direction it's facing
-    const vector = new THREE.Vector3();
-    camera.getWorldDirection(vector);
-    camera.position.addScaledVector(vector, direction * zoomFactor);
-  });
-  
-  // Control buttons functionality
-  document.getElementById('toggle-lights').addEventListener('click', function() {
-    directionalLight.visible = !directionalLight.visible;
-    pointLight.visible = !pointLight.visible;
-  });
-  
-  document.getElementById('reset-camera').addEventListener('click', function() {
-    camera.position.set(0, 5, 10);
-    camera.lookAt(0, 0, 0);
-  });
-  
-  document.getElementById('change-sphere-color').addEventListener('click', function() {
-    // Generate a random color
-    const randomColor = new THREE.Color(
-      Math.random(),
-      Math.random(),
-      Math.random()
-    );
-    sphereMaterial.color = randomColor;
-  });
-  
+
   // Animation loop
   function animate() {
     requestAnimationFrame(animate);
-    
-    // Rotate the sphere slowly
-    sphere.rotation.y += 0.01;
-    
-    // Render the scene
+    controls.update(); // Only required if controls.enableDamping is set to true
     renderer.render(scene, camera);
   }
-  
-  // Handle window resize
-  window.addEventListener('resize', function() {
-    camera.aspect = canvas.clientWidth / canvas.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-  });
-  
-  // Initial render
-  renderer.render(scene, camera);
-  console.log('Starting animation loop...');
-  
-  // Start animation
+
   animate();
 }
+
+// Start initialization when the DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 </script>
+
+</body>
+</html>
