@@ -28,21 +28,18 @@
         <a href="#home">Home</a>
         <a href="#server">Up And Up Server</a>
         <a href="#about">About</a>
-        <a href="#stats">Dicc's Stats</a>
-        <a href="#contact">Contact</a>
+        <a href="#SketchFab">Dicc's SketchFab</a>
         <a href="#newsletter">Newsletter</a>
+        <a href="#contact">Contact</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <section id="home" class="section home">
-      <h2>Welcome</h2>
-      <p>Hello everyone! Welcome to my futuristic playground.</p>
-    </section>
+    <section id="home" class="section home"></section>
     <section id="server" class="section server"></section>
     <section id="about" class="section about"></section>
-    <section id="stats" class="section stats"></section>
+    <section id="SketchFab" class="section SketchFab"></section>
     <section id="newsletter" class="section newsletter"></section>
     <section id="contact" class="section contact"></section>
   </main>
@@ -147,9 +144,10 @@
     }
 
     // Load all sections
+    loadSection('home', './sections/home.html');
     loadSection('server', './sections/UpandUp.html');
     loadSection('about', './sections/about.html');
-    loadSection('stats', './sections/DiccsStats.html');
+    loadSection('SketchFab', './sections/SketchFab.html');
     loadSection('newsletter', './sections/newsletter.html');
     loadSection('contact', './sections/contact.html');
 
