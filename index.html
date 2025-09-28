@@ -2,83 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title >DiccChops</title>
-
+  <title>DiccChops</title>
   <link rel="icon" type="image/png" sizes="32x32" href="./icon.png">
-   <link rel="apple-touch-icon" sizes="180x180" href="./icon.png">
-
+  <link rel="apple-touch-icon" sizes="180x180" href="./icon.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body, html { margin: 0; padding: 0; overflow-x: hidden; }
-    canvas#bg { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
-    .section { min-height: 100vh; padding: 100px 20px; color: #fff; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <canvas id="bg"></canvas>
-
   <header class="site-header">
     <div class="inner">
       <div class="site-brand">
-        <h1 class="brand-title">DiccChops</h1>
+        <h1 class="brand-title">DiccChopss</h1>
         <span class="tagline">Futuristic Playground</span>
       </div>
       <nav class="main-nav">
-        <a href="#home">Home</a>
-        <a href="#server">Up And Up Server</a>
-        <a href="#about">About</a>
-        <a href="#SketchFab">Dicc's SketchFab</a>
-        <a href="#newsletter">Newsletter</a>
-        <a href="#contact">Contact</a>
+        <a href="#welcome" data-target="welcome">welcome</a>
+        <a href="#server" data-target="server">Up And Up Server</a>
+        <a href="#about" data-target="about">About</a>
+        <a href="#CurrStatsStats" data-target="CurrStatsStats">Dicc's SketchFab</a>
+        <a href="#newsletter" data-target="newsletter">Newsletter</a>
+        <a href="#contact" data-target="contact">Contact</a>
       </nav>
     </div>
   </header>
-
   <main>
-    <section id="home" class="section home"></section>
-    <section id="server" class="section server"></section>
-    <section id="about" class="section about"></section>
-    <section id="SketchFab" class="section SketchFab"></section>
-    <section id="newsletter" class="section newsletter"></section>
-    <section id="contact" class="section contact"></section>
+    <section id="welcome" class="section welcome" data-file="./sections/welcome.html"><div class="section-content"></div></section>
+    <section id="server" class="section server" data-file="./sections/UpandUp.html"><div class="section-content"></div></section>
+    <section id="about" class="section about" data-file="./sections/about.html"><div class="section-content"></div></section>
+    <section id="CurrStatsStats" class="section CurrStatsStats" data-file="./sections/CurrStatsStats.html"><div class="section-content"></div></section>
+    <section id="newsletter" class="section newsletter" data-file="./sections/newsletter.html"><div class="section-content"></div></section>
+    <section id="contact" class="section contact" data-file="./sections/contact.html"><div class="section-content"></div></section>
   </main>
-
   <footer>
     <p>© 2025 DiccChops</p>
   </footer>
-
-  <!-- Three.js Blob Background and Dynamic Sections -->
-  <script type="module">
-    import { initBlobBackground } from './blob.js';
-    const { camera } = initBlobBackground();
-
-    // Handle window resize
-    window.addEventListener('resize', ()=>{
-      camera.aspect = window.innerWidth/window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    // Dynamic Section Loader
-    async function loadSection(sectionId, filePath) {
-      try {
-        const response = await fetch(filePath);
-        const content = await response.text();
-        document.getElementById(sectionId).innerHTML = content;
-      } catch(err) {
-        console.error('Error loading section', sectionId, err);
-      }
-    }
-
-    // Load all sections
-    loadSection('home', './sections/home.html');
-    loadSection('server', './sections/UpandUp.html');
-    loadSection('about', './sections/about.html');
-    loadSection('SketchFab', './sections/SketchFab.html');
-    loadSection('newsletter', './sections/newsletter.html');
-    loadSection('contact', './sections/contact.html');
-
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
