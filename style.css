@@ -88,15 +88,15 @@ nav.main-nav a.active {
   backdrop-filter: blur(8px);
   box-shadow: 0 8px 30px rgba(0,0,0,0.4);
   padding: 80px 20px 40px;
-  transition: all 0.3s ease-in-out;
+  transition: width 0.5s cubic-bezier(.4,2,.3,1), height 0.5s cubic-bezier(.4,2,.3,1), padding 0.5s, background 0.5s, box-shadow 0.5s, border-radius 0.5s;
 }
 
 /* Custom heights */
-.welcome { min-height: 80vh; }
-.server { min-height: 70vh; }
-.about { min-height: 60vh; }
-.CurrStatsStats { min-height: 50vh; }
-.newsletter { min-height: 50vh; }
+.welcome { min-height: 30vh; padding: 40px 20px; }
+.server { min-height: 30vh; padding: 40px 20px;; }
+.about { min-height: 30vh; padding: 40px 20px; }
+.CurrStatsStats { min-height: 30vh; padding: 40px 20px; }
+.newsletter { min-height: 30vh; padding: 40px 20px; }
 #contact.section { min-height: 30vh; padding: 40px 20px; }
 
 h2 {
@@ -150,6 +150,7 @@ body.no-scroll {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  transition: width 0.5s cubic-bezier(.4,2,.3,1), height 0.5s cubic-bezier(.4,2,.3,1), padding 0.5s, background 0.5s, box-shadow 0.5s, border-radius 0.5s;
 }
 
 .section.expanded .section-content {
@@ -201,6 +202,27 @@ body.no-scroll {
 .section.expanded .close-button:hover {
   background: rgba(255,255,255,0.2);
   color: #FFD700;
+}
+
+/* Custom Scrollbar Styles */
+body, .section.expanded {
+  scrollbar-width: thin;
+  scrollbar-color: #7feaf9 #1a1a40;
+}
+
+body::-webkit-scrollbar, .section.expanded::-webkit-scrollbar {
+  width: 12px;
+  background: #1a1a40;
+  border-radius: 8px;
+}
+body::-webkit-scrollbar-thumb, .section.expanded::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #00f9ff 0%, #7feaf9 100%);
+  border-radius: 8px;
+  border: 2px solid #1a1a40;
+}
+body::-webkit-scrollbar-track, .section.expanded::-webkit-scrollbar-track {
+  background: #1a1a40;
+  border-radius: 8px;
 }
 
 /* Responsive */

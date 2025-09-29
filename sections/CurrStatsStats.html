@@ -1,9 +1,52 @@
-<h3>Real-time System Statistics</h3>
-<p>Our analytics show high performance and efficiency across all modules.</p>
-<ul>
-    <li>CPU Usage: <span style="color: #FFD700;">15%</span></li>
-    <li>Memory: <span style="color: #00E0FF;">8.2 GB / 16 GB</span></li>
-    <li>Network Latency: <span style="color: #FF00FF;">3 ms</span></li>
-    <li>Active Users: <span style="color: #00FF00;">1,234</span></li>
-</ul>
-<p style="font-size: 0.9em; color: rgba(255,255,255,0.6);">Data updated every 5 seconds.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DiccChops - Client Stats</title>
+  <link rel="stylesheet" href="./Stats-style.css">
+</head>
+<body>
+  <div id="stats-page">
+    <section class="stats">
+      <h3>Real-time Client Stats</h3>
+      <p>Stats below are measured directly from your device.</p>
+      <ul>
+        <li>Memory (JS Heap): <span id="memory">--</span></li>
+        <li>Network Type: <span id="network">--</span></li>
+        <li>Latency (to server): <span id="latency">--</span></li>
+        <li>Browser: <span id="browser">--</span></li>
+      </ul>
+      <p class="update-note">Data updates every 5 seconds.</p>
+    </section>
+  </div>
+
+  <script>
+  async function updateClientStats() {
+    if (performance.memory) {
+      const usedMB = (performance.memory.usedJSHeapSize / 1048576).toFixed(1);
+      const totalMB = (performance.memory.jsHeapSizeLimit / 1048576).toFixed(0);
+      document.getElementById("memory").textContent = `${usedMB} MB / ${totalMB} MB`;
+    } else {
+      document.getElementById("memory").textContent = "Not supported";
+    }
+
+    if (navigator.connection) {
+      document.getElementById("network").textContent =
+        `${navigator.connection.effectiveType} (${navigator.connection.downlink} Mbps est.)`;
+    } else {
+      document.getElementById("network").textContent = "Unknown";
+    }
+
+    const t0 = performance.now();
+    await fetch(window.location.href, { cache: "no-store", mode: "no-cors" }).catch(()=>{});
+    const t1 = performance.now();
+    document.getElementById("latency").textContent = `${Math.round(t1 - t0)} ms`;
+
+    document.getElementById("browser").textContent = navigator.userAgent;
+  }
+
+  updateClientStats();
+  setInterval(updateClientStats, 5000);
+  </script>
+</body>
+</html>
