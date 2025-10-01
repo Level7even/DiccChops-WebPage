@@ -211,11 +211,14 @@ body.no-scroll {
   border-radius: 50%;
   width: 40px; height: 40px;
   font-size: 1.5rem;
-  line-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   cursor: pointer;
   transition: 0.2s;
   z-index: 1001;
+  padding: 0;
 }
 .section.expanded .close-button:hover {
   background: rgba(255,255,255,0.2);
@@ -241,6 +244,209 @@ body::-webkit-scrollbar-thumb, .section.expanded::-webkit-scrollbar-thumb {
 body::-webkit-scrollbar-track, .section.expanded::-webkit-scrollbar-track {
   background: #1a1a40;
   border-radius: 8px;
+}
+
+/* Quick Scroll Dropdown Menu */
+.quick-scroll {
+  position: relative;
+  display: inline-block;
+}
+.quick-scroll-toggle {
+  color: #7feaf9;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.quick-scroll-toggle:hover {
+  color: #FFD700;
+  background: rgba(255,255,255,0.05);
+}
+.quick-scroll-menu {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background: #181830;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px #000a;
+  min-width: 180px;
+  z-index: 3000;
+  padding: 8px 0;
+  margin: 0;
+  list-style: none;
+}
+.quick-scroll-menu li a {
+  display: block;
+  color: #7feaf9;
+  padding: 8px 18px;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+.quick-scroll-menu li a:hover {
+  background: #222244;
+  color: #FFD700;
+}
+.quick-scroll:hover .quick-scroll-menu,
+.quick-scroll:focus-within .quick-scroll-menu {
+  display: block;
+}
+
+/* Options Tab and Dropdown Menu */
+.options-tab {
+  position: relative;
+  display: inline-block;
+  margin-left: 18px;
+}
+.options-toggle {
+  color: #FFD700;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.options-toggle i.fa-gear {
+  font-size: 1.1em;
+}
+.options-toggle:hover {
+  color: #7feaf9;
+  background: rgba(255,255,255,0.05);
+}
+.options-menu {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background: #181830;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px #000a;
+  min-width: 160px;
+  z-index: 3000;
+  padding: 8px 0;
+  margin: 0;
+  list-style: none;
+}
+.options-menu li a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #FFD700;
+  padding: 8px 18px;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+.options-menu li a:hover {
+  background: #222244;
+  color: #7feaf9;
+}
+.options-tab:hover .options-menu,
+.options-tab:focus-within .options-menu {
+  display: block;
+}
+
+/* Button Styles */
+button {
+  background: #222244;
+  color: #FFD700;
+  border: 1px solid #7feaf9;
+  border-radius: 8px;
+  padding: 8px 18px;
+  margin: 0 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+button:hover, button.active {
+  background: #7feaf9;
+  color: #181830;
+}
+
+/* Audio Settings */
+.audio-settings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 0 0;
+}
+#audio-volume {
+  width: 220px;
+  accent-color: #FFD700;
+  background: transparent;
+  margin: 0 10px;
+}
+#audio-volume::-webkit-slider-thumb {
+  background: #FFD700;
+  border: 2px solid #7feaf9;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #000a;
+}
+#audio-volume::-webkit-slider-runnable-track {
+  height: 8px;
+  background: linear-gradient(90deg, #7feaf9 0%, #FFD700 100%);
+  border-radius: 8px;
+}
+#audio-volume::-moz-range-thumb {
+  background: #FFD700;
+  border: 2px solid #7feaf9;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #000a;
+}
+#audio-volume::-moz-range-track {
+  height: 8px;
+  background: linear-gradient(90deg, #7feaf9 0%, #FFD700 100%);
+  border-radius: 8px;
+}
+#audio-volume::-ms-thumb {
+  background: #FFD700;
+  border: 2px solid #7feaf9;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #000a;
+}
+#audio-volume::-ms-fill-lower {
+  background: #7feaf9;
+  border-radius: 8px;
+}
+#audio-volume::-ms-fill-upper {
+  background: #FFD700;
+  border-radius: 8px;
+}
+#audio-volume:focus {
+  outline: none;
+}
+#audio-volume-value {
+  display: inline-block;
+  min-width: 40px;
+  font-weight: bold;
+  color: #FFD700;
+  margin-left: 8px;
+}
+#audio-mute-toggle.muted, #audio-mute-toggle[aria-pressed="true"] {
+  background: #a00;
+  color: #fff;
+  border-color: #f44;
 }
 
 /* Responsive */

@@ -18,14 +18,25 @@
         <span class="tagline">Futuristic Playground</span>
       </div>
       <nav class="main-nav">
-        <a href="#welcome" data-target="welcome">welcome</a>
-        <a href="#server" data-target="server">Up And Up Server</a>
-        <a href="#about" data-target="about">About</a>
-        <a href="#CurrStatsStats" data-target="CurrStatsStats">Test Stats</a>
-        <a href="#newsletter" data-target="newsletter">Newsletter</a>
-        <a href="#contact" data-target="contact">Contact</a>
-        <a href="#lorem" data-target="lorem">Lorem Ipsum</a>
-        <a href="#GraphTest" data-target="GraphTest">GraphTest</a>
+        <div class="quick-scroll">
+          <a href="#" class="quick-scroll-toggle">Quick Scroll <i class="fa fa-caret-down"></i></a>
+          <ul class="quick-scroll-menu">
+            <li><a href="#welcome" data-target="welcome">welcome</a></li>
+            <li><a href="#server" data-target="server">Up And Up Server</a></li>
+            <li><a href="#about" data-target="about">About</a></li>
+            <li><a href="#CurrStatsStats" data-target="CurrStatsStats">Test Stats</a></li>
+            <li><a href="#newsletter" data-target="newsletter">Newsletter</a></li>
+            <li><a href="#contact" data-target="contact">Contact</a></li>
+            <li><a href="#lorem" data-target="lorem">Lorem Ipsum</a></li>
+            <li><a href="#GraphTest" data-target="GraphTest">GraphTest</a></li>
+          </ul>
+        </div>
+        <div class="options-tab">
+          <a href="#" class="options-toggle"><i class="fa fa-gear"></i> Options <i class="fa fa-caret-down"></i></a>
+          <ul class="options-menu">
+            <li><a href="#Settings" data-target="Settings"><i class="fa fa-gear"></i> Settings</a></li>
+          </ul>
+        </div>
       </nav>
     </div>
   </header>
@@ -37,12 +48,17 @@
     <section id="newsletter" class="section newsletter" data-file="./sections/newsletter.html"><div class="section-content"></div></section>
     <section id="contact" class="section contact" data-file="./sections/contact.html"><div class="section-content"></div></section>
     <section id="lorem" class="section lorem" data-file="./sections/lorem.html"><div class="section-content"></div></section>
-    <section id="GraphTest" class="section GraphTest" data-file="./sections/GraphTest.html"><div class="section-content"></div></section>
+    <section id="GraphTest" class="section GraphTest" data-file="./GraphTest/GraphTest.html"><div class="section-content"></div></section>
+    <section id="Settings" class="section Settings" data-file="./sections/Settings.html"><div class="section-content"></div></section>
   </main>
   <footer>
     <p>© 2025 DiccChops</p>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
   <script src="./script.js"></script>
+  <script src="./sections/Settings.js"></script>
+  <audio id="clickSound" src="sounds/Click.wav"></audio>
+  <audio id="whooshSound" src="sounds/Whoosh.wav"></audio>
+  <audio id="dropSound" src="sounds/Drop.wav"></audio>
 </body>
 </html>
