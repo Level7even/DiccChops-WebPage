@@ -1,3 +1,17 @@
+// --- Global Audio Engine (audioCtx, gainNodes) ---
+window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+window.gainNodes = {
+  click: audioCtx.createGain(),
+  whoosh: audioCtx.createGain(),
+  drop: audioCtx.createGain()
+};
+gainNodes.click.gain.value = 0.5;
+gainNodes.whoosh.gain.value = 0.5;
+gainNodes.drop.gain.value = 0.5;
+gainNodes.click.connect(audioCtx.destination);
+gainNodes.whoosh.connect(audioCtx.destination);
+gainNodes.drop.connect(audioCtx.destination);
+
 // Load external HTML into sections
 document.querySelectorAll(".section").forEach(section => {
   const file = section.getAttribute("data-file");
@@ -85,7 +99,7 @@ function playDrop() {
   if (!dropBuffer) return;
   const source = audioCtx.createBufferSource();
   source.buffer = dropBuffer;
-  source.connect(audioCtx.destination);
+  source.connect(gainNodes.drop);
   source.start(0, 0, 1 - 0);
 }
 
@@ -117,7 +131,6 @@ window.addEventListener("mousedown", e => {
 // Play a segment of click.wav when a nav link is clicked
 const clickSoundUrl = './sounds/Click.wav';
 let clickBuffer = null;
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 fetch(clickSoundUrl)
   .then(res => res.arrayBuffer())
   .then(data => audioCtx.decodeAudioData(data))
@@ -129,8 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!clickBuffer) return;
       const source = audioCtx.createBufferSource();
       source.buffer = clickBuffer;
-      source.connect(audioCtx.destination);
-      // Play from 0.03s to 1.0s
+      source.connect(gainNodes.click);
       source.start(0, 0.6, 1.0 - 0.6);
     });
   });
@@ -148,7 +160,7 @@ function playWhoosh() {
   if (!whooshBuffer) return;
   const source = audioCtx.createBufferSource();
   source.buffer = whooshBuffer;
-  source.connect(audioCtx.destination);
+  source.connect(gainNodes.whoosh);
   source.start(0, 2.5, 3 - 2.5);
 }
 
@@ -217,67 +229,29 @@ document.querySelectorAll('.section').forEach(section => {
   observer.observe(section, { childList: true, subtree: true });
 });
 
-// --- Audio Settings Logic ---
-(function() {
-  // IDs of your UI sound audio elements
-  const soundIds = ['clickSound', 'whooshSound', 'dropSound'];
-  function getUiSounds() {
-    return soundIds.map(id => document.getElementById(id)).filter(Boolean);
-  }
-  function setVolume(vol) {
-    getUiSounds().forEach(audio => { audio.volume = vol; });
-    localStorage.setItem('uiVolume', vol);
-  }
-  function setMute(mute) {
-    getUiSounds().forEach(audio => { audio.muted = mute; });
-    localStorage.setItem('uiMute', mute);
-    const btn = document.getElementById('audio-mute-toggle');
-    if (btn) btn.innerHTML = mute ? '<i class="fa fa-volume-mute"></i> Unmute' : '<i class="fa fa-volume-mute"></i> Mute';
-  }
-  function loadAudioSettings() {
-    const vol = localStorage.getItem('uiVolume');
-    const mute = localStorage.getItem('uiMute') === 'true';
-    const volSlider = document.getElementById('audio-volume');
-    const volValue = document.getElementById('audio-volume-value');
-    if (volSlider && vol !== null) {
-      volSlider.value = vol;
-      setVolume(parseFloat(vol));
-      if (volValue) volValue.textContent = Math.round(vol * 100) + '%';
-    }
-    setMute(mute);
-  }
-  document.addEventListener('input', function(e) {
-    if (e.target && e.target.id === 'audio-volume') {
-      const vol = parseFloat(e.target.value);
-      setVolume(vol);
-      const volValue = document.getElementById('audio-volume-value');
-      if (volValue) volValue.textContent = Math.round(vol * 100) + '%';
-      setMute(false);
-    }
+// --- User Settings with IP as ID ---
+let userId = null;
+fetch('https://api.ipify.org?format=json')
+  .then(res => res.json())
+  .then(data => {
+    userId = data.ip;
+    console.log('User IP:', userId);
+    // After IP is loaded, load audio settings for this user
+    loadAudioSettings();
   });
-  document.addEventListener('click', function(e) {
-    if (e.target && (e.target.id === 'audio-mute-toggle' || e.target.closest('#audio-mute-toggle'))) {
-      const sounds = getUiSounds();
-      const isMuted = sounds.length && sounds[0].muted;
-      setMute(!isMuted);
-    }
-  });
-  document.addEventListener('DOMContentLoaded', loadAudioSettings);
-})();
 
-// --- Fix for repaint/hover/focus issues after closing expanded section ---
-(function() {
-  const observer = new MutationObserver(() => {
-    const expanded = document.querySelector('.section.expanded');
-    if (!expanded) {
-      // Remove focus from any element
-      if (document.activeElement && document.activeElement !== document.body) {
-        document.activeElement.blur();
-      }
-      // Force repaint by toggling a class
-      document.body.classList.add('force-repaint');
-      setTimeout(() => document.body.classList.remove('force-repaint'), 50);
-    }
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-})();
+function getSettingsKey() {
+  return userId ? `Users-Settings-${userId}` : 'Users-Settings-unknown';
+}
+
+function saveUserSettings(settings) {
+  if (!userId) return;
+  localStorage.setItem(getSettingsKey(), JSON.stringify(settings));
+}
+
+function loadUserSettings() {
+  if (!userId) return null;
+  const raw = localStorage.getItem(getSettingsKey());
+  if (raw) return JSON.parse(raw);
+  return null;
+}
