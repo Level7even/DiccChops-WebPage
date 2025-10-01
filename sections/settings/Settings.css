@@ -1,3 +1,5 @@
+@import url('../../StyleInfo.css');
+
 /* Audio Settings Styles - matches main site look */
 .audio-settings {
   display: flex;
@@ -5,23 +7,21 @@
   align-items: center;
   gap: 22px;
   margin: 32px 0 0 0;
-  background: rgba(20,20,40,0.55);
-  border: 1px solid rgba(127,234,249,0.18);
-  border-radius: 20px;
-  padding: 28px 22px 22px 22px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
-  max-width: 440px;
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-section-border);
+  border-radius: var(--radius-main);
+  padding: 24px 18px 18px 18px;
+  box-shadow: var(--shadow-main);
+  max-width: 420px;
   margin-left: auto;
   margin-right: auto;
-  backdrop-filter: blur(12px);
 }
 .audio-settings label {
-  font-weight: 700;
-  color: #7feaf9;
+  font-weight: 600;
+  color: var(--color-gold);
   margin-right: 12px;
-  min-width: 120px;
+  min-width: 110px;
   text-align: right;
-  letter-spacing: 1px;
 }
 .audio-settings .slider-group {
   display: flex;
@@ -32,14 +32,13 @@
 }
 .audio-settings input[type="range"] {
   width: 180px;
-  accent-color: #FFD700;
+  accent-color: var(--color-gold);
   background: transparent;
   margin: 0 10px;
-  border-radius: 8px;
 }
 .audio-settings input[type="range"]::-webkit-slider-thumb {
-  background: #FFD700;
-  border: 2px solid #7feaf9;
+  background: var(--color-gold);
+  border: 2px solid var(--color-accent);
   border-radius: 50%;
   width: 18px;
   height: 18px;
@@ -48,12 +47,12 @@
 }
 .audio-settings input[type="range"]::-webkit-slider-runnable-track {
   height: 8px;
-  background: linear-gradient(90deg, #7feaf9 0%, #FFD700 100%);
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-gold) 100%);
   border-radius: 8px;
 }
 .audio-settings input[type="range"]::-moz-range-thumb {
-  background: #FFD700;
-  border: 2px solid #7feaf9;
+  background: var(--color-gold);
+  border: 2px solid var(--color-accent);
   border-radius: 50%;
   width: 18px;
   height: 18px;
@@ -62,12 +61,12 @@
 }
 .audio-settings input[type="range"]::-moz-range-track {
   height: 8px;
-  background: linear-gradient(90deg, #7feaf9 0%, #FFD700 100%);
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-gold) 100%);
   border-radius: 8px;
 }
 .audio-settings input[type="range"]::-ms-thumb {
-  background: #FFD700;
-  border: 2px solid #7feaf9;
+  background: var(--color-gold);
+  border: 2px solid var(--color-accent);
   border-radius: 50%;
   width: 18px;
   height: 18px;
@@ -75,11 +74,11 @@
   box-shadow: 0 2px 8px #000a;
 }
 .audio-settings input[type="range"]::-ms-fill-lower {
-  background: #7feaf9;
+  background: var(--color-accent);
   border-radius: 8px;
 }
 .audio-settings input[type="range"]::-ms-fill-upper {
-  background: #FFD700;
+  background: var(--color-gold);
   border-radius: 8px;
 }
 .audio-settings input[type="range"]:focus {
@@ -89,34 +88,21 @@
   display: inline-block;
   min-width: 40px;
   font-weight: bold;
-  color: #FFD700;
+  color: var(--color-gold);
   margin-left: 8px;
   text-align: left;
-  font-size: 1.1em;
 }
 #audio-mute-toggle {
   margin-top: 18px;
-  width: 130px;
+  width: 120px;
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 1px;
-  background: #222244;
-  color: #FFD700;
-  border: 1px solid #7feaf9;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-#audio-mute-toggle:hover, #audio-mute-toggle:focus {
-  background: #7feaf9;
-  color: #181830;
 }
 #audio-mute-toggle.muted, #audio-mute-toggle[aria-pressed="true"] {
-  background: #a00;
-  color: #fff;
-  border-color: #f44;
+  background: var(--color-btn-danger);
+  color: var(--color-white);
+  border-color: var(--color-btn-danger-border);
 }
 @media (max-width: 600px) {
   .audio-settings {
@@ -128,4 +114,53 @@
     align-items: flex-start;
     gap: 4px;
   }
+}
+
+/* Color Settings Styles - matches main site look */
+.color-settings {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 18px;
+  margin: 18px 0 24px 0;
+  background: var(--color-bg-glass);
+  border-radius: var(--radius-main);
+  padding: 18px 12px;
+  box-shadow: var(--shadow-main);
+  justify-content: center;
+}
+.color-settings label {
+  font-weight: 600;
+  color: var(--color-gold);
+  margin-right: 6px;
+  min-width: 80px;
+  text-align: right;
+}
+.color-settings input[type="color"] {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  box-shadow: 0 2px 8px #0002;
+  cursor: pointer;
+  margin-right: 10px;
+}
+#reset-theme-btn {
+  background: var(--color-btn-danger);
+  color: var(--color-white);
+  border: 1px solid var(--color-btn-danger-border);
+  border-radius: var(--radius-btn);
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  font-weight: 700;
+  margin-left: 18px;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+#reset-theme-btn:hover {
+  background: var(--color-btn-hover);
+  color: var(--color-btn-hover-text);
+  border-color: var(--color-gold);
 }

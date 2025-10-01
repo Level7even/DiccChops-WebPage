@@ -2,67 +2,108 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>DiccChops</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="./IconL7.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="./IconL7.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <title>DiccChops - In Development</title>
   <link rel="stylesheet" href="./style.css">
-  <link rel="stylesheet" href="./sections/settings/Settings.css">
+  <link rel="stylesheet" href="./Components/Header/Header.css">
+  <link rel="stylesheet" href="./StyleInfo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
-  <canvas id="bg"></canvas>
-  <header class="site-header">
-    <div class="inner" style="display: flex; justify-content: space-between; align-items: center;">
-      <div class="site-brand" style="display: flex; align-items: flex-start; padding-left: 24px; gap: 18px;">
-        <img src="./IconL7.png" alt="DiccChops Logo" style="height: 3em; width: 3em; display: block;">
-        <div style="display: flex; flex-direction: column; justify-content: center;">
-          <h1 class="brand-title" style="margin: 0; line-height: 1.1;">DiccChops's</h1>
-          <span class="tagline" style="display: block; font-size: 0.95em; color: #CFFAFF; margin-top: 2px;">Futuristic Playground</span>
+<body data-mainpage="true">
+  <div class="stars"></div>
+  <div class="stars2"></div>
+  <div class="stars3"></div>
+  
+  <div id="header"></div>
+  <main>
+    <div class="container mainpage-content">
+      <div class="logo-container">
+        <div class="logo-pulse">
+          <i class="fas fa-code"></i>
         </div>
       </div>
-      <nav class="main-nav">
-        <div class="quick-scroll">
-          <a href="#" class="quick-scroll-toggle">Quick Scroll <i class="fa fa-caret-down"></i></a>
-          <ul class="quick-scroll-menu">
-            <li><a href="#welcome" data-target="welcome">welcome</a></li>
-            <li><a href="#server" data-target="server">Up And Up Server</a></li>
-            <li><a href="#about" data-target="about">About</a></li>
-            <li><a href="#CurrStatsStats" data-target="CurrStatsStats">Test Stats</a></li>
-            <li><a href="#newsletter" data-target="newsletter">Newsletter</a></li>
-            <li><a href="#contact" data-target="contact">Contact</a></li>
-            <li><a href="#lorem" data-target="lorem">Lorem Ipsum</a></li>
-            <li><a href="#GraphTest" data-target="GraphTest">GraphTest</a></li>
-          </ul>
+      
+      <h1 class="glitch-text" data-text="DiccChops">DiccChops</h1>
+      <div class="subtitle">
+        <span class="typing-text">Crafting something amazing...</span>
+        <span class="cursor">|</span>
+      </div>
+      
+      <div class="status-container">
+        <div class="status-item">
+          <i class="fas fa-cogs"></i>
+          <span>Backend Services</span>
+          <div class="status-indicator loading"></div>
         </div>
-        <div class="options-tab">
-          <a href="#" class="options-toggle"><i class="fa fa-gear"></i> Options <i class="fa fa-caret-down"></i></a>
-          <ul class="options-menu">
-            <li><a href="#Settings" data-target="Settings"><i class="fa fa-gear"></i> Settings</a></li>
-          </ul>
+        <div class="status-item">
+          <i class="fas fa-paint-brush"></i>
+          <span>UI/UX Design</span>
+          <div class="status-indicator progress"></div>
         </div>
-      </nav>
+        <div class="status-item">
+          <i class="fas fa-database"></i>
+          <span>Database Setup</span>
+          <div class="status-indicator complete"></div>
+        </div>
+      </div>
+      
+      <div class="progress-section">
+        <div class="progress-label">Overall Progress</div>
+        <div class="progress-bar">
+          <div class="progress-fill" data-progress="67"></div>
+          <div class="progress-text">67%</div>
+        </div>
+      </div>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <i class="fas fa-rocket"></i>
+          <h3>High Performance</h3>
+          <p>Lightning fast loading times</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-shield-alt"></i>
+          <h3>Secure</h3>
+          <p>Enterprise-grade security</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-mobile-alt"></i>
+          <h3>Responsive</h3>
+          <p>Works on all devices</p>
+        </div>
+      </div>
+      
+      <div class="countdown-container">
+        <div class="countdown-label">Estimated Launch</div>
+        <div class="countdown" id="countdown">
+          <div class="time-unit">
+            <span id="days">1500</span>
+            <label>Days</label>
+          </div>
+          <div class="time-unit">
+            <span id="hours">08</span>
+            <label>Hours</label>
+          </div>
+          <div class="time-unit">
+            <span id="minutes">42</span>
+            <label>Minutes</label>
+          </div>
+          <div class="time-unit">
+            <span id="seconds">30</span>
+            <label>Seconds</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="cta-section">
+        <button class="cta-button" id="notifyBtn">
+          <i class="fas fa-bell"></i>
+          Get Notified
+        </button>
+        <p class="cta-text">Be the first to know when we launch!</p>
+      </div>
     </div>
-  </header>
-  <main>
-    <section id="welcome" class="section welcome" data-file="./sections/welcome.html"><div class="section-content"></div></section>
-    <section id="server" class="section server" data-file="./sections/UpandUp.html"><div class="section-content"></div></section>
-    <section id="about" class="section about" data-file="./sections/about.html"><div class="section-content"></div></section>
-    <section id="CurrStatsStats" class="section CurrStatsStats" data-file="./sections/CurrStatsStats.html"><div class="section-content"></div></section>
-    <section id="newsletter" class="section newsletter" data-file="./sections/newsletter.html"><div class="section-content"></div></section>
-    <section id="contact" class="section contact" data-file="./sections/contact.html"><div class="section-content"></div></section>
-    <section id="lorem" class="section lorem" data-file="./sections/lorem.html"><div class="section-content"></div></section>
-    <section id="GraphTest" class="section GraphTest" data-file="./GraphTest/GraphTest.html"><div class="section-content"></div></section>
-    <section id="Settings" class="section Settings" data-file="./sections/settings/Settings.html"><div class="section-content"></div></section>
   </main>
-  <footer>
-    <p>© 2025 DiccChops</p>
-  </footer>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
-  <script src="./script.js"></script>
-  <script src="./sections/settings/Settings.js"></script>
-  <audio id="clickSound" src="sounds/Click.wav"></audio>
-  <audio id="whooshSound" src="sounds/Whoosh.wav"></audio>
-  <audio id="dropSound" src="sounds/Drop.wav"></audio>
 </body>
 </html>
+<script src="./script.js"></script>
