@@ -85,6 +85,7 @@ nav.main-nav a.active {
   border-radius: 20px;
   margin: 40px auto;
   max-width: 80%;
+  min-width: 80%;
   backdrop-filter: blur(8px);
   box-shadow: 0 8px 30px rgba(0,0,0,0.4);
   padding: 80px 20px 40px;
@@ -93,7 +94,7 @@ nav.main-nav a.active {
 
 /* Custom heights */
 .welcome { min-height: 30vh; padding: 40px 20px; }
-.server { min-height: 30vh; padding: 40px 20px;; }
+.server { min-height: 30vh; padding: 40px 20px; }
 .about { min-height: 30vh; padding: 40px 20px; }
 .CurrStatsStats { min-height: 30vh; padding: 40px 20px; }
 .newsletter { min-height: 30vh; padding: 40px 20px; }
@@ -141,7 +142,7 @@ body.no-scroll {
   height: calc(100vh - 66px);
   z-index: 1000;
   overflow: auto;
-  background: rgba(0,0,0,0.95);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 0;
   box-shadow: 0 8px 30px rgba(0,0,0,0.6);
   padding: 40px 0;
@@ -187,7 +188,7 @@ body.no-scroll {
   display: block;
   position: absolute;
   top: 20px; right: 20px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
   border: none;
   border-radius: 50%;
