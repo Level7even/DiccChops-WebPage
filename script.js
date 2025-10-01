@@ -150,3 +150,50 @@ sectionEls.forEach(section => {
     }
   }, true);
 });
+
+// Render test graph for GraphTest section if present
+function renderGraphTest() {
+  const canvas = document.getElementById('btcChart');
+  if (canvas && window.Chart) {
+    const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const data = [12, 19, 3, 5, 2, 3, 9];
+    new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Test Data',
+          data: data,
+          borderColor: '#7feaf9',
+          backgroundColor: 'rgba(127,234,249,0.1)',
+          fill: true,
+          tension: 0.2
+        }]
+      },
+      options: {
+        responsive: false,
+        plugins: { legend: { display: true } },
+        scales: { x: { display: true }, y: { display: true } }
+      }
+    });
+  }
+}
+
+// After section content is loaded, check for GraphTest and render chart
+const origSectionLoader = document.querySelectorAll('.section');
+document.querySelectorAll('.section').forEach(section => {
+  const observer = new MutationObserver(() => {
+    if (section.classList.contains('GraphTest')) {
+      // Wait for Chart.js to load if needed
+      if (window.Chart) {
+        renderGraphTest();
+      } else {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        script.onload = renderGraphTest;
+        document.body.appendChild(script);
+      }
+    }
+  });
+  observer.observe(section, { childList: true, subtree: true });
+});
