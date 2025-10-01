@@ -450,34 +450,47 @@ body {
     padding-top: 100px; 
     min-height: calc(100vh - 100px); 
   }
-  
   .container {
-    margin: 20px;
-    padding: 30px 20px;
+    margin: 10px;
+    padding: 18px 6px;
+    border-radius: 12px;
   }
-  
   .glitch-text {
-    font-size: 2.5rem;
-  }
-  
-  .status-container {
-    flex-direction: column;
-  }
-  
-  .feature-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .countdown {
-    gap: 10px;
-  }
-  
-  .time-unit {
-    padding: 15px;
-    min-width: 60px;
-  }
-  
-  .time-unit span {
     font-size: 2rem;
   }
+  .status-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .countdown {
+    gap: 6px;
+  }
+  .time-unit {
+    padding: 10px;
+    min-width: 48px;
+  }
+  .time-unit span {
+    font-size: 1.2rem;
+  }
+  .cta-button {
+    padding: 12px 18px;
+    font-size: 1rem;
+  }
+}
+
+/* iOS tap highlight and font smoothing */
+body {
+  -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+}
+
+input, button, select, textarea {
+  font-family: inherit;
+  font-size: 1em;
 }
