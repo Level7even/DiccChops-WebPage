@@ -3,19 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>DiccChops</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="./icon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="./icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./IconL7.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./IconL7.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./sections/settings/Settings.css">
 </head>
 <body>
   <canvas id="bg"></canvas>
   <header class="site-header">
-    <div class="inner">
-      <div class="site-brand">
-        <h1 class="brand-title">DiccChopss</h1>
-        <span class="tagline">Futuristic Playground</span>
+    <div class="inner" style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="site-brand" style="display: flex; align-items: flex-start; padding-left: 24px; gap: 18px;">
+        <img src="./IconL7.png" alt="DiccChops Logo" style="height: 3em; width: 3em; display: block;">
+        <div style="display: flex; flex-direction: column; justify-content: center;">
+          <h1 class="brand-title" style="margin: 0; line-height: 1.1;">DiccChops's</h1>
+          <span class="tagline" style="display: block; font-size: 0.95em; color: #CFFAFF; margin-top: 2px;">Futuristic Playground</span>
+        </div>
       </div>
       <nav class="main-nav">
         <div class="quick-scroll">
@@ -49,14 +53,14 @@
     <section id="contact" class="section contact" data-file="./sections/contact.html"><div class="section-content"></div></section>
     <section id="lorem" class="section lorem" data-file="./sections/lorem.html"><div class="section-content"></div></section>
     <section id="GraphTest" class="section GraphTest" data-file="./GraphTest/GraphTest.html"><div class="section-content"></div></section>
-    <section id="Settings" class="section Settings" data-file="./sections/Settings.html"><div class="section-content"></div></section>
+    <section id="Settings" class="section Settings" data-file="./sections/settings/Settings.html"><div class="section-content"></div></section>
   </main>
   <footer>
     <p>© 2025 DiccChops</p>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
   <script src="./script.js"></script>
-  <script src="./sections/Settings.js"></script>
+  <script src="./sections/settings/Settings.js"></script>
   <audio id="clickSound" src="sounds/Click.wav"></audio>
   <audio id="whooshSound" src="sounds/Whoosh.wav"></audio>
   <audio id="dropSound" src="sounds/Drop.wav"></audio>

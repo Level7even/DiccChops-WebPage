@@ -47,6 +47,7 @@ document.querySelectorAll(".section").forEach(section => {
     if (e.target.closest("nav.main-nav")) return;
     const wasExpanded = section.classList.contains("expanded");
     if (!wasExpanded) {
+      lastScrollY = window.scrollY;
       collapseAll();
       section.classList.add("expanded");
       document.body.classList.add("no-scroll");
@@ -57,24 +58,18 @@ document.querySelectorAll(".section").forEach(section => {
   });
 });
 
-// Prevent scroll-to-top on section navigation
-(function() {
-  document.addEventListener('click', function(e) {
-    const link = e.target.closest('.main-nav a[data-target]');
-    if (link) {
-      e.preventDefault();
-      // Your SPA logic to show/expand the section goes here
-      // For example, trigger your section loader or expansion logic
-      const target = link.getAttribute('data-target');
-      if (target) {
-        // Optionally, update the URL hash without scrolling
-        history.replaceState(null, '', '#' + target);
-        // If you have a function to show/expand the section, call it here
-        // showSection(target);
-      }
-    }
-  });
-})();
+// Show and expand the correct section by id
+function showSection(target) {
+  const section = document.getElementById(target);
+  if (section) {
+    collapseAll();
+    section.classList.add('expanded');
+    document.body.classList.add('no-scroll');
+    section.scrollTop = 0;
+    playWhoosh();
+    section.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
 
 // Helper: toggle expand
 function toggleExpand(section) {
@@ -112,6 +107,15 @@ function collapseAll() {
     playDrop();
   } else {
     document.body.classList.remove('no-scroll');
+  }
+  // Only force repaint (no CSS reload)
+  document.body.classList.add('force-repaint');
+  setTimeout(() => document.body.classList.remove('force-repaint'), 50);
+  window.scrollBy(0, 1);
+  window.scrollBy(0, -1);
+  // Restore scroll position
+  if (typeof lastScrollY === 'number') {
+    window.scrollTo({ top: lastScrollY, behavior: 'auto' });
   }
 }
 
@@ -255,3 +259,23 @@ function loadUserSettings() {
   if (raw) return JSON.parse(raw);
   return null;
 }
+
+// --- Fix for repaint/hover/focus issues after closing expanded section ---
+(function() {
+  const observer = new MutationObserver(() => {
+    const expanded = document.querySelector('.section.expanded');
+    if (!expanded) {
+      // Remove focus from any element
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
+      // Force repaint by toggling a class
+      document.body.classList.add('force-repaint');
+      setTimeout(() => document.body.classList.remove('force-repaint'), 50);
+      // Nudge scroll to force browser repaint
+      window.scrollBy(0, 1);
+      window.scrollBy(0, -1);
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
