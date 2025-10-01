@@ -1,0 +1,86 @@
+.lorem-section {
+  width: 80vw;
+  max-width: 900px;
+  min-height: 70px;
+  margin: 40px auto;
+  border-radius: 22px;
+  background: rgba(20, 20, 40, 0.45);
+  border: 2px solid #00ffff55;
+  box-shadow: 0 4px 32px rgba(0,255,255,0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: block;
+  padding: 32px 36px;
+  color: #fff;
+  font-family: 'Orbitron', Arial, sans-serif;
+  text-align: left;
+  overflow: hidden;
+}
+.lorem-section h2, .lorem-section h3 {
+  color: #00ffff;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.lorem-section h2 {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+.lorem-section h3 {
+  font-size: 1.2rem;
+  margin-top: 32px;
+  margin-bottom: 8px;
+}
+.lorem-section p {
+  color: #aaa;
+  font-size: 1.08rem;
+  margin: 10px 0;
+}
+.lorem-section ul, .lorem-section ol {
+  margin: 16px 0 16px 24px;
+  color: #fff;
+  font-size: 1.05rem;
+}
+.lorem-section li {
+  margin-bottom: 6px;
+}
+.lorem-section a {
+  color: #7feaf9;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.lorem-section a:hover {
+  color: #ff0080;
+}
+.lorem-section blockquote {
+  border-left: 4px solid #00ffff;
+  background: rgba(0,255,255,0.05);
+  color: #7feaf9;
+  margin: 18px 0;
+  padding: 12px 18px;
+  font-style: italic;
+  border-radius: 8px;
+}
+.lorem-section hr {
+  border: none;
+  border-top: 2px solid #00ffff44;
+  margin: 32px 0;
+}
+@media (max-width: 600px) {
+  .lorem-section {
+    width: 96vw;
+    min-height: 56px;
+    border-radius: 12px;
+    margin: 18px auto;
+    padding: 12px 6px;
+  }
+  .lorem-section h2 {
+    font-size: 1.1rem;
+  }
+  .lorem-section h3 {
+    font-size: 1rem;
+  }
+  .lorem-section p, .lorem-section ul, .lorem-section ol {
+    font-size: 0.95rem;
+  }
+}

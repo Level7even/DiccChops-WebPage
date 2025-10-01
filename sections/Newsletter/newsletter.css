@@ -1,0 +1,97 @@
+.newsletter-section {
+  width: 80vw;
+  max-width: 900px;
+  min-height: 70px;
+  margin: 40px auto;
+  border-radius: 22px;
+  background: rgba(20, 20, 40, 0.45);
+  border: 2px solid #00ffff55;
+  box-shadow: 0 4px 32px rgba(0,255,255,0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 32px;
+  color: #fff;
+  font-family: 'Orbitron', Arial, sans-serif;
+  text-align: center;
+}
+.newsletter-section h2 {
+  color: #00ffff;
+  font-size: 2rem;
+  margin-bottom: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.newsletter-section p {
+  color: #aaa;
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+}
+.newsletter-form {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+  justify-content: center;
+}
+.newsletter-form input[type="email"] {
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: 1px solid #00ffff55;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  font-family: inherit;
+  transition: border 0.2s;
+}
+.newsletter-form input[type="email"]:focus {
+  border: 1.5px solid #00ffff;
+}
+.newsletter-form button {
+  background: linear-gradient(135deg, #ff0080, #00ffff);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: background 0.2s, color 0.2s, transform 0.1s;
+}
+.newsletter-form button:hover {
+  background: linear-gradient(135deg, #00ffff, #ff0080);
+  color: #181c24;
+  transform: translateY(-2px) scale(1.04);
+}
+@media (max-width: 600px) {
+  .newsletter-section {
+    width: 96vw;
+    min-height: 56px;
+    border-radius: 12px;
+    margin: 18px auto;
+    padding: 12px 6px;
+  }
+  .newsletter-section h2 {
+    font-size: 1.2rem;
+  }
+  .newsletter-section p {
+    font-size: 0.95rem;
+  }
+  .newsletter-form {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .newsletter-form input[type="email"],
+  .newsletter-form button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 12px 0;
+  }
+}

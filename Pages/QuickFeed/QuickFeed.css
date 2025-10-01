@@ -1,0 +1,558 @@
+@import url('/StyleInfo.css');
+
+body {
+  background: linear-gradient(135deg, #0a0a1f 0%, #1a1a3e 50%, #2a1a5e 100%);
+  color: #fff;
+  font-family: 'Orbitron', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  min-height: 100vh;
+  -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+}
+
+.stars, .stars2, .stars3 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.stars:before, .stars2:before, .stars3:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 160px 30px, rgba(255,255,255,0.9), transparent);
+  background-repeat: repeat;
+  background-size: 200px 100px;
+  animation: sparkle 20s linear infinite;
+  -webkit-animation: sparkle 20s linear infinite;
+}
+
+.stars2:before {
+  background-size: 100px 80px;
+  animation: sparkle 25s linear infinite reverse;
+  -webkit-animation: sparkle 25s linear infinite reverse;
+}
+
+.stars3:before {
+  background-size: 300px 120px;
+  animation: sparkle 30s linear infinite;
+  -webkit-animation: sparkle 30s linear infinite;
+}
+
+@-webkit-keyframes sparkle {
+  0% { -webkit-transform: translateY(0px); }
+  100% { -webkit-transform: translateY(-100px); }
+}
+@keyframes sparkle {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-100px); }
+}
+
+.container {
+  max-width: 900px;
+  margin: 60px auto;
+  background: rgba(15, 15, 35, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 255, 255, 0.1), 0 0 100px rgba(138, 43, 226, 0.1);
+  padding: 50px 40px;
+  text-align: center;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+.container:before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ff0080, #00ffff, #8a2be2, #ff0080);
+  border-radius: 22px;
+  z-index: -1;
+  animation: borderGlow 3s ease-in-out infinite alternate;
+  opacity: 0.3;
+}
+
+@keyframes borderGlow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.glitch-text {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #fff;
+  margin: 20px 0;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.glitch-text:before,
+.glitch-text:after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-text:before {
+  animation: glitch-1 0.5s infinite;
+  color: #ff0080;
+  z-index: -1;
+}
+
+.glitch-text:after {
+  animation: glitch-2 0.5s infinite;
+  color: #00ffff;
+  z-index: -2;
+}
+
+@keyframes glitch-1 {
+  0%, 14%, 15%, 49%, 50%, 99%, 100% { transform: translate(0); }
+  15%, 49% { transform: translate(-2px, 1px); }
+}
+
+@keyframes glitch-2 {
+  0%, 20%, 21%, 62%, 63%, 99%, 100% { transform: translate(0); }
+  21%, 62% { transform: translate(2px, -1px); }
+}
+
+.subtitle {
+  font-size: 1.3rem;
+  color: #aaa;
+  margin-bottom: 40px;
+}
+
+.typing-text {
+  border-right: 2px solid #00ffff;
+  animation: typing 3s steps(25), blink 1s infinite;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.cursor {
+  color: #00ffff;
+  animation: blink 1s infinite;
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 40px 0;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 30px 20px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 255, 255, 0.2);
+}
+
+.feature-card i {
+  font-size: 3rem;
+  color: #00ffff;
+  margin-bottom: 15px;
+}
+
+.feature-card h3 {
+  color: #fff;
+  margin: 15px 0 10px 0;
+  font-size: 1.3rem;
+}
+
+.feature-card p {
+  color: #aaa;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.cta-section {
+  margin-top: 50px;
+}
+
+.cta-button {
+  background: linear-gradient(135deg, #ff0080, #00ffff);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 18px 40px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0, 255, 255, 0.4);
+}
+
+.cta-button i {
+  margin-right: 10px;
+}
+
+.cta-text {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin-top: 15px;
+}
+
+.mainpage-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding-top: 120px;
+  box-sizing: border-box;
+}
+
+.ad-section {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  margin: 30px 0 0 0;
+  padding-bottom: 30px;
+}
+.ad-card {
+  background: linear-gradient(135deg, #181830 0%, #7feaf9 100%);
+  color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,255,255,0.12);
+  padding: 24px 32px;
+  max-width: 350px;
+  text-align: center;
+  border: 1px solid #00ffff44;
+  position: relative;
+  font-family: 'Orbitron', Arial, sans-serif;
+}
+.ad-label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #ff0080;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 8px;
+  letter-spacing: 1px;
+}
+.ad-link {
+  color: #00ffff;
+  text-decoration: underline;
+  font-weight: 700;
+  transition: color 0.2s;
+}
+.ad-link:hover {
+  color: #ff0080;
+}
+@media (max-width: 600px) {
+  .mainpage-content { 
+    padding-top: 140px; 
+    min-height: 100vh; 
+  }
+  .container {
+    margin: 10px;
+    padding: 18px 6px;
+    border-radius: 12px;
+  }
+  .glitch-text {
+    font-size: 2rem;
+  }
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .cta-button {
+    padding: 12px 18px;
+    font-size: 1rem;
+  }
+  .ad-card {
+    padding: 16px 8px;
+    font-size: 0.95rem;
+  }
+}
+
+input, button, select, textarea {
+  font-family: inherit;
+  font-size: 1em;
+}
+
+.page-content {
+  padding-top: 130px;
+  min-height: calc(100vh - 120px);
+  box-sizing: border-box;
+}
+@media (max-width: 600px) {
+  .page-content {
+    padding-top: 140px;
+    min-height: calc(100vh - 140px);
+  }
+}
+
+/* --- ENLARGED SECTION FULL VIEWPORT FIX --- */
+.main-section-cube.enlarged {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 99999 !important;
+  background: rgba(20, 20, 40, 1) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+body.enlarged-section .page-content {
+  /* Remove padding/margin when overlay is active */
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+/* Prevent parent containers from interfering with centering and borders */
+.sections-container:has(.main-section-cube.enlarged),
+.mainpage-content:has(.main-section-cube.enlarged),
+.container:has(.main-section-cube.enlarged) {
+  display: block !important;
+  position: static !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  left: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  background: none !important;
+}
+
+.main-section-cube.enlarged {
+  box-sizing: border-box !important;
+}
+
+/* Prevent body from scrolling when a section is enlarged */
+body.no-scroll {
+  overflow: hidden !important;
+}
+
+/* Ensure enlarged section is scrollable */
+.main-section-cube.enlarged {
+  overflow: hidden !important;
+}
+
+.main-section-cube.enlarged > * {
+  overflow-y: auto !important;
+  max-height: 100vh !important;
+  width: 100%;
+}
+
+/* When a section is enlarged, force header and its children below the overlay */
+body.enlarged-section #header,
+body.enlarged-section #header *,
+body.enlarged-section .header,
+body.enlarged-section .header * {
+  z-index: 1000 !important;
+  position: relative !important;
+}
+body.enlarged-section #header,
+body.enlarged-section .header {
+  position: relative !important;
+}
+
+/* Animate section enlargement */
+.main-section-cube {
+  transition: all 0.4s cubic-bezier(.4,0,.2,1);
+}
+.main-section-cube.enlarging {
+  /* No changes needed, just triggers transition */
+}
+.main-section-cube.enlarged {
+  /* ...existing enlarged styles... */
+  /* transition is handled by .main-section-cube */
+}
+
+body.enlarged-section .page-content {
+  padding-top: 0 !important;
+}
+
+/* Custom scrollbar for enlarged section */
+.main-section-cube.enlarged > *::-webkit-scrollbar {
+  width: 12px;
+  background: #181830;
+  border-radius: 8px;
+}
+.main-section-cube.enlarged > *::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #00ffff 0%, #ff0080 100%);
+  border-radius: 8px;
+  border: 2px solid #181830;
+}
+.main-section-cube.enlarged > *::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #ff0080 0%, #00ffff 100%);
+}
+
+/* For Firefox */
+.main-section-cube.enlarged > * {
+  scrollbar-width: thin;
+  scrollbar-color: #00ffff #181830;
+}
+
+/* Enlarged section header styles */
+.enlarged-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 56px;
+  padding: 0 32px;
+  background: linear-gradient(90deg, rgba(20,20,40,0.98) 80%, rgba(20,20,40,0.7) 100%);
+  z-index: 100001;
+  box-sizing: border-box;
+}
+
+.enlarged-header .enlarged-close-btn,
+.enlarged-header .close-section-btn {
+  margin-left: auto;
+  position: relative;
+  right: 0;
+  top: 0;
+}
+
+.enlarged-header .enlarged-close-btn,
+.close-section-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #181830 60%, #ff0080 100%);
+  color: #fff;
+  border: 2px solid #00ffff;
+  font-size: 2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100002;
+  box-shadow: 0 2px 12px rgba(0,255,255,0.15);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.enlarged-header .enlarged-close-btn:hover,
+.close-section-btn:hover {
+  background: linear-gradient(135deg, #ff0080 0%, #00ffff 100%);
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(255,0,128,0.25);
+}
+
+/* Circular close button for enlarged section */
+.close-section-btn {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #181830 60%, #ff0080 100%);
+  color: #fff;
+  border: 2px solid #00ffff;
+  font-size: 2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100000;
+  box-shadow: 0 2px 12px rgba(0,255,255,0.15);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.close-section-btn:hover {
+  background: linear-gradient(135deg, #ff0080 0%, #00ffff 100%);
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(255,0,128,0.25);
+}
+.close-section-btn span {
+  line-height: 1;
+  font-size: 2rem;
+  pointer-events: none;
+}
+
+/* ESC hint for enlarged section */
+.esc-hint {
+  position: absolute;
+  top: 32px;
+  right: 90px;
+  color: #fff;
+  opacity: 0.35;
+  font-size: 1.05rem;
+  font-family: 'Orbitron', Arial, sans-serif;
+  letter-spacing: 1px;
+  pointer-events: none;
+  user-select: none;
+  z-index: 100001;
+}
+
+/* Enlarged container for overlay */
+#enlarged-container {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+}
+#enlarged-container .main-section-cube.enlarged {
+  pointer-events: auto;
+}

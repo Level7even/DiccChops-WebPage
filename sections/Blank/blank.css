@@ -1,0 +1,23 @@
+.blank-section {
+  width: 80vw;
+  max-width: 900px;
+  min-height: 70px;
+  margin: 40px auto;
+  border-radius: 22px;
+  background: rgba(20, 20, 40, 0.45);
+  border: 2px dashed #00ffff55;
+  box-shadow: 0 4px 32px rgba(0,255,255,0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 600px) {
+  .blank-section {
+    width: 96vw;
+    min-height: 56px;
+    border-radius: 12px;
+    margin: 18px auto;
+  }
+}

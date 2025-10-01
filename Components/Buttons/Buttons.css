@@ -1,0 +1,44 @@
+.button-group {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-btn {
+  background: linear-gradient(90deg, #0ff1ce 0%, #00e0ff 100%);
+  color: #181c24;
+  font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  border-radius: 32px;
+  padding: 12px 28px;
+  margin: 0 4px;
+  box-shadow: 0 2px 12px 0 rgba(0,255,255,0.12);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.1s;
+  letter-spacing: 1px;
+  outline: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.main-btn:hover, .main-btn:focus {
+  background: linear-gradient(90deg, #00e0ff 0%, #0ff1ce 100%);
+  color: #0a0a0a;
+  transform: translateY(-2px) scale(1.04);
+}
+
+@media (max-width: 600px) {
+  .button-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .main-btn {
+    width: 100%;
+    font-size: 1.1rem;
+    padding: 14px 0;
+  }
+}

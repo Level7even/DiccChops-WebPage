@@ -1,0 +1,101 @@
+.main-section {
+  background: rgba(20, 20, 40, 0.85);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,255,255,0.08);
+  padding: 40px 28px;
+  margin: 40px auto;
+  max-width: 900px;
+  border: 1px solid rgba(0,255,255,0.18);
+  backdrop-filter: blur(6px);
+  text-align: center;
+  overflow: hidden;
+}
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #00ffff;
+  margin-bottom: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.section-desc {
+  color: #aaa;
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+}
+@media (max-width: 600px) {
+  .main-section {
+    padding: 18px 4px;
+    border-radius: 10px;
+  }
+  .section-title {
+    font-size: 1.3rem;
+  }
+  .section-desc {
+    font-size: 0.95rem;
+  }
+}
+.main-section-cube {
+  width: 80vw;
+  max-width: 900px;
+  height: 400px;
+  margin: 40px auto;
+  border-radius: 22px;
+  background: rgba(20, 20, 40, 0.45);
+  border: 2px solid #00ffff55;
+  box-shadow: 0 4px 32px rgba(0,255,255,0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+}
+.main-section-cube * {
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+@media (max-width: 600px) {
+  .main-section-cube {
+    width: 96vw;
+    height: 56px;
+    border-radius: 12px;
+    margin: 18px auto;
+  }
+}
+.main-section-cube.enlarged {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw;
+  min-height: 100vh;
+  border-radius: 0 !important;
+  z-index: 10010;
+  background: rgba(20, 20, 40, 1);
+  box-shadow: none;
+  overflow: auto;
+  transition: all 0.4s cubic-bezier(.4,0,.2,1);
+  display: block;
+  align-items: initial;
+  justify-content: initial;
+  transform: none;
+}
+.main-section-cube.enlarged > * {
+  margin: 0;
+}
+@media (max-width: 800px) {
+  .main-section-cube.enlarged {
+    width: 100vw !important;
+    height: 100vh !important;
+    min-height: 100vh;
+    border-radius: 0 !important;
+  }
+}
+
