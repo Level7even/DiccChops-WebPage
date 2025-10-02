@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>QuickFeed - DiccChops</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/Components/Header/Header.css">
+  <link rel="stylesheet" href="/StyleInfo.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/Components/Section/Section.css">
+  <link rel="stylesheet" href="/Components/Stars/Stars.css">
+</head>
+<body>
+  <div class="Whole-Page">
+
+  <div id="header"></div>
+  <div class="page-box">
+
+    <!-- Stars Component -->
+    <div id="stars-component"></div>
+
+  <main>
+
+    <div class="Page Title">Dev Test Page</div>
+
+    <div class="Page Contents">
+      <div class="container mainpage-content">
+        <h1 class="glitch-text" data-text="Glitch Text">Glitch Text</h1>
+        <div class="subtitle">
+
+          <span class="typing-text">Your fast updates, all in one place.</span>
+
+          <span class="cursor">|</span>
+
+        </div>
+
+        <div class="main-content">
+          
+          <div class="PageHtml"></div>
+
+          <div class="cta-section">
+            <button class="cta-button main-btn" onclick="window.location.href='/'">
+              <i class="fas fa-arrow-left"></i>
+              Back to Home
+            </button>
+          </div>
+
+          <div class="ad-section">
+            <div class="ad-card">
+              <span class="ad-label">Ad</span>
+              <h3>DiccChops!</h3>
+              <p>features, early access, and more. <a href="#" class="ad-link">Learn More</a></p>
+              <p class="cta-text">v. 3.0.3</p>
+            </div>
+          </div>
+          
+
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+  </div>
+  <script type="module">
+    import { loadStars } from '/Components/Stars/Stars.js';
+    loadStars(document.getElementById('stars-component'));
+  </script>
+</body>
+</html>
+<script src="style.js"></script>

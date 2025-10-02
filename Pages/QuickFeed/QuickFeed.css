@@ -1,4 +1,5 @@
 @import url('/StyleInfo.css');
+@import url('/Components/Stars/Stars.css');
 
 body {
   background: linear-gradient(135deg, #0a0a1f 0%, #1a1a3e 50%, #2a1a5e 100%);
@@ -14,59 +15,6 @@ body {
   touch-action: manipulation;
 }
 
-.stars, .stars2, .stars3 {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: -1;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-.stars:before, .stars2:before, .stars3:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: transparent;
-  background-image: 
-    radial-gradient(2px 2px at 20px 30px, #eee, transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
-    radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-    radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
-    radial-gradient(2px 2px at 160px 30px, rgba(255,255,255,0.9), transparent);
-  background-repeat: repeat;
-  background-size: 200px 100px;
-  animation: sparkle 20s linear infinite;
-  -webkit-animation: sparkle 20s linear infinite;
-}
-
-.stars2:before {
-  background-size: 100px 80px;
-  animation: sparkle 25s linear infinite reverse;
-  -webkit-animation: sparkle 25s linear infinite reverse;
-}
-
-.stars3:before {
-  background-size: 300px 120px;
-  animation: sparkle 30s linear infinite;
-  -webkit-animation: sparkle 30s linear infinite;
-}
-
-@-webkit-keyframes sparkle {
-  0% { -webkit-transform: translateY(0px); }
-  100% { -webkit-transform: translateY(-100px); }
-}
-@keyframes sparkle {
-  0% { transform: translateY(0px); }
-  100% { transform: translateY(-100px); }
-}
-
 .container {
   max-width: 900px;
   margin: 60px auto;
@@ -78,6 +26,17 @@ body {
   border: 1px solid rgba(0, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   position: relative;
+}
+
+.container.mainpage-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
 }
 
 .container:before {
@@ -270,6 +229,8 @@ body {
   border: 1px solid #00ffff44;
   position: relative;
   font-family: 'Orbitron', Arial, sans-serif;
+  min-height: 180px;
+  overflow: visible;
 }
 .ad-label {
   position: absolute;
@@ -277,11 +238,15 @@ body {
   left: 12px;
   background: #ff0080;
   color: #fff;
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 2px 10px;
-  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  padding: 4px 16px;
+  border-radius: 10px;
   letter-spacing: 1px;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(255,0,128,0.18);
+  opacity: 1;
+  border: 2px solid #fff;
 }
 .ad-link {
   color: #00ffff;
@@ -292,6 +257,7 @@ body {
 .ad-link:hover {
   color: #ff0080;
 }
+
 @media (max-width: 600px) {
   .mainpage-content { 
     padding-top: 140px; 
@@ -336,223 +302,4 @@ input, button, select, textarea {
   }
 }
 
-/* --- ENLARGED SECTION FULL VIEWPORT FIX --- */
-.main-section-cube.enlarged {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  margin: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  z-index: 99999 !important;
-  background: rgba(20, 20, 40, 1) !important;
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-}
 
-body.enlarged-section .page-content {
-  /* Remove padding/margin when overlay is active */
-  padding: 0 !important;
-  margin: 0 !important;
-  overflow: visible !important;
-}
-
-/* Prevent parent containers from interfering with centering and borders */
-.sections-container:has(.main-section-cube.enlarged),
-.mainpage-content:has(.main-section-cube.enlarged),
-.container:has(.main-section-cube.enlarged) {
-  display: block !important;
-  position: static !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  left: 0 !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  background: none !important;
-}
-
-.main-section-cube.enlarged {
-  box-sizing: border-box !important;
-}
-
-/* Prevent body from scrolling when a section is enlarged */
-body.no-scroll {
-  overflow: hidden !important;
-}
-
-/* Ensure enlarged section is scrollable */
-.main-section-cube.enlarged {
-  overflow: hidden !important;
-}
-
-.main-section-cube.enlarged > * {
-  overflow-y: auto !important;
-  max-height: 100vh !important;
-  width: 100%;
-}
-
-/* When a section is enlarged, force header and its children below the overlay */
-body.enlarged-section #header,
-body.enlarged-section #header *,
-body.enlarged-section .header,
-body.enlarged-section .header * {
-  z-index: 1000 !important;
-  position: relative !important;
-}
-body.enlarged-section #header,
-body.enlarged-section .header {
-  position: relative !important;
-}
-
-/* Animate section enlargement */
-.main-section-cube {
-  transition: all 0.4s cubic-bezier(.4,0,.2,1);
-}
-.main-section-cube.enlarging {
-  /* No changes needed, just triggers transition */
-}
-.main-section-cube.enlarged {
-  /* ...existing enlarged styles... */
-  /* transition is handled by .main-section-cube */
-}
-
-body.enlarged-section .page-content {
-  padding-top: 0 !important;
-}
-
-/* Custom scrollbar for enlarged section */
-.main-section-cube.enlarged > *::-webkit-scrollbar {
-  width: 12px;
-  background: #181830;
-  border-radius: 8px;
-}
-.main-section-cube.enlarged > *::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #00ffff 0%, #ff0080 100%);
-  border-radius: 8px;
-  border: 2px solid #181830;
-}
-.main-section-cube.enlarged > *::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #ff0080 0%, #00ffff 100%);
-}
-
-/* For Firefox */
-.main-section-cube.enlarged > * {
-  scrollbar-width: thin;
-  scrollbar-color: #00ffff #181830;
-}
-
-/* Enlarged section header styles */
-.enlarged-header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 56px;
-  padding: 0 32px;
-  background: linear-gradient(90deg, rgba(20,20,40,0.98) 80%, rgba(20,20,40,0.7) 100%);
-  z-index: 100001;
-  box-sizing: border-box;
-}
-
-.enlarged-header .enlarged-close-btn,
-.enlarged-header .close-section-btn {
-  margin-left: auto;
-  position: relative;
-  right: 0;
-  top: 0;
-}
-
-.enlarged-header .enlarged-close-btn,
-.close-section-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #181830 60%, #ff0080 100%);
-  color: #fff;
-  border: 2px solid #00ffff;
-  font-size: 2rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 100002;
-  box-shadow: 0 2px 12px rgba(0,255,255,0.15);
-  transition: background 0.2s, box-shadow 0.2s;
-}
-
-.enlarged-header .enlarged-close-btn:hover,
-.close-section-btn:hover {
-  background: linear-gradient(135deg, #ff0080 0%, #00ffff 100%);
-  color: #fff;
-  box-shadow: 0 4px 24px rgba(255,0,128,0.25);
-}
-
-/* Circular close button for enlarged section */
-.close-section-btn {
-  position: absolute;
-  top: 24px;
-  right: 32px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #181830 60%, #ff0080 100%);
-  color: #fff;
-  border: 2px solid #00ffff;
-  font-size: 2rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 100000;
-  box-shadow: 0 2px 12px rgba(0,255,255,0.15);
-  transition: background 0.2s, box-shadow 0.2s;
-}
-.close-section-btn:hover {
-  background: linear-gradient(135deg, #ff0080 0%, #00ffff 100%);
-  color: #fff;
-  box-shadow: 0 4px 24px rgba(255,0,128,0.25);
-}
-.close-section-btn span {
-  line-height: 1;
-  font-size: 2rem;
-  pointer-events: none;
-}
-
-/* ESC hint for enlarged section */
-.esc-hint {
-  position: absolute;
-  top: 32px;
-  right: 90px;
-  color: #fff;
-  opacity: 0.35;
-  font-size: 1.05rem;
-  font-family: 'Orbitron', Arial, sans-serif;
-  letter-spacing: 1px;
-  pointer-events: none;
-  user-select: none;
-  z-index: 100001;
-}
-
-/* Enlarged container for overlay */
-#enlarged-container {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  pointer-events: none;
-}
-#enlarged-container .main-section-cube.enlarged {
-  pointer-events: auto;
-}

@@ -1,37 +1,56 @@
 .about-section {
-  width: 80vw;
+  width: 90vw;
   max-width: 900px;
-  min-height: 70px;
   margin: 40px auto;
   border-radius: 22px;
-  background: rgba(20, 20, 40, 0.45);
+  background: linear-gradient(135deg, #181830 0%, #7feaf9 100%);
   border: 2px solid #00ffff55;
-  box-shadow: 0 4px 32px rgba(0,255,255,0.10);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0,255,255,0.18), 0 0 100px rgba(138, 43, 226, 0.10);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 32px 40px 32px 40px;
+  justify-content: flex-start;
+  padding: 40px 48px;
   color: #fff;
   font-family: 'Orbitron', Arial, sans-serif;
   text-align: center;
-  gap: 18px;
+  gap: 22px;
+  position: relative;
+  z-index: 1;
+  min-height: unset;
+  height: auto;
+  box-sizing: border-box;
+}
+.about-section:before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: linear-gradient(45deg, #ff0080, #00ffff, #8a2be2, #ff0080);
+  border-radius: 24px;
+  z-index: -1;
+  animation: borderGlow 3s ease-in-out infinite alternate;
+  opacity: 0.25;
+}
+@keyframes borderGlow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
 }
 .about-section h2 {
   color: #00ffff;
-  font-size: 2rem;
-  margin-bottom: 12px;
-  font-weight: 800;
+  font-size: 2.2rem;
+  margin-bottom: 16px;
+  font-weight: 900;
   letter-spacing: 2px;
   text-transform: uppercase;
+  text-shadow: 0 2px 16px #00f9ff44, 0 0px 2px #181830;
 }
 .about-section p {
   color: #aaa;
-  font-size: 1.1rem;
-  margin: 0 0 10px 0;
-  line-height: 1.7;
+  font-size: 1.15rem;
+  margin: 0 0 12px 0;
+  line-height: 1.8;
 }
 .about-section p em {
   color: #ff0080;
@@ -42,22 +61,21 @@
 }
 .about-section p strong {
   color: #00ffff;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 1px;
 }
 @media (max-width: 600px) {
   .about-section {
-    width: 96vw;
-    min-height: 56px;
-    border-radius: 12px;
+    width: 98vw;
+    border-radius: 14px;
     margin: 18px auto;
-    padding: 14px 6px 18px 6px;
-    gap: 10px;
+    padding: 16px 6px 18px 6px;
+    gap: 12px;
   }
   .about-section h2 {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
   .about-section p {
-    font-size: 0.95rem;
+    font-size: 1.01rem;
   }
 }
