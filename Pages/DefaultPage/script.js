@@ -2,7 +2,7 @@ import { DICCCHOPS_VERSION, DICCCHOPS_AD_TEXT, DICCCHOPS_AD_LINK, DICCCHOPS_AD_L
 
 // Dynamically load multiple HTMLs into #section-component
 const sectionFiles = [
-  '/Components/Section/Section.html',
+  '/sections/Blank/blank.html',
   '/sections/About/about.html',
   '/sections/Lorem/lorem.html',
   '/sections/Newsletter/newsletter.html',
@@ -10,88 +10,100 @@ const sectionFiles = [
   
 ];
 
-function loadSections() {
+async function loadSections() {
   const container = document.getElementById('section-component');
   if (!container) return;
   container.innerHTML = '';
-  sectionFiles.forEach((file, idx) => {
-    fetch(file)
-      .then(res => res.text())
-      .then(html => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'section-wrapper';
-        wrapper.innerHTML = html;
-        wrapper.dataset.sectionIdx = idx;
-        wrapper.addEventListener('click', function (e) {
-          // Remove any existing overlays
-          let overlay = document.getElementById('enlarged-container');
-          if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.id = 'enlarged-container';
-            document.body.appendChild(overlay);
-          }
-          overlay.innerHTML = '';
-          overlay.style.display = 'flex';
-          overlay.style.position = 'fixed';
-          overlay.style.top = '0';
-          overlay.style.left = '0';
-          overlay.style.width = '100vw';
-          overlay.style.height = '100vh';
-          overlay.style.background = 'rgba(20,20,40,0.98)';
-          overlay.style.zIndex = '10010';
-          overlay.style.alignItems = 'center';
-          overlay.style.justifyContent = 'center';
-          overlay.style.overflow = 'auto';
-          overlay.style.padding = '0';
-          overlay.style.margin = '0';
-          overlay.style.right = '0';
-          overlay.style.bottom = '0';
+  for (let idx = 0; idx < sectionFiles.length; idx++) {
+    const file = sectionFiles[idx];
+    const res = await fetch(file);
+    const html = await res.text();
+    const wrapper = document.createElement('div');
+    wrapper.className = 'section-wrapper';
+    wrapper.innerHTML = html;
+    wrapper.dataset.sectionIdx = idx;
+    wrapper.addEventListener('click', function (e) {
+      // Remove any existing overlays
+      let overlay = document.getElementById('enlarged-container');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'enlarged-container';
+        document.body.appendChild(overlay);
+      }
+      overlay.innerHTML = '';
+      overlay.style.display = 'flex';
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100vw';
+      overlay.style.height = '100vh';
+      overlay.style.background = 'rgba(20,20,40,0.98)';
+      overlay.style.zIndex = '10010';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.overflow = 'auto';
+      overlay.style.padding = '0';
+      overlay.style.margin = '0';
+      overlay.style.right = '0';
+      overlay.style.bottom = '0';
 
-          // Clone the section's HTML
-          const mainSection = wrapper.querySelector('.main-section, .main-section-cube, .section-content');
-          const content = document.createElement('div');
-          content.className = 'enlarged-html-content';
-          if (mainSection) {
-            content.innerHTML = mainSection.outerHTML;
-            content.style.margin = '0 auto';
-            content.style.display = 'flex';
-            content.style.flexDirection = 'column';
-            content.style.alignItems = 'center';
-            content.style.justifyContent = 'center';
-            content.style.maxWidth = '900px';
-            content.style.width = '100%';
-            content.style.background = 'rgba(24,28,43,0.98)';
-            content.style.borderRadius = '16px';
-            content.style.boxShadow = '0 4px 32px rgba(0,255,255,0.10)';
-            content.style.padding = '32px 20px';
-          } else {
-            content.innerHTML = wrapper.innerHTML;
-          }
-          overlay.appendChild(content);
+      // Clone the section's HTML
+      const mainSection = wrapper.querySelector('.main-section, .main-section-cube, .section-content');
+      const content = document.createElement('div');
+      content.className = 'enlarged-html-content';
+      content.style.maxWidth = '900px';
+      content.style.width = '100%';
+      content.style.margin = '0 auto';
+      content.style.display = 'flex';
+      content.style.flexDirection = 'column';
+      content.style.alignItems = 'center';
+      content.style.justifyContent = 'center';
+      content.style.background = 'rgba(24,28,43,0.98)';
+      content.style.borderRadius = '16px';
+      content.style.boxShadow = '0 4px 32px rgba(0,255,255,0.10)';
+      content.style.padding = '32px 20px';
 
-          overlay.addEventListener('click', function closeOverlay(ev) {
-            if (ev.target === overlay) {
-              overlay.style.display = 'none';
-              overlay.innerHTML = '';
-              document.body.classList.remove('section-enlarged-active');
-              overlay.removeEventListener('click', closeOverlay);
-            }
-          });
-          document.body.classList.add('section-enlarged-active');
-          // ESC to close
-          function escHandler(e) {
-            if (e.key === 'Escape') {
-              overlay.style.display = 'none';
-              overlay.innerHTML = '';
-              document.body.classList.remove('section-enlarged-active');
-              document.removeEventListener('keydown', escHandler);
-            }
-          }
-          document.addEventListener('keydown', escHandler);
-        });
-        container.appendChild(wrapper);
+      // Add close button to overlay (not inside content)
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'enlarged-close-btn';
+      closeBtn.innerHTML = '&times;';
+      closeBtn.setAttribute('aria-label', 'Close');
+      closeBtn.addEventListener('click', function(ev) {
+        overlay.style.display = 'none';
+        overlay.innerHTML = '';
+        document.body.classList.remove('section-enlarged-active');
       });
-  });
+      overlay.appendChild(closeBtn);
+
+      if (mainSection) {
+        content.innerHTML = mainSection.outerHTML;
+      } else {
+        content.innerHTML = wrapper.innerHTML;
+      }
+      overlay.appendChild(content);
+
+      overlay.addEventListener('click', function closeOverlay(ev) {
+        if (ev.target === overlay) {
+          overlay.style.display = 'none';
+          overlay.innerHTML = '';
+          document.body.classList.remove('section-enlarged-active');
+          overlay.removeEventListener('click', closeOverlay);
+        }
+      });
+      document.body.classList.add('section-enlarged-active');
+      // ESC to close
+      function escHandler(e) {
+        if (e.key === 'Escape') {
+          overlay.style.display = 'none';
+          overlay.innerHTML = '';
+          document.body.classList.remove('section-enlarged-active');
+          document.removeEventListener('keydown', escHandler);
+        }
+      }
+      document.addEventListener('keydown', escHandler);
+    });
+    container.appendChild(wrapper);
+  }
 }
 
 window.addEventListener('DOMContentLoaded', function () {

@@ -285,7 +285,7 @@ body {
   z-index: 9999;
 }
 
-.sections-container {
+.sections-conwtainer {
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -377,4 +377,69 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  scrollbar-width: thin;
+  scrollbar-color: #00ffff #181c2b;
+  position: relative;
+}
+.enlarged-html-content::-webkit-scrollbar {
+  width: 10px;
+  background: #181c2b;
+  border-radius: 8px;
+}
+.enlarged-html-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #00ffff 0%, #181c2b 100%);
+  border-radius: 8px;
+  box-shadow: 0 0 8px #00ffff88;
+  border: 2px solid #181c2b;
+}
+.enlarged-html-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #00ffff 60%, #ff0080 100%);
+  box-shadow: 0 0 12px #ff008088;
+}
+.enlarged-html-content::-webkit-scrollbar-track {
+  background: #181c2b;
+  border-radius: 8px;
+}
+
+body.section-enlarged-active, .Whole-Page.section-enlarged-active {
+  overflow: hidden !important;
+  height: 100vh !important;
+  position: relative;
+}
+
+.enlarged-close-btn {
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  z-index: 10020;
+  background: linear-gradient(135deg, #181c2b 60%, #00ffff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 2.2rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 16px #00ffff88;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+.enlarged-close-btn:hover, .enlarged-close-btn:focus {
+  background: linear-gradient(135deg, #ff0080 60%, #00ffff 100%);
+  color: #fff;
+  box-shadow: 0 0 24px #ff008088;
+  transform: scale(1.08);
+}
+@media (max-width: 600px) {
+  .enlarged-close-btn {
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
+  }
 }
