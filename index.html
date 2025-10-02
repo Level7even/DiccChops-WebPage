@@ -103,7 +103,7 @@
             Get Notified
           </button>
           <p class="cta-text">Be the first to know when we launch!</p>
-          <p class="cta-text">v. 3.0.3</p>
+          <p class="cta-text" id="version-text"></p>
         </div>
       </div>
     </main>
@@ -111,6 +111,13 @@
 </body>
 </html>
 <script src="./script.js"></script>
+<script type="module">
+  import { DICCCHOPS_VERSION } from './Info.js';
+  const versionEl = document.getElementById('version-text');
+  if (versionEl && DICCCHOPS_VERSION) {
+    versionEl.textContent = `v. ${DICCCHOPS_VERSION}`;
+  }
+</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7F5XKKSWJZ"></script>
 <script>

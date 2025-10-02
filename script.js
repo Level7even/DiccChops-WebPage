@@ -220,3 +220,12 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+// Version update logic
+import { DICCCHOPS_VERSION } from './Info.js';
+window.addEventListener('DOMContentLoaded', () => {
+  const versionEl = document.getElementById('version-text');
+  if (versionEl && DICCCHOPS_VERSION) {
+    versionEl.textContent = ` ${DICCCHOPS_VERSION}`;
+  }
+});
