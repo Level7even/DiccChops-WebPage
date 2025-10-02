@@ -136,12 +136,19 @@
   .tagline {
     font-size: 0.7rem;
   }
+  .header-buttons {
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   .header-buttons .main-btn {
     font-size: 0.8rem;
     padding: 6px 8px;
-  }
-  .header-buttons {
-    gap: 6px;
+    flex-shrink: 1;
+    min-width: 0;
+    max-width: 100%;
+    white-space: nowrap;
   }
 }
 
@@ -160,12 +167,39 @@
   .tagline {
     font-size: 0.55rem;
   }
+  .header-buttons {
+    gap: 1px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   .header-buttons .main-btn {
-    font-size: 0.65rem;
-    padding: 4px 4px;
-    border-radius: 6px;
+    font-size: 0.5rem;
+    padding: 2px 2px;
+    border-radius: 5px;
+    min-width: 0;
+    min-height: 0;
+    letter-spacing: 0;
+    flex-shrink: 1;
+    max-width: 100%;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 400px) {
+  .header-buttons .main-btn {
+    font-size: 0.35rem;
+    padding: 1px 1px;
+    border-radius: 4px;
+    flex-shrink: 1;
+    min-width: 0;
+    max-width: 100%;
+    white-space: nowrap;
   }
   .header-buttons {
-    gap: 2px;
+    gap: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
