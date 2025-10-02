@@ -1,5 +1,4 @@
-// Removed import { DICCCHOPS_VERSION, DICCCHOPS_AD_TEXT, DICCCHOPS_AD_LINK, DICCCHOPS_AD_LINK_TEXT } from '/Info.js';
-// Use window.DICCCHOPS_VERSION, window.DICCCHOPS_AD_TEXT, etc. instead throughout this file.
+import { DICCCHOPS_VERSION, DICCCHOPS_AD_TEXT, DICCCHOPS_AD_LINK, DICCCHOPS_AD_LINK_TEXT } from '/Info.js';
 
 // Dynamically load multiple HTMLs into #section-component
 const sectionFiles = [
@@ -131,8 +130,8 @@ window.addEventListener('DOMContentLoaded', function () {
       // Update ad section with version and info from Info.js
       const adCard = document.querySelector('.ad-card');
       if (adCard) {
-        adCard.querySelector('.cta-text').textContent = window.DICCCHOPS_VERSION;
-        adCard.querySelector('p').innerHTML = `${window.DICCCHOPS_AD_TEXT} <a href="${window.DICCCHOPS_AD_LINK}" class="ad-link">${window.DICCCHOPS_AD_LINK_TEXT}</a>`;
+        adCard.querySelector('.cta-text').textContent = DICCCHOPS_VERSION;
+        adCard.querySelector('p').innerHTML = `${DICCCHOPS_AD_TEXT} <a href="${DICCCHOPS_AD_LINK}" class="ad-link">${DICCCHOPS_AD_LINK_TEXT}</a>`;
       }
     });
 
