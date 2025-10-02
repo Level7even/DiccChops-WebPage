@@ -185,15 +185,13 @@ document.addEventListener('DOMContentLoaded', function () {
   setTimeout(updateProgress, 2000);
   setTimeout(animateOnScroll, 1500);
   handleCTAClick();
-
-  // Version update logic (moved here, no import)
-  if (window.DICCCHOPS_VERSION) {
-    const versionEl = document.getElementById('version-text');
-    if (versionEl) {
-      versionEl.textContent = `v. ${window.DICCCHOPS_VERSION}`;
-    }
-  }
 });
+
+// Version update logic (no import needed)
+const versionEl = document.getElementById('version-text');
+if (versionEl && window.DICCCHOPS_VERSION) {
+  versionEl.textContent = `v. ${window.DICCCHOPS_VERSION}`;
+}
 
 // Add CSS animations dynamically
 const style = document.createElement('style');

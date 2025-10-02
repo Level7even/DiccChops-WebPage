@@ -29,3 +29,11 @@ window.removeHeaderNav = function() {
     if (nav) nav.remove();
   }
 };
+
+// Version update logic
+window.addEventListener('DOMContentLoaded', () => {
+  const versionEl = document.getElementById('version-text');
+  if (versionEl && window.DICCCHOPS_VERSION) {
+    versionEl.textContent = ` ${window.DICCCHOPS_VERSION}`;
+  }
+});
