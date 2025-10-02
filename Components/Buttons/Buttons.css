@@ -31,14 +31,52 @@
   transform: translateY(-2px) scale(1.04);
 }
 
+@media (max-width: 900px) {
+  .main-btn {
+    font-size: 0.95rem;
+    padding: 12px 18px;
+  }
+}
+@media (max-width: 700px) {
+  .main-btn {
+    font-size: 0.9rem;
+    padding: 10px 10px;
+  }
+}
 @media (max-width: 600px) {
   .button-group {
     flex-direction: column;
     gap: 10px;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 100vw !important;
+    align-items: stretch !important;
+    padding: 0 2vw !important;
+    box-sizing: border-box;
   }
   .main-btn {
-    width: 100%;
-    font-size: 1.1rem;
-    padding: 14px 0;
+    width: 100% !important;
+    font-size: 1.1rem !important;
+    padding: 14px 0 !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    border-radius: 24px !important;
+    box-sizing: border-box;
   }
+}
+@media (max-width: 500px) {
+  .main-btn {
+    font-size: 0.85rem;
+    padding: 8px 4px;
+    min-width: 60px;
+  }
+}
+.button-group {
+  flex-wrap: wrap;
+}
+
+/* iOS Safari safe area support */
+.button-group {
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
 }
