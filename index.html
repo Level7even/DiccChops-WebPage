@@ -15,7 +15,11 @@
   <div class="stars2"></div>
   <div class="stars3"></div>
   
+  <!-- HEADER COMPONENT START -->
   <div id="header"></div>
+  <!-- HEADER COMPONENT END -->
+
+  
   <div class="page-content">
     <main>
       <div class="container mainpage-content">
@@ -108,22 +112,14 @@
       </div>
     </main>
   </div>
+  <script src="./script.js"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7F5XKKSWJZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7F5XKKSWJZ');
+  </script>
 </body>
 </html>
-<script src="./script.js"></script>
-<script type="module">
-  import { DICCCHOPS_VERSION } from './Info.js';
-  const versionEl = document.getElementById('version-text');
-  if (versionEl && DICCCHOPS_VERSION) {
-    versionEl.textContent = `v. ${DICCCHOPS_VERSION}`;
-  }
-</script>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-7F5XKKSWJZ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-7F5XKKSWJZ');
-</script>

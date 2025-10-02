@@ -148,32 +148,51 @@ function showNotification() {
   }, 3000);
 }
 
-// Load header component
+// Load header component and initialize header-related JS after it's loaded
+
 document.addEventListener('DOMContentLoaded', function () {
-  const headerContainer = document.getElementById('header');
-  fetch('./Components/Header/Header.html')
+  // Load header HTML
+  fetch('/Components/Header/Header.html')
     .then(res => res.text())
     .then(html => {
-      headerContainer.outerHTML = html;
-      setTimeout(() => {
-        const nav = document.querySelector('.main-nav');
+      document.getElementById('header').innerHTML = html;
+      // Now initialize header/nav JS that depends on the header DOM
+      // Remove nav.main-nav if on MainPage
+      if (document.body.getAttribute('data-mainpage') === 'true') {
+        var nav = document.querySelector('.main-nav');
         if (nav) nav.remove();
-      }, 0);
-    })
-    .catch(error => {
-      console.log('Header not found, continuing without it');
-      headerContainer.style.display = 'none';
+      }
+      // Dropdown toggle for Quick Scroll (from MainNav.js)
+      const quickScrollToggle = document.querySelector('.quick-scroll-toggle');
+      const quickScrollMenu = document.querySelector('.quick-scroll-menu');
+      if (quickScrollToggle && quickScrollMenu) {
+        quickScrollToggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          quickScrollMenu.style.display = quickScrollMenu.style.display === 'block' ? 'none' : 'block';
+        });
+        document.addEventListener('click', function(e) {
+          if (!quickScrollToggle.contains(e.target) && !quickScrollMenu.contains(e.target)) {
+            quickScrollMenu.style.display = 'none';
+          }
+        });
+      }
     });
-  
-  // Initialize animations and effects
+
+  // Initialize other page features
   updateCountdown();
   setInterval(updateCountdown, 1000);
-  
   setTimeout(typeWriter, 1000);
   setTimeout(updateProgress, 2000);
   setTimeout(animateOnScroll, 1500);
-  
   handleCTAClick();
+
+  // Version update logic (moved here, no import)
+  if (window.DICCCHOPS_VERSION) {
+    const versionEl = document.getElementById('version-text');
+    if (versionEl) {
+      versionEl.textContent = `v. ${window.DICCCHOPS_VERSION}`;
+    }
+  }
 });
 
 // Add CSS animations dynamically
@@ -220,12 +239,3 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
-
-// Version update logic
-import { DICCCHOPS_VERSION } from './Info.js';
-window.addEventListener('DOMContentLoaded', () => {
-  const versionEl = document.getElementById('version-text');
-  if (versionEl && DICCCHOPS_VERSION) {
-    versionEl.textContent = ` ${DICCCHOPS_VERSION}`;
-  }
-});
