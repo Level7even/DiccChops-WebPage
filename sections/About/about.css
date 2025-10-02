@@ -1,37 +1,18 @@
 .about-section {
-  width: 90vw;
-  max-width: 900px;
-  margin: 40px auto;
   border-radius: 22px;
-  background: linear-gradient(135deg, #181830 0%, #7feaf9 100%);
+  background: rgba(20, 20, 40, 0.45);
   border: 2px solid #00ffff55;
-  box-shadow: 0 8px 32px rgba(0,255,255,0.18), 0 0 100px rgba(138, 43, 226, 0.10);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 32px rgba(0,255,255,0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: 40px 48px;
+  justify-content: center;
+  padding: 24px 32px;
   color: #fff;
   font-family: 'Orbitron', Arial, sans-serif;
   text-align: center;
-  gap: 22px;
-  position: relative;
-  z-index: 1;
-  min-height: unset;
-  height: auto;
-  box-sizing: border-box;
-}
-.about-section:before {
-  content: '';
-  position: absolute;
-  top: -2px; left: -2px; right: -2px; bottom: -2px;
-  background: linear-gradient(45deg, #ff0080, #00ffff, #8a2be2, #ff0080);
-  border-radius: 24px;
-  z-index: -1;
-  animation: borderGlow 3s ease-in-out infinite alternate;
-  opacity: 0.25;
 }
 @keyframes borderGlow {
   0% { filter: hue-rotate(0deg); }
@@ -66,16 +47,16 @@
 }
 @media (max-width: 600px) {
   .about-section {
-    width: 98vw;
-    border-radius: 14px;
+    width: 96vw;
+    min-height: 56px;
+    border-radius: 12px;
     margin: 18px auto;
-    padding: 16px 6px 18px 6px;
-    gap: 12px;
+    padding: 12px 6px;
   }
   .about-section h2 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
   }
   .about-section p {
-    font-size: 1.01rem;
+    font-size: 0.95rem;
   }
 }
