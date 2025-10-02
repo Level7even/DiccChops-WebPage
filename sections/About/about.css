@@ -13,6 +13,8 @@
   color: #fff;
   font-family: 'Orbitron', Arial, sans-serif;
   text-align: center;
+  box-sizing: border-box;
+
 }
 @keyframes borderGlow {
   0% { filter: hue-rotate(0deg); }
@@ -44,6 +46,12 @@
   color: #00ffff;
   font-weight: 900;
   letter-spacing: 1px;
+}
+.about-copyright {
+  text-align: center;
+  color: #7feaf9;
+  font-size: 1.1rem;
+  margin-top: 40px;
 }
 @media (max-width: 600px) {
   .about-section {

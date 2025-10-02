@@ -13,56 +13,44 @@
   color: #fff;
   font-family: 'Orbitron', Arial, sans-serif;
   text-align: center;
+  box-sizing: border-box;
 }
-.lorem-section h2, .lorem-section h3 {
-  color: #00ffff;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+@keyframes borderGlow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
 }
 .lorem-section h2 {
-  font-size: 2rem;
-  margin-bottom: 12px;
-}
-.lorem-section h3 {
-  font-size: 1.2rem;
-  margin-top: 32px;
-  margin-bottom: 8px;
+  color: #00ffff;
+  font-size: 2.2rem;
+  margin-bottom: 16px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 16px #00f9ff44, 0 0px 2px #181830;
 }
 .lorem-section p {
   color: #aaa;
-  font-size: 1.08rem;
-  margin: 10px 0;
+  font-size: 1.15rem;
+  margin: 0 0 12px 0;
+  line-height: 1.8;
 }
-.lorem-section ul, .lorem-section ol {
-  margin: 16px 0 16px 24px;
-  color: #fff;
-  font-size: 1.05rem;
-}
-.lorem-section li {
-  margin-bottom: 6px;
-}
-.lorem-section a {
-  color: #7feaf9;
-  text-decoration: underline;
-  transition: color 0.2s;
-}
-.lorem-section a:hover {
+.lorem-section p em {
   color: #ff0080;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 12px #00f9ff44;
 }
-.lorem-section blockquote {
-  border-left: 4px solid #00ffff;
-  background: rgba(0,255,255,0.05);
+.lorem-section p strong {
+  color: #00ffff;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+.lorem-copyright {
+  text-align: center;
   color: #7feaf9;
-  margin: 18px 0;
-  padding: 12px 18px;
-  font-style: italic;
-  border-radius: 8px;
-}
-.lorem-section hr {
-  border: none;
-  border-top: 2px solid #00ffff44;
-  margin: 32px 0;
+  font-size: 1.1rem;
+  margin-top: 40px;
 }
 @media (max-width: 600px) {
   .lorem-section {
@@ -73,12 +61,9 @@
     padding: 12px 6px;
   }
   .lorem-section h2 {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
-  .lorem-section h3 {
-    font-size: 1rem;
-  }
-  .lorem-section p, .lorem-section ul, .lorem-section ol {
+  .lorem-section p {
     font-size: 0.95rem;
   }
 }
