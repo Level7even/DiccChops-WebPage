@@ -185,6 +185,17 @@ document.addEventListener('DOMContentLoaded', function () {
   setTimeout(updateProgress, 2000);
   setTimeout(animateOnScroll, 1500);
   handleCTAClick();
+  // Load starfield background
+  const starsContainer = document.getElementById('stars-component') || document.body;
+  fetch('/Components/Stars/Stars.html')
+    .then(res => res.text())
+    .then(html => {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      document.querySelectorAll('.stars, .stars2, .stars3, .stars-bg').forEach(e => e.remove());
+      Array.from(tempDiv.children).forEach(child => starsContainer.appendChild(child));
+    });
+
 });
 
 // Version update logic (no import needed)
