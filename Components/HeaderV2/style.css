@@ -68,7 +68,7 @@
 .sidebar-tab {
   position: absolute;
   top: 50%;
-  right: 30;
+  right: 0;
   transform: translateY(-50%);
   width: 32px;
   height: 64px;
@@ -99,7 +99,7 @@
 }
 
 .header-container.collapsed .sidebar-tab {
-  right: -35px;
+  right: -32px;
 }
 
 .header-container.collapsed .sidebar-tab::after {
