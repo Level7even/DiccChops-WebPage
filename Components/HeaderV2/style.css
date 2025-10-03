@@ -99,7 +99,7 @@
 }
 
 .header-container.collapsed .sidebar-tab {
-  right: -30px;
+  right: 30px;
 }
 
 .header-container.collapsed .sidebar-tab::after {
