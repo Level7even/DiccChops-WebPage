@@ -25,7 +25,6 @@
   transition: transform 0.3s;
   overflow: visible;
   transform: translateY(-50%);
-  position: relative;
 }
 
 .inner {
@@ -69,7 +68,7 @@
 .sidebar-tab {
   position: absolute;
   top: 50%;
-  right: 0;
+  right: 30;
   transform: translateY(-50%);
   width: 32px;
   height: 64px;
@@ -100,7 +99,7 @@
 }
 
 .header-container.collapsed .sidebar-tab {
-  right: -32px;
+  right: -35px;
 }
 
 .header-container.collapsed .sidebar-tab::after {
