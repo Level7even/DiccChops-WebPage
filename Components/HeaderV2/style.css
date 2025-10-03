@@ -1,5 +1,5 @@
 @import url('/Components/HeaderV2/Comps/Buttons/HB.css');
-@import url('/Components/Brand/style.css');
+@import url('/Components/HeaderV2/Comps/Brand/style.css');
 
 /* Header Component Styles */
 .header-container {
@@ -7,16 +7,22 @@
   top: 0;
   left: 0;
   width: 96px;
-  height: 100vh;
+  height: auto;
+
+  min-height: 0;
   background: var(--color-bg-main, #181c2b);
   border-right: 1px solid var(--color-bg-card, #22223a);
   box-shadow: 2px 0 16px var(--color-bg-glow, #00f9ff22);
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 32px 0 0 0;
+  padding: 32px 0 32px 0;
+  transition: transform 0.3s;
+  overflow: visible;
 }
 
 .inner {
@@ -35,8 +41,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  margin: 0 0 24px 0;
+  justify-content: center;
+  margin: 0 0 12px 0;
+  width: 100%;
+  height: auto;
+}
+
+.brand {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .button-container {
@@ -47,54 +63,46 @@
   width: 100%;
 }
 
-.button, .button:link, .button:visited {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, var(--color-accent, #00ffff99) 0%, var(--color-accent2, #ff008099) 100%), rgba(24,28,43,0.35);
-  color: var(--color-text-main, #fff);
-  font-family: var(--font-main, 'Orbitron', Arial, sans-serif);
-  font-weight: 700;
-  font-size: 0.95rem;
-  border: 1.5px solid rgba(255,255,255,0.18);
-  border-radius: 14px;
-  box-shadow: 0 4px 16px var(--color-bg-glow, #00f9ff44), 0 1.5px 8px rgba(0,0,0,0.10) inset;
-  cursor: pointer;
-  margin: 0 0 10px 0;
+.sidebar-tab {
+  position: absolute;
+  top: 50%;
+  right: -25px;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--color-accent, #00ffffcc) 0%, var(--color-accent2, #ff0080cc) 100%);
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  box-shadow: 2px 0 8px var(--color-bg-glow, #00f9ff44);
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  transition: background 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s, border 0.2s;
-  outline: none;
-  text-decoration: none;
-  position: relative;
-  overflow: hidden;
-  min-width: 0;
-  backdrop-filter: blur(8px) saturate(1.5);
-  -webkit-backdrop-filter: blur(8px) saturate(1.5);
+  cursor: pointer;
+  z-index: 1100;
+  transition: background 0.2s, right 0.3s;
 }
-.button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(120deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%);
+
+.sidebar-tab::after {
+  content: '\25C0'; /* left-pointing triangle */
+  color: #fff;
+  font-size: 1.3em;
+  font-weight: bold;
   pointer-events: none;
-  z-index: 1;
+  transition: transform 0.3s;
 }
-.button:hover, .button:focus {
-  background: linear-gradient(135deg, var(--color-accent2, #ff008099) 0%, var(--color-accent, #00ffff99) 100%), rgba(24,28,43,0.45);
-  color: var(--color-accent, #00ffff);
-  transform: scale(1.08);
-  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.22), 0 2px 12px var(--color-accent2, #ff008044) inset;
-  border: 1.5px solid rgba(255,255,255,0.28);
+
+.header-container.collapsed {
+  transform: translateX(-90%);
+  transition: transform 0.3s;
 }
-.button:active {
-  transform: scale(0.97);
-  box-shadow: 0 2px 8px var(--color-accent, #00ffff44);
+
+.header-container.collapsed .sidebar-tab {
+  right: -18px;
+}
+
+.header-container.collapsed .sidebar-tab::after {
+  content: '\25B6'; /* right-pointing triangle */
+  transform: rotate(0deg);
 }
 
 @media (max-width: 900px) {

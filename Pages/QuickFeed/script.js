@@ -118,6 +118,15 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(res => res.text())
     .then(html => {
       document.getElementById('header').innerHTML = html;
+      // After header loads, load the Brand into .brand
+      const brandDiv = document.querySelector('.brand');
+      if (brandDiv) {
+        fetch('/Components/HeaderV2/Comps/Brand/Brand.html')
+          .then(res => res.text())
+          .then(brandHtml => {
+            brandDiv.innerHTML = brandHtml;
+          });
+      }
     });
 
   loadSections();
@@ -144,6 +153,15 @@ document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.stars, .stars2, .stars3, .stars-bg').forEach(e => e.remove());
       Array.from(tempDiv.children).forEach(child => starsContainer.appendChild(child));
     });
+
+      // Sidebar tab toggle logic
+  const header = document.querySelector('.header-container');
+  const tab = document.querySelector('.sidebar-tab');
+  if (header && tab) {
+    tab.addEventListener('click', () => {
+      header.classList.toggle('collapsed');
+    });
+  }
 });
 
 // ESC to close enlarged section

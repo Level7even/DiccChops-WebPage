@@ -1,7 +1,7 @@
 @import url('/StyleInfo.css');
 @import url('/Components/HeaderV2/style.css');
 @import url('/Components/HeaderV2/Comps/Buttons/HB.css');
-@import url('/Components/Brand/style.css');
+@import url('/Components/HeaderV2/Comps/Brand/style.css');
 
 .Whole-Page {
   min-height: 100vh;
