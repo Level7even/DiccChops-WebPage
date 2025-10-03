@@ -13,9 +13,6 @@
   overflow-x: hidden;
   box-sizing: border-box;
   position: relative;
-  /* Ensure fixed header is not clipped or covered */
-  z-index: 0;
-  background: transparent;
 }
 
 

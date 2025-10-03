@@ -4,13 +4,14 @@
 /* Header Component Styles */
 .header-container {
   position: fixed;
-  top: 0;
+  top: 50%;
   left: 0;
   width: 96px;
   height: auto;
-
   min-height: 0;
-  background: var(--color-bg-main, #181c2b);
+  background: rgba(24,28,43,0.55); /* semi-transparent background */
+  backdrop-filter: blur(8px) saturate(1.5);
+  -webkit-backdrop-filter: blur(8px) saturate(1.5);
   border-right: 1px solid var(--color-bg-card, #22223a);
   box-shadow: 2px 0 16px var(--color-bg-glow, #00f9ff22);
   border-top-right-radius: 16px;
@@ -23,6 +24,7 @@
   padding: 32px 0 32px 0;
   transition: transform 0.3s;
   overflow: visible;
+  transform: translateY(-50%);
 }
 
 .inner {
@@ -66,7 +68,7 @@
 .sidebar-tab {
   position: absolute;
   top: 50%;
-  right: -25px;
+  right: -30;
   transform: translateY(-50%);
   width: 32px;
   height: 64px;
@@ -92,12 +94,12 @@
 }
 
 .header-container.collapsed {
-  transform: translateX(-90%);
+  transform: translateX(-95%) translateY(-50%);
   transition: transform 0.3s;
 }
 
 .header-container.collapsed .sidebar-tab {
-  right: -18px;
+  right: -30px;
 }
 
 .header-container.collapsed .sidebar-tab::after {
