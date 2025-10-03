@@ -113,9 +113,8 @@ async function loadSections() {
   }
 }
 
-window.addEventListener('DOMContentLoaded', function () {
-  // Dynamically load the Header component
-  fetch('/Components/Header/Header.html')
+document.addEventListener('DOMContentLoaded', function () {
+   fetch('/Components/HeaderV2/HeaderV2.html')
     .then(res => res.text())
     .then(html => {
       document.getElementById('header').innerHTML = html;

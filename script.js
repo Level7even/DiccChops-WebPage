@@ -151,50 +151,29 @@ function showNotification() {
 // Load header component and initialize header-related JS after it's loaded
 
 document.addEventListener('DOMContentLoaded', function () {
-  // Load header HTML
-  fetch('/Components/Header/Header.html')
+   fetch('/Components/HeaderV2/HeaderV2.html')
     .then(res => res.text())
     .then(html => {
       document.getElementById('header').innerHTML = html;
-      // Now initialize header/nav JS that depends on the header DOM
-      // Remove nav.main-nav if on MainPage
-      if (document.body.getAttribute('data-mainpage') === 'true') {
-        var nav = document.querySelector('.main-nav');
-        if (nav) nav.remove();
-      }
-      // Dropdown toggle for Quick Scroll (from MainNav.js)
-      const quickScrollToggle = document.querySelector('.quick-scroll-toggle');
-      const quickScrollMenu = document.querySelector('.quick-scroll-menu');
-      if (quickScrollToggle && quickScrollMenu) {
-        quickScrollToggle.addEventListener('click', function(e) {
-          e.preventDefault();
-          quickScrollMenu.style.display = quickScrollMenu.style.display === 'block' ? 'none' : 'block';
-        });
-        document.addEventListener('click', function(e) {
-          if (!quickScrollToggle.contains(e.target) && !quickScrollMenu.contains(e.target)) {
-            quickScrollMenu.style.display = 'none';
-          }
-        });
-      }
     });
 
-  // Initialize other page features
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-  setTimeout(typeWriter, 1000);
-  setTimeout(updateProgress, 2000);
-  setTimeout(animateOnScroll, 1500);
-  handleCTAClick();
-  // Load starfield background
-  const starsContainer = document.getElementById('stars-component') || document.body;
-  fetch('/Components/Stars/Stars.html')
-    .then(res => res.text())
-    .then(html => {
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = html;
-      document.querySelectorAll('.stars, .stars2, .stars3, .stars-bg').forEach(e => e.remove());
-      Array.from(tempDiv.children).forEach(child => starsContainer.appendChild(child));
-    });
+    // Initialize other page features
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+    setTimeout(typeWriter, 1000);
+    setTimeout(updateProgress, 2000);
+    setTimeout(animateOnScroll, 1500);
+    handleCTAClick();
+    // Load starfield background
+    const starsContainer = document.getElementById('stars-component') || document.body;
+    fetch('/Components/Stars/Stars.html')
+      .then(res => res.text())
+      .then(html => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        document.querySelectorAll('.stars, .stars2, .stars3, .stars-bg').forEach(e => e.remove());
+        Array.from(tempDiv.children).forEach(child => starsContainer.appendChild(child));
+      });
 
 });
 

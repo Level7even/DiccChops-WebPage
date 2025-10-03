@@ -1,7 +1,9 @@
 @import url('/StyleInfo.css');
 @import url('/Components/Stars/Stars.css');
 @import url('/Components/Section/Section.css');
-@import url('/Components/Header/Header.css');
+@import url('/Components/HeaderV2/style.css');
+@import url('/Components/HeaderV2/Comps/Buttons/HB.css');
+@import url('/Components/Brand/style.css');
 @import url('/Components/AdCard/AdCard.css');
 
 .Whole-Page {

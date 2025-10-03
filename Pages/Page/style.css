@@ -1,0 +1,21 @@
+@import url('/StyleInfo.css');
+@import url('/Components/HeaderV2/style.css');
+@import url('/Components/HeaderV2/Comps/Buttons/HB.css');
+@import url('/Components/Brand/style.css');
+
+.Whole-Page {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  position: relative;
+  /* Ensure fixed header is not clipped or covered */
+  z-index: 0;
+  background: transparent;
+}
+
+
