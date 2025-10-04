@@ -49,32 +49,35 @@ body {
     background: var(--cosmic-gradient);
     background-attachment: fixed;
     color: var(--space-white);
-    overflow-x: hidden;
+    overflow: hidden;
     position: relative;
     min-height: 100vh;
 }
 
 /* Whole page container */
 .whole-page {
-    min-height: 100vh;
+    height: 100vh;
     background: var(--space-gradient);
+    display: flex;
 }
 
 /* Header object positioning */
 .whole-page object {
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 320px;
     height: 100vh;
     border: none;
-    z-index: 1000;
+}
+
+/* Header area container */
+.header-area {
+    width: 320px;
+    height: 100vh;
 }
 
 /* Remaining area - main content */
 .remaining-area {
-    margin-left: 320px;
-    min-height: 100vh;
+    flex: 1;
+    height: 100vh;
     padding: 2rem;
     background: var(--cosmic-gradient);
     backdrop-filter: blur(5px);
@@ -102,8 +105,11 @@ body {
         width:  50px;
     }
     
+    .header-area {
+        width: 50px;
+    }
+    
     .remaining-area {
-        margin-left: 50px;
         padding: 1rem;
     }
     
