@@ -3,6 +3,38 @@
 @import url('/Components/Section/Section.css');
 @import url('/Components/HeaderV2/style.css');
 @import url('/Components/AdCard/AdCard.css');
+/* CSS Custom Properties for Space Theme */
+:root {
+    /* Space Colors */
+    --space-black: #0a0a0a;
+    --space-dark: #1a1a2e;
+    --space-purple: #16213e;
+    --space-blue: #0f3460;
+    --space-cyan: #00d4ff;
+    --space-neon: #00ff88;
+    --space-pink: #ff006e;
+    --space-orange: #ffbe0b;
+    --space-white: #e5e5e5;
+
+    /* Gradients */
+    --space-gradient: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
+    --neon-gradient: linear-gradient(45deg, #00d4ff, #00ff88);
+    --cosmic-gradient: linear-gradient(135deg, #ff006e, #ffbe0b, #00d4ff);
+
+    /* Shadows */
+    --neon-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    --neon-shadow-strong: 0 0 30px rgba(0, 212, 255, 0.8);
+    --glow-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+
+    /* Borders */
+    --neon-border: 1px solid #00d4ff;
+    --glow-border: 1px solid #00ff88;
+
+    /* Transitions */
+    --space-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
 
 .Whole-Page {
   min-height: 100vh;

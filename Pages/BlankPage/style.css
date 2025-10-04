@@ -1,0 +1,115 @@
+/* CSS Custom Properties for Space Theme */
+:root {
+    /* Space Colors */
+    --space-black: #0a0a0a;
+    --space-dark: #1a1a2e;
+    --space-purple: #16213e;
+    --space-blue: #0f3460;
+    --space-cyan: #00d4ff;
+    --space-neon: #00ff88;
+    --space-pink: #ff006e;
+    --space-orange: #ffbe0b;
+    --space-white: #e5e5e5;
+
+    /* Gradients */
+    --space-gradient: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
+    --neon-gradient: linear-gradient(45deg, #00d4ff, #00ff88);
+    --cosmic-gradient: linear-gradient(135deg, #ff006e, #ffbe0b, #00d4ff);
+
+    /* Shadows */
+    --neon-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    --neon-shadow-strong: 0 0 30px rgba(0, 212, 255, 0.8);
+    --glow-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+
+    /* Borders */
+    --neon-border: 1px solid #00d4ff;
+    --glow-border: 1px solid #00ff88;
+
+    /* Transitions */
+    --space-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.8; }
+}
+
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    line-height: 1.6;
+    background: var(--cosmic-gradient);
+    background-attachment: fixed;
+    color: var(--space-white);
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Whole page container */
+.whole-page {
+    min-height: 100vh;
+    background: var(--space-gradient);
+}
+
+/* Header object positioning */
+.whole-page object {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100vh;
+    border: none;
+    z-index: 1000;
+}
+
+/* Remaining area - main content */
+.remaining-area {
+    margin-left: 320px;
+    min-height: 100vh;
+    padding: 2rem;
+    background: var(--cosmic-gradient);
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+}
+
+.remaining-area h1 {
+    color: var(--space-cyan);
+    text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.remaining-area p {
+    color: var(--space-white);
+    text-align: center;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .whole-page object {
+        width: 250px;
+    }
+    
+    .remaining-area {
+        margin-left: 250px;
+        padding: 1rem;
+    }
+    
+    .remaining-area h1 {
+        font-size: 1.5rem;
+    }
+    
+    .remaining-area p {
+        font-size: 1rem;
+    }
+}

@@ -1,0 +1,114 @@
+/* Header styles - positioned on the left as vertical sidebar */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+ 
+    height: 100vh;
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(10px);
+    border-right: var(--neon-border);
+    box-shadow: var(--neon-shadow-strong);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    padding: 2rem 1.5rem;
+    overflow: hidden;
+}
+
+/* Logo box - positioned at the top */
+.logo-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem 0;
+    border-bottom: var(--glow-border);
+    margin-bottom: 2rem;
+    background: rgba(15, 52, 96, 0.3);
+    border-radius: 12px;
+    box-shadow: var(--glow-shadow);
+    position: relative;
+}
+
+.logo-box::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--neon-gradient);
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0;
+    transition: var(--space-transition);
+}
+
+.logo-box:hover::before {
+    opacity: 1;
+}
+
+.logo-img {
+    height: 70px;
+    width: auto;
+    filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+    transition: var(--space-transition);
+}
+
+.logo-img:hover {
+    transform: scale(1.1) rotate(5deg);
+    filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8));
+}
+
+/* Quickfeed box - for components */
+.quickfeed-box {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+    position: relative;
+}
+
+/* Object styling for embedded components */
+.buttons-box object,
+.quickfeed-box object {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Buttons box - for components */
+.buttons-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem 0.75rem;
+    }
+    
+    
+    .logo-box {
+        margin-bottom: 1rem;
+        padding: 1rem 0;
+    }
+    
+    .logo-img {
+        height: 50px;
+    }
+    
+    .buttons-box,
+    .quickfeed-box {
+        margin-bottom: 0.5rem;
+    }
+    
+    .main-content {
+        padding: 1rem;
+    }
+}
+
