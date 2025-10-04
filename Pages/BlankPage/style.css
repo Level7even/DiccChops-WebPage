@@ -1,3 +1,5 @@
+/* Futuristic Space Theme - styleinfo.css */
+
 /* CSS Custom Properties for Space Theme */
 :root {
     /* Space Colors */
@@ -97,11 +99,11 @@ body {
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     .whole-page object {
-        width: 250px;
+        width:  50px;
     }
     
     .remaining-area {
-        margin-left: 250px;
+        margin-left: 50px;
         padding: 1rem;
     }
     
