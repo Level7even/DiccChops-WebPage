@@ -6,7 +6,7 @@ body {
 
 .feed-card {
   width: 100%;
-  height: 100%;
+  height: 120px;
   box-sizing: border-box;
   background: linear-gradient(145deg, rgba(25, 25, 40, 0.85), rgba(40, 40, 70, 0.85));
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -52,6 +52,10 @@ body {
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
+  .feed-card {
+    padding: 10px;
+  }
+
   .feed-card h3 {
     font-size: 1rem;
   }

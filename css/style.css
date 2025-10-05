@@ -20,16 +20,12 @@ body {
 
 /* Mobile support */
 @media (max-width: 768px) {
-  body {
-    flex-direction: column;
-  }
-
   #sidebar-area {
-    width: 100px; /* Shrink horizontally on mobile */
+    width: 110px; /* Narrower sidebar on mobile */
   }
 
   #remaining-area {
     flex: 1;
-    height: calc(100vh - 300px);
+    height: 100vh;
   }
 }

@@ -11,7 +11,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   color: white;
   padding: 20px 10px;
   box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
@@ -22,17 +22,18 @@ body {
 }
 #feed-container {
   width: 100%;
+  overflow: hidden;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  #feed-container {
+    display: none;
+  }
 }
 
 .sidebar-btn {
 overflow: hidden;
-}
-
-.sidebar-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  justify-content: flex-start;
 }
 
 /* Mobile styles */
