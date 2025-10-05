@@ -1,0 +1,35 @@
+body {
+  height: 100vh;
+  font-family: 'Orbitron', sans-serif;
+  background: #0d0d0d;
+  color: white;
+  overflow: hidden;
+  display: flex;
+}
+
+#sidebar-area {
+  width: 300px;
+  height: 100vh;
+  overflow: auto;
+}
+
+#remaining-area {
+  flex: 1;
+  height: 100vh;
+}
+
+/* Mobile support */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  #sidebar-area {
+    width: 100px; /* Shrink horizontally on mobile */
+  }
+
+  #remaining-area {
+    flex: 1;
+    height: calc(100vh - 300px);
+  }
+}
