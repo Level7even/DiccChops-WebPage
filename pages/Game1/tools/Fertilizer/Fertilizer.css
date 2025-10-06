@@ -1,0 +1,17 @@
+.fertilizer {
+  background: rgba(139, 69, 19, 0.2);
+  border: 1px solid #8b4513;
+}
+
+.tool-emoji {
+  font-size: 2rem;
+}
+
+.tool-name {
+  font-weight: bold;
+  color: #ffaa00;
+}
+
+.tool-desc {
+  color: #ccc;
+}

@@ -79,7 +79,7 @@ body {
 }
 
 #feedtitle::after {
-  content: "DiccChops";
+  content: "DiccChops.com";
   color: #00ffaa;
   position: absolute;
   left: 0;
@@ -89,6 +89,6 @@ body {
 /* On mobile, show only "Dicc" */
 @media (max-width: 768px) {
   #feedtitle::after {
-    content: "";
+    content: "Dicc";
   }
 }

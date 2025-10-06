@@ -23,7 +23,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
-  max-width: 1200px;
+  
   margin: 0 auto;
 }
 
@@ -147,4 +147,46 @@ body {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  #quick-feed {
+    padding: 10px;
+  }
+
+  #quick-feed h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  #grid-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    max-width: none;
+  }
+
+  .section {
+    padding: 20px;
+  }
+
+  .section h2 {
+    font-size: 1.2rem;
+  }
+
+  .section p {
+    font-size: 0.9rem;
+  }
+
+  #fullscreen-content {
+    padding: 20px;
+    max-width: 90%;
+    max-height: 90%;
+  }
+
+  #close-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 1.5rem;
+  }
 }

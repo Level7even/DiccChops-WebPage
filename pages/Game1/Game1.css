@@ -1,0 +1,126 @@
+.game-container {
+  text-align: center;
+  padding: 20px;
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+}
+
+#game-world {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+  background: linear-gradient(45deg, #4CAF50, #8BC34A);
+  border: 2px solid #fff;
+  overflow: hidden;
+}
+
+#player {
+  position: absolute;
+  font-size: 2rem;
+  z-index: 10;
+  transition: all 0.1s ease;
+}
+
+.world-item {
+  position: absolute;
+  z-index: 5;
+}
+
+.planted-plant {
+  animation: grow 60s ease-in-out;
+}
+
+@keyframes grow {
+  0% { transform: scale(0.5); }
+  33% { transform: scale(0.7); }
+  66% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+#ui {
+  margin-top: 20px;
+}
+
+#plant-area {
+  margin: 20px 0;
+  font-size: 5rem;
+}
+
+#plant {
+  transition: all 0.5s ease;
+}
+
+#controls {
+  margin: 20px 0;
+}
+
+button {
+  background: rgba(0, 255, 0, 0.2);
+  border: 1px solid #00ff00;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  margin: 0 10px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: rgba(0, 255, 0, 0.4);
+}
+
+#progress-container {
+  margin: 20px 0;
+}
+
+#progress-bar {
+  width: 300px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+#progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff00, #00aa00);
+  width: 0%;
+  transition: width 1s linear;
+}
+
+#status {
+  margin-top: 10px;
+  font-size: 1.2rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  #game-world {
+    width: 300px;
+    height: 300px;
+  }
+
+  #player {
+    font-size: 1.5rem;
+  }
+
+  .world-item {
+    font-size: 1.2rem;
+  }
+
+  #plant-area {
+    font-size: 3rem;
+  }
+
+  #progress-bar {
+    width: 250px;
+  }
+
+  button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}

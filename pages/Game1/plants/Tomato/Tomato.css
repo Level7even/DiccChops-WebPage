@@ -1,0 +1,17 @@
+.tomato {
+  background: rgba(255, 0, 0, 0.2);
+  border: 1px solid #ff0000;
+}
+
+.plant-emoji {
+  font-size: 3rem;
+}
+
+.plant-name {
+  font-weight: bold;
+  color: #ffaa00;
+}
+
+.plant-desc {
+  color: #ccc;
+}

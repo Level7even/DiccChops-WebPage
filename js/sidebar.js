@@ -27,13 +27,17 @@ function loadSidebar() {
           buttons.forEach(btn => {
             btn.addEventListener('click', () => {
               const page = btn.dataset.page || btn.textContent.toLowerCase().replace(/\s+/g, '');
-              fetch(`./pages/${page}.html`)
+              let path = `./pages/${page}.html`;
+              if (page.includes('/')) {
+                path = `./${page}.html`;
+              }
+              fetch(path)
                 .then(res => res.text())
                 .then(html => {
                   document.getElementById('remaining-area').innerHTML = html;
                   // Load the corresponding JS if it exists
                   const script = document.createElement('script');
-                  script.src = `./js/${page}.js`;
+                  script.src = `./${page}.js`;
                   document.body.appendChild(script);
                 })
                 .catch(err => console.error(`${page} page failed to load:`, err));
