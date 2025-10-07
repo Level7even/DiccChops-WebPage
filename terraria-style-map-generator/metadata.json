@@ -1,0 +1,5 @@
+
+{
+  "name": "Terraria Style Map Generator",
+  "description": "A self-contained web application that generates a 1920x1920 Terraria-style side-view map as a PNG. Features procedural terrain with caves, water simulation, and customizable settings for generation parameters."
+}
