@@ -131,14 +131,12 @@ const viewer = document.getElementById("viewer");
 const dropdown = document.getElementById("envSelect");
 const statsDiv = document.getElementById("modelStats");
 
-// HDR environment presets
 const environments = {
     neutral: "../HDRs/kloofendal_misty_morning_puresky_4k.hdr",
     sunset: "../HDRs/qwantani_sunset_puresky_4k.hdr",
     studio: "../HDRs/table_mountain_2_puresky_4k.hdr"
 };
 
-// Function to set environment
 function setEnvironment(env) {
     if (env in environments) {
         viewer.setAttribute("environment-image", environments[env]);
@@ -154,55 +152,43 @@ function setEnvironment(env) {
 // Start Neutral
 setEnvironment("neutral");
 
-// Update environment when dropdown changes
+// Update environment
 dropdown.addEventListener("change", () => {
     setEnvironment(dropdown.value);
 });
 
-// Update vertex/face stats after model loads
-viewer.addEventListener('load', () => {
-    // 1. Access the internal Three.js scene using Symbols
-    // This bypasses the API wrapper to get to the actual geometry
-    const symbol = Object.getOwnPropertySymbols(viewer).find(s => s.description === 'model-viewer-scene');
-    
-    if (!symbol) {
-        statsDiv.innerHTML = "Stats unavailable";
-        return;
-    }
-
-    const internalContext = viewer[symbol];
-    
-    // 2. Get the target (the actual loaded model within the internal scene)
-    // Fallback to internalContext itself if target is undefined in this version
-    const rootObject = internalContext.target || internalContext;
-
-    let vertexCount = 0;
-    let faceCount = 0;
-
-    // 3. Traverse the Three.js Object
-    rootObject.traverse((node) => {
-        // Check if the node is a Mesh
-        if (node.isMesh && node.geometry) {
-            const geom = node.geometry;
-            
-            // Count Vertices
-            if (geom.attributes.position) {
-                vertexCount += geom.attributes.position.count;
-            }
-
-            // Count Faces (Triangles)
-            if (geom.index) {
-                // If geometry is indexed
-                faceCount += geom.index.count / 3;
-            } else if (geom.attributes.position) {
-                // If geometry is non-indexed
-                faceCount += geom.attributes.position.count / 3;
-            }
+// Wait until model is ready
+async function updateStats() {
+    try {
+        const model = viewer.model;
+        if (!model) {
+            // Retry next frame if model isn't ready
+            requestAnimationFrame(updateStats);
+            return;
         }
-    });
 
-    statsDiv.innerHTML = `Vertices: ${vertexCount.toLocaleString()} | Faces: ${Math.floor(faceCount).toLocaleString()}`;
-});
+        const scene = await model.getScene();
+        let vertexCount = 0;
+        let faceCount = 0;
+
+        scene.traverse((node) => {
+            if (node.isMesh && node.geometry) {
+                const geom = node.geometry;
+                vertexCount += geom.attributes.position.count;
+                faceCount += geom.index ? geom.index.count / 3 : geom.attributes.position.count / 3;
+            }
+        });
+
+        statsDiv.innerHTML = `Vertices: ${vertexCount.toLocaleString()} | Faces: ${faceCount.toLocaleString()}`;
+    } catch (err) {
+        statsDiv.innerHTML = "Stats unavailable";
+        console.warn("Unable to access model data yet:", err);
+        requestAnimationFrame(updateStats); // retry
+    }
+}
+
+// Start checking stats
+updateStats();
 </script>
 
 </body>
