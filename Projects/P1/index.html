@@ -68,6 +68,7 @@ Vertices: – | Faces: –
 </ul>
 
 <h2>Controls</h2>
+
 <h3>Mouse Controls</h3>
 <ul>
   <li>Left Click / Drag: Rotate the model</li>
@@ -158,26 +159,28 @@ dropdown.addEventListener("change", () => {
     setEnvironment(dropdown.value);
 });
 
-// Model stats after load
-viewer.addEventListener('load', async () => {
-    try {
-        const scene = await viewer.model.getScene(); // get THREE.Scene
-        let vertexCount = 0;
-        let faceCount = 0;
+// Update vertex/face stats after model loads
+viewer.addEventListener('load', () => {
+    const model = viewer.model;
+    if (!model) {
+        statsDiv.innerHTML = "Unable to access model";
+        return;
+    }
 
-        scene.traverse((node) => {
-            if (node.isMesh && node.geometry) {
-                const geom = node.geometry;
+    let vertexCount = 0;
+    let faceCount = 0;
+
+    model.traverse((node) => {
+        if (node.isMesh) {
+            const geom = node.geometry;
+            if (geom) {
                 vertexCount += geom.attributes.position.count;
                 faceCount += geom.index ? geom.index.count / 3 : geom.attributes.position.count / 3;
             }
-        });
+        }
+    });
 
-        statsDiv.innerHTML = `Vertices: ${vertexCount.toLocaleString()} | Faces: ${faceCount.toLocaleString()}`;
-    } catch (err) {
-        statsDiv.innerHTML = "Unable to access model data";
-        console.error(err);
-    }
+    statsDiv.innerHTML = `Vertices: ${vertexCount.toLocaleString()} | Faces: ${faceCount.toLocaleString()}`;
 });
 </script>
 
