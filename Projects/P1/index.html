@@ -112,7 +112,6 @@ dropdown.addEventListener("change", () => {
     const val = dropdown.value;
     if(val === "") {
         viewer.removeAttribute("environment-image");
-        viewer.style.backgroundColor = "#000000"; // fallback black
         viewer.exposure = 1;
     } else {
         viewer.setAttribute("environment-image", environments[val]);
