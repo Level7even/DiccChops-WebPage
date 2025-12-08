@@ -1,0 +1,71 @@
+/* Dark Mode Base */
+body {
+font-family: Arial, sans-serif;
+margin: 0;
+background: #121212;
+color: #e0e0e0;
+}
+
+
+header {
+background: #1f1f1f;
+padding: 15px;
+box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+
+nav {
+display: flex;
+justify-content: center;
+gap: 20px;
+}
+
+
+nav a {
+color: #e0e0e0;
+text-decoration: none;
+font-size: 18px;
+}
+
+
+nav a:hover {
+color: #8ab4f8;
+}
+
+
+main {
+padding: 30px;
+}
+
+
+.box {
+background: #1e1e1e;
+padding: 25px;
+border-radius: 14px;
+box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+max-width: 700px;
+margin: auto;
+}
+
+
+footer {
+background: #1f1f1f;
+text-align: center;
+padding: 20px;
+margin-top: 40px;
+color: #999;
+}
+
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+nav {
+flex-direction: column;
+gap: 10px;
+}
+
+
+.box {
+padding: 20px;
+}
+}
