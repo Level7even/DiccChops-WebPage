@@ -9,6 +9,15 @@
 
 <!-- Model Viewer Script -->
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+<!-- Three.js CDN -->
+<script type="module">
+  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
+  import { STLLoader } from 'https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/loaders/STLLoader.js';
+
+  window.THREE = THREE;
+  window.STLLoader = STLLoader;
+</script>
 </head>
 <body>
 
@@ -65,6 +74,8 @@
 
 <h2>Files</h2>
 <div class="file-list">
+
+<!-- Example File Item -->
 <div class="file-item">
 <div id="preview1" class="stl-preview"></div>
 <span>Side_Bin_Bottom_Tray.stl</span>
@@ -78,28 +89,11 @@
 </div>
 
 <div class="file-item">
-<div id="preview3" class="stl-preview"></div>
-<span>Side_Bin_Nozzle_Tray.stl</span>
-<a href="./Files/Side_Bin_Nozzle_Tray.stl" download><button>Download</button></a>
-</div>
-
-<div class="file-item">
-<div id="preview4" class="stl-preview"></div>
-<span>Side_Bin_Open_Top.stl</span>
-<a href="./Files/Side_Bin_Open_Top.stl" download><button>Download</button></a>
-</div>
-
-<div class="file-item">
-<div id="preview5" class="stl-preview"></div>
-<span>Side_Bin_Top_Tray.stl</span>
-<a href="./Files/Side_Bin_Top_Tray.stl" download><button>Download</button></a>
-</div>
-
-<div class="file-item">
 <div class="stl-preview"><img src="./Thumbs/Thumb.png" style="width:100%;height:100%;border-radius:6px;"></div>
 <span>SideBin.blend</span>
 <a href="./Files/SideBin.blend" download><button>Download</button></a>
 </div>
+
 </div>
 </div>
 </main>
@@ -109,29 +103,24 @@
 </footer>
 
 <script type="module">
-// Model Viewer Environment Switch
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
+import { STLLoader } from 'https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/loaders/STLLoader.js';
+
+// Environment switch
 const viewer = document.getElementById("viewer");
 const dropdown = document.getElementById("envSelect");
-
 const environments = {
     neutral: "https://modelviewer.dev/assets/neutral.hdr",
     sunset: "https://modelviewer.dev/assets/sunset.hdr",
     studio: "https://modelviewer.dev/shared-assets/environments/studio_small_08_1k.hdr"
 };
-
 dropdown.addEventListener("change", () => {
     const val = dropdown.value;
-    if(val === "") {
-        viewer.removeAttribute("environment-image");
-    } else {
-        viewer.setAttribute("environment-image", environments[val]);
-    }
+    if(val==="") viewer.removeAttribute("environment-image");
+    else viewer.setAttribute("environment-image", environments[val]);
 });
 
-// STL Preview Loader with Fallback
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
-import { STLLoader } from 'https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/loaders/STLLoader.js';
-
+// Function to create STL preview or fallback
 function createSTLPreview(containerId, stlPath) {
     const container = document.getElementById(containerId);
     const width = 100;
@@ -180,10 +169,6 @@ function createSTLPreview(containerId, stlPath) {
 // Generate previews
 createSTLPreview('preview1','./Files/Side_Bin_Bottom_Tray.stl');
 createSTLPreview('preview2','./Files/Side_Bin_Closed_Top.stl');
-createSTLPreview('preview3','./Files/Side_Bin_Nozzle_Tray.stl');
-createSTLPreview('preview4','./Files/Side_Bin_Open_Top.stl');
-createSTLPreview('preview5','./Files/Side_Bin_Top_Tray.stl');
-
 </script>
 
 </body>
