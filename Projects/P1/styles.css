@@ -23,16 +23,23 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
+    flex-wrap: wrap;
 }
 
 .logo {
     font-size: 22px;
     font-weight: bold;
     color: #fff;
+    text-decoration: none;
+}
+
+.links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .links a {
-    margin-left: 20px;
     color: #e0e0e0;
     text-decoration: none;
     font-size: 18px;
@@ -87,6 +94,8 @@ footer {
     color: #e0e0e0;
     box-shadow: 0 3px 10px rgba(0,0,0,0.5);
     transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
 }
 
 .card:hover {
@@ -94,19 +103,21 @@ footer {
     box-shadow: 0 6px 18px rgba(0,0,0,0.6);
 }
 
-.card img {
+.card img, .card model-viewer {
     width: 100%;
     height: 160px;
     object-fit: cover;
+    border-radius: 8px 8px 0 0;
 }
 
 .card h3 {
     padding: 15px;
     font-size: 20px;
+    margin: 0;
 }
 
 /* Project Page */
-.project-img {
+.project-img, model-viewer {
     width: 100%;
     max-width: 900px;
     border-radius: 10px;
@@ -122,9 +133,46 @@ footer {
     margin-bottom: 8px;
 }
 
+/* Files Section */
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1e1e1e;
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.file-item span {
+    color: #e0e0e0;
+}
+
+.file-item button {
+    background: #8ab4f8;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    color: #121212;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.file-item button:hover {
+    background: #5a86d9;
+}
+
 /* Mobile Responsive */
 @media (max-width: 600px) {
-    nav {
+    .nav-container {
         flex-direction: column;
         gap: 10px;
     }
@@ -135,5 +183,11 @@ footer {
 
     .grid {
         grid-template-columns: 1fr;
+    }
+
+    .file-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
     }
 }
