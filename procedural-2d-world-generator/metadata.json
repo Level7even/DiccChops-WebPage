@@ -1,5 +1,0 @@
-
-{
-  "name": "Procedural 2D World Generator",
-  "description": "A web application that procedurally generates a 1920x1920 2D world with varied terrain like grass, dirt, rock, caves, and water using noise algorithms. The generated world can be viewed and downloaded as a PNG."
-}

@@ -1,4 +1,0 @@
-      PID    PPID    PGID     WINPID   TTY         UID    STIME COMMAND
-       43       1      43      24328  ?         197609 23:29:43 /usr/bin/mintty
-      105      44     105      35372  pty0      197609 23:30:05 /usr/bin/PS
-       44      43      44      31248  pty0      197609 23:29:43 /usr/bin/bash
