@@ -55,9 +55,7 @@
 </model-viewer>
 
 <!-- Model Stats -->
-<div id="modelStats" style="margin-bottom:20px; font-weight:bold;">
-    Loading model stats...
-</div>
+<div id="modelStats" style="margin-bottom:20px; font-weight:bold;"></div>
 
 <h2>Details</h2>
 <ul>
@@ -131,7 +129,7 @@ const viewer = document.getElementById("viewer");
 const dropdown = document.getElementById("envSelect");
 const statsDiv = document.getElementById("modelStats");
 
-// HDR presets
+// Environment HDRs (ensure these HDR files exist)
 const environments = {
     neutral: "../HDRs/kloofendal_misty_morning_puresky_4k.hdr",
     sunset: "../HDRs/qwantani_sunset_puresky_4k.hdr",
@@ -159,26 +157,28 @@ dropdown.addEventListener("change", () => {
     setEnvironment(dropdown.value);
 });
 
-// Model stats
-viewer.addEventListener('load', async () => {
-    // Wait until the model is ready
-    const model = viewer.model;
-    if (!model) {
-        statsDiv.innerHTML = "Unable to load model stats";
+// Display vertices & faces
+viewer.addEventListener('load', () => {
+    const modelScene = viewer.scene;
+    if (!modelScene) {
+        statsDiv.innerHTML = "Unable to access model scene";
         return;
     }
 
     let vertexCount = 0;
     let faceCount = 0;
 
-    // Traverse the model's meshes safely
-    model.meshes.forEach(mesh => {
-        const geom = mesh.geometry;
-        vertexCount += geom.attributes.position.count;
-        if (geom.index) {
-            faceCount += geom.index.count / 3;
-        } else {
-            faceCount += geom.attributes.position.count / 3;
+    modelScene.traverse((node) => {
+        if (node.isMesh) {
+            const geom = node.geometry;
+            if (geom) {
+                vertexCount += geom.attributes.position.count;
+                if (geom.index) {
+                    faceCount += geom.index.count / 3;
+                } else {
+                    faceCount += geom.attributes.position.count / 3;
+                }
+            }
         }
     });
 
