@@ -3,84 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ender 3 Side Bin</title>
+<title>Project 1</title>
 <link rel="icon" href="../../Icon.webp" type="image/webp">
 <link rel="stylesheet" href="./styles.css">
 
 <!-- Model Viewer Script -->
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
-
-<!-- Three.js CDN -->
-<script type="module">
-  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
-  import { STLLoader } from 'https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/loaders/STLLoader.js';
-
-  window.createSTLPreview = function(containerId, stlPath) {
-    const container = document.getElementById(containerId);
-    const width = 100;
-    const height = 100;
-
-    // Scene & camera
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.set(0, 0, 100);
-
-    // Renderer
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(width, height);
-    container.appendChild(renderer.domElement);
-
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
-    directionalLight.position.set(1, 1, 1);
-    scene.add(directionalLight);
-
-    // STL Loader
-    const loader = new STLLoader();
-    loader.load(
-      stlPath,
-      geometry => {
-        const material = new THREE.MeshStandardMaterial({ color: 0x8ab4f8 });
-        const mesh = new THREE.Mesh(geometry, material);
-
-        // Center geometry
-        geometry.computeBoundingBox();
-        const center = new THREE.Vector3();
-        geometry.boundingBox.getCenter(center);
-        mesh.position.sub(center);
-
-        scene.add(mesh);
-
-        const animate = function() {
-          requestAnimationFrame(animate);
-          mesh.rotation.y += 0.01;
-          renderer.render(scene, camera);
-        };
-        animate();
-      },
-      undefined,
-      error => {
-        console.warn('Failed to load STL:', stlPath, error);
-        container.innerHTML = `<img src="./Thumbs/Thumb.png" alt="Preview" style="width:${width}px;height:${height}px;border-radius:6px;">`;
-      }
-    );
-  }
-</script>
 </head>
 <body>
 
 <header>
-  <nav class="nav-container">
-    <a href="../../index.html" class="logo">My Portfolio</a>
-    <div class="links">
-      <a href="../../index.html">Home</a>
-      <a href="#about">About</a>
-      <a href="#portfolio">Portfolio</a>
-      <a href="#contact">Contact</a>
-    </div>
-  </nav>
+<nav class="nav-container">
+<a href="../../index.html" class="logo">My Portfolio</a>
+<div class="links">
+<a href="../../index.html">Home</a>
+<a href="#about">About</a>
+<a href="#portfolio">Portfolio</a>
+<a href="#contact">Contact</a>
+</div>
+</nav>
 </header>
 
 <main>
@@ -92,13 +33,13 @@
 
 <!-- Environment Dropdown -->
 <div class="env-select-wrapper">
-  <label for="envSelect">Environment:</label>
-  <select id="envSelect" class="env-select">
-      <option value="">Default Lighting</option>
-      <option value="neutral">Neutral</option>
-      <option value="sunset">Sunset</option>
-      <option value="studio">Studio</option>
-  </select>
+<label for="envSelect">Environment:</label>
+<select id="envSelect" class="env-select">
+    <option value="">Default Lighting</option>
+    <option value="neutral">Neutral</option>
+    <option value="sunset">Sunset</option>
+    <option value="studio">Studio</option>
+</select>
 </div>
 
 <model-viewer
@@ -124,31 +65,41 @@
 
 <h2>Files</h2>
 <div class="file-list">
-
 <div class="file-item">
-  <div id="preview-bottom-tray" class="stl-preview"></div>
-  <span>Side_Bin_Bottom_Tray.stl</span>
-  <a href="./Files/Side_Bin_Bottom_Tray.stl" download><button>Download</button></a>
+<div id="preview1" class="stl-preview"></div>
+<span>Side_Bin_Bottom_Tray.stl</span>
+<a href="./Files/Side_Bin_Bottom_Tray.stl" download><button>Download</button></a>
 </div>
 
 <div class="file-item">
-  <div id="preview-closed-top" class="stl-preview"></div>
-  <span>Side_Bin_Closed_Top.stl</span>
-  <a href="./Files/Side_Bin_Closed_Top.stl" download><button>Download</button></a>
+<div id="preview2" class="stl-preview"></div>
+<span>Side_Bin_Closed_Top.stl</span>
+<a href="./Files/Side_Bin_Closed_Top.stl" download><button>Download</button></a>
 </div>
 
 <div class="file-item">
-  <div id="preview-nozzle-tray" class="stl-preview"></div>
-  <span>Side_Bin_Nozzle_Tray.stl</span>
-  <a href="./Files/Side_Bin_Nozzle_Tray.stl" download><button>Download</button></a>
+<div id="preview3" class="stl-preview"></div>
+<span>Side_Bin_Nozzle_Tray.stl</span>
+<a href="./Files/Side_Bin_Nozzle_Tray.stl" download><button>Download</button></a>
 </div>
 
 <div class="file-item">
-  <div id="preview-open-top" class="stl-preview"></div>
-  <span>Side_Bin_Open_Top.stl</span>
-  <a href="./Files/Side_Bin_Open_Top.stl" download><button>Download</button></a>
+<div id="preview4" class="stl-preview"></div>
+<span>Side_Bin_Open_Top.stl</span>
+<a href="./Files/Side_Bin_Open_Top.stl" download><button>Download</button></a>
 </div>
 
+<div class="file-item">
+<div id="preview5" class="stl-preview"></div>
+<span>Side_Bin_Top_Tray.stl</span>
+<a href="./Files/Side_Bin_Top_Tray.stl" download><button>Download</button></a>
+</div>
+
+<div class="file-item">
+<div class="stl-preview"><img src="./Thumbs/Thumb.png" style="width:100%;height:100%;border-radius:6px;"></div>
+<span>SideBin.blend</span>
+<a href="./Files/SideBin.blend" download><button>Download</button></a>
+</div>
 </div>
 </div>
 </main>
@@ -157,11 +108,11 @@
 <p>© 2025 DiccChops.com — All Rights Reserved.</p>
 </footer>
 
-<script>
+<script type="module">
+// Model Viewer Environment Switch
 const viewer = document.getElementById("viewer");
 const dropdown = document.getElementById("envSelect");
 
-// Environment presets
 const environments = {
     neutral: "https://modelviewer.dev/assets/neutral.hdr",
     sunset: "https://modelviewer.dev/assets/sunset.hdr",
@@ -177,11 +128,62 @@ dropdown.addEventListener("change", () => {
     }
 });
 
-// Initialize STL previews with fallback to PH
-createSTLPreview('preview-bottom-tray', './Files/Side_Bin_Bottom_Tray.stl');
-createSTLPreview('preview-closed-top', './Files/Side_Bin_Closed_Top.stl');
-createSTLPreview('preview-nozzle-tray', './Files/Side_Bin_Nozzle_Tray.stl');
-createSTLPreview('preview-open-top', './Files/Side_Bin_Open_Top.stl');
+// STL Preview Loader with Fallback
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
+import { STLLoader } from 'https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/loaders/STLLoader.js';
+
+function createSTLPreview(containerId, stlPath) {
+    const container = document.getElementById(containerId);
+    const width = 100;
+    const height = 100;
+
+    try {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 1000);
+        camera.position.set(0,0,100);
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(width,height);
+        container.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff,0.6);
+        directionalLight.position.set(1,1,1);
+        scene.add(directionalLight);
+
+        const loader = new STLLoader();
+        loader.load(
+            stlPath,
+            geometry => {
+                const material = new THREE.MeshStandardMaterial({color:0x8ab4f8});
+                const mesh = new THREE.Mesh(geometry, material);
+                geometry.computeBoundingBox();
+                const center = new THREE.Vector3();
+                geometry.boundingBox.getCenter(center);
+                mesh.position.sub(center);
+                scene.add(mesh);
+                const animate = () => { requestAnimationFrame(animate); mesh.rotation.y+=0.01; renderer.render(scene,camera); };
+                animate();
+            },
+            undefined,
+            err => { 
+                console.warn('STL failed:', stlPath, err);
+                container.innerHTML = `<img src="./Thumbs/Thumb.png" alt="Preview" style="width:${width}px;height:${height}px;border-radius:6px;">`;
+            }
+        );
+    } catch(e) {
+        container.innerHTML = `<img src="./Thumbs/Thumb.png" alt="Preview" style="width:${width}px;height:${height}px;border-radius:6px;">`;
+    }
+}
+
+// Generate previews
+createSTLPreview('preview1','./Files/Side_Bin_Bottom_Tray.stl');
+createSTLPreview('preview2','./Files/Side_Bin_Closed_Top.stl');
+createSTLPreview('preview3','./Files/Side_Bin_Nozzle_Tray.stl');
+createSTLPreview('preview4','./Files/Side_Bin_Open_Top.stl');
+createSTLPreview('preview5','./Files/Side_Bin_Top_Tray.stl');
+
 </script>
 
 </body>
