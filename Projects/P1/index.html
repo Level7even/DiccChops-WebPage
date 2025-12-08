@@ -55,7 +55,9 @@
 </model-viewer>
 
 <!-- Model Stats -->
-<div id="modelStats" style="margin-bottom:20px; font-weight:bold;"></div>
+<div id="modelStats" style="margin-bottom:20px; font-weight:bold;">
+Vertices: – | Faces: –
+</div>
 
 <h2>Details</h2>
 <ul>
@@ -129,14 +131,14 @@ const viewer = document.getElementById("viewer");
 const dropdown = document.getElementById("envSelect");
 const statsDiv = document.getElementById("modelStats");
 
-// Environment HDRs (ensure these HDR files exist)
+// HDR environment presets
 const environments = {
     neutral: "../HDRs/kloofendal_misty_morning_puresky_4k.hdr",
     sunset: "../HDRs/qwantani_sunset_puresky_4k.hdr",
     studio: "../HDRs/table_mountain_2_puresky_4k.hdr"
 };
 
-// Set environment
+// Function to set environment
 function setEnvironment(env) {
     if (env in environments) {
         viewer.setAttribute("environment-image", environments[env]);
@@ -152,40 +154,33 @@ function setEnvironment(env) {
 // Start Neutral
 setEnvironment("neutral");
 
-// Dropdown change
+// Update environment when dropdown changes
 dropdown.addEventListener("change", () => {
     setEnvironment(dropdown.value);
 });
 
-// Display vertices & faces
+// Update vertex/face stats after model loads
 viewer.addEventListener('load', () => {
-    const modelScene = viewer.scene;
-    if (!modelScene) {
-        statsDiv.innerHTML = "Unable to access model scene";
+    const model = viewer.model;
+    if (!model) {
+        statsDiv.innerHTML = "Unable to access model";
         return;
     }
 
     let vertexCount = 0;
     let faceCount = 0;
 
-    modelScene.traverse((node) => {
+    model.traverse((node) => {
         if (node.isMesh) {
             const geom = node.geometry;
             if (geom) {
                 vertexCount += geom.attributes.position.count;
-                if (geom.index) {
-                    faceCount += geom.index.count / 3;
-                } else {
-                    faceCount += geom.attributes.position.count / 3;
-                }
+                faceCount += geom.index ? geom.index.count / 3 : geom.attributes.position.count / 3;
             }
         }
     });
 
-    statsDiv.innerHTML = `
-        Vertices: ${vertexCount.toLocaleString()}<br>
-        Faces: ${faceCount.toLocaleString()}
-    `;
+    statsDiv.innerHTML = `Vertices: ${vertexCount.toLocaleString()} | Faces: ${faceCount.toLocaleString()}`;
 });
 </script>
 
