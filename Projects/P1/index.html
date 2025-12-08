@@ -161,26 +161,47 @@ dropdown.addEventListener("change", () => {
 
 // Update vertex/face stats after model loads
 viewer.addEventListener('load', () => {
-    const model = viewer.model;
-    if (!model) {
-        statsDiv.innerHTML = "Unable to access model";
+    // 1. Access the internal Three.js scene using Symbols
+    // This bypasses the API wrapper to get to the actual geometry
+    const symbol = Object.getOwnPropertySymbols(viewer).find(s => s.description === 'model-viewer-scene');
+    
+    if (!symbol) {
+        statsDiv.innerHTML = "Stats unavailable";
         return;
     }
+
+    const internalContext = viewer[symbol];
+    
+    // 2. Get the target (the actual loaded model within the internal scene)
+    // Fallback to internalContext itself if target is undefined in this version
+    const rootObject = internalContext.target || internalContext;
 
     let vertexCount = 0;
     let faceCount = 0;
 
-    model.traverse((node) => {
-        if (node.isMesh) {
+    // 3. Traverse the Three.js Object
+    rootObject.traverse((node) => {
+        // Check if the node is a Mesh
+        if (node.isMesh && node.geometry) {
             const geom = node.geometry;
-            if (geom) {
+            
+            // Count Vertices
+            if (geom.attributes.position) {
                 vertexCount += geom.attributes.position.count;
-                faceCount += geom.index ? geom.index.count / 3 : geom.attributes.position.count / 3;
+            }
+
+            // Count Faces (Triangles)
+            if (geom.index) {
+                // If geometry is indexed
+                faceCount += geom.index.count / 3;
+            } else if (geom.attributes.position) {
+                // If geometry is non-indexed
+                faceCount += geom.attributes.position.count / 3;
             }
         }
     });
 
-    statsDiv.innerHTML = `Vertices: ${vertexCount.toLocaleString()} | Faces: ${faceCount.toLocaleString()}`;
+    statsDiv.innerHTML = `Vertices: ${vertexCount.toLocaleString()} | Faces: ${Math.floor(faceCount).toLocaleString()}`;
 });
 </script>
 
