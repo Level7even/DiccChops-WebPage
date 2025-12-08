@@ -131,49 +131,54 @@ const viewer = document.getElementById("viewer");
 const dropdown = document.getElementById("envSelect");
 const statsDiv = document.getElementById("modelStats");
 
-// Environment HDR presets (ensure these HDR files exist)
+// HDR presets
 const environments = {
     neutral: "../HDRs/kloofendal_misty_morning_puresky_4k.hdr",
     sunset: "../HDRs/qwantani_sunset_puresky_4k.hdr",
     studio: "../HDRs/table_mountain_2_puresky_4k.hdr"
 };
 
-// Set environment function
+// Set environment
 function setEnvironment(env) {
     if (env in environments) {
         viewer.setAttribute("environment-image", environments[env]);
-        viewer.style.backgroundColor = "transparent"; // remove fallback
+        viewer.style.backgroundColor = "transparent";
         viewer.exposure = 1.3;
     } else {
         viewer.removeAttribute("environment-image");
-        viewer.style.backgroundColor = "#888"; // fallback
+        viewer.style.backgroundColor = "#888";
         viewer.exposure = 1;
     }
 }
 
-// Start with Neutral environment
+// Start Neutral
 setEnvironment("neutral");
 
-// Update environment on dropdown change
+// Dropdown change
 dropdown.addEventListener("change", () => {
     setEnvironment(dropdown.value);
 });
 
-// Update model stats once loaded
-viewer.addEventListener('load', () => {
+// Model stats
+viewer.addEventListener('load', async () => {
+    // Wait until the model is ready
     const model = viewer.model;
+    if (!model) {
+        statsDiv.innerHTML = "Unable to load model stats";
+        return;
+    }
+
     let vertexCount = 0;
     let faceCount = 0;
 
-    model.traverse((child) => {
-        if (child.isMesh) {
-            const geom = child.geometry;
-            vertexCount += geom.attributes.position.count;
-            if (geom.index) {
-                faceCount += geom.index.count / 3;
-            } else {
-                faceCount += geom.attributes.position.count / 3;
-            }
+    // Traverse the model's meshes safely
+    model.meshes.forEach(mesh => {
+        const geom = mesh.geometry;
+        vertexCount += geom.attributes.position.count;
+        if (geom.index) {
+            faceCount += geom.index.count / 3;
+        } else {
+            faceCount += geom.attributes.position.count / 3;
         }
     });
 
