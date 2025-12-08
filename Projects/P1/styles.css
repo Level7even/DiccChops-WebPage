@@ -1,3 +1,4 @@
+/* styles.css */
 /* Dark Mode Base */
 body {
     font-family: Arial, sans-serif;
@@ -41,22 +42,6 @@ header {
     color: #8ab4f8;
 }
 
-nav {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-nav a {
-    color: #e0e0e0;
-    text-decoration: none;
-    font-size: 18px;
-}
-
-nav a:hover {
-    color: #8ab4f8;
-}
-
 main {
     padding: 30px;
 }
@@ -66,7 +51,7 @@ main {
     padding: 25px;
     border-radius: 14px;
     box-shadow: 0 3px 10px rgba(0,0,0,0.5);
-    max-width: 700px;
+    max-width: 900px;
     margin: auto;
 }
 
@@ -120,6 +105,23 @@ footer {
     font-size: 20px;
 }
 
+/* Project Page */
+.project-img {
+    width: 100%;
+    max-width: 900px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.project-details ul {
+    list-style: inside disc;
+    padding-left: 0;
+}
+
+.project-details li {
+    margin-bottom: 8px;
+}
+
 /* Mobile Responsive */
 @media (max-width: 600px) {
     nav {
@@ -135,7 +137,3 @@ footer {
         grid-template-columns: 1fr;
     }
 }
-
-    .box {
-        padding: 20px;
-    }
