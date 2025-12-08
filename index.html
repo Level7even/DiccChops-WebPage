@@ -9,12 +9,18 @@
 <link rel="stylesheet" href="styles.css">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1925199488400006" crossorigin="anonymous"></script>
 
+
 <!-- Open Graph / Discord Embed -->
 <meta property="og:title" content="My Portfolio">
 <meta property="og:description" content="Check out my projects, portfolio, and more!">
 <meta property="og:image" content="https://DiccChops.com/Icon.webp">
 <meta property="og:url" content="https://DiccChops.com">
 <meta property="og:type" content="website">
+
+
+<!-- Model Viewer Script -->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
 
 </head>
 <body>
@@ -36,19 +42,52 @@
 <h1>Welcome!</h1>
 <p>This is my Webpage it is currently under construction. Please check back later. there might be updates soon!</p>
 </div>
+
+
 <section id="portfolio">
 <h2 class="section-title">My Projects</h2>
 <div class="grid">
 <a class="card" href="/Projects/P1/index.html">
-<img src="/Projects/P1/Thumbs/Thumb.png" alt="Project 1 Thumbnail">
+<model-viewer
+alt="Project 1 3D Model"
+src="/Projects/P1/Glb/SideBin V2.glb"
+poster="/Projects/P1/Thumbs/Thumb.png"
+shadow-intensity="1"
+camera-controls
+auto-rotate
+touch-action="pan-y"
+style="width:100%; height:160px; border-radius:8px;">
+</model-viewer>
 <h3>Project One</h3>
 </a>
+
+
 <a class="card" href="/Projects/P2/index.html">
-<img src="/Projects/P2/Thumbs/Thumb.png" alt="Project 2 Thumbnail">
+<model-viewer
+alt="Project 2 3D Model"
+src="/Projects/P2/Model/Project2.glb"
+poster="/Projects/P2/Thumbs/Thumb.png"
+shadow-intensity="1"
+camera-controls
+auto-rotate
+touch-action="pan-y"
+style="width:100%; height:160px; border-radius:8px;">
+</model-viewer>
 <h3>Project Two</h3>
 </a>
+
+
 <a class="card" href="/Projects/P3/index.html">
-<img src="/Projects/P3/Thumbs/Thumb.png" alt="Project 3 Thumbnail">
+<model-viewer
+alt="Project 3 3D Model"
+src="/Projects/P3/Model/Project3.glb"
+poster="/Projects/P3/Thumbs/Thumb.png"
+shadow-intensity="1"
+camera-controls
+auto-rotate
+touch-action="pan-y"
+style="width:100%; height:160px; border-radius:8px;">
+</model-viewer>
 <h3>Project Three</h3>
 </a>
 </div>
