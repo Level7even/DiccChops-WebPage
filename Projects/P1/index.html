@@ -39,25 +39,33 @@
 
     // STL Loader
     const loader = new STLLoader();
-    loader.load(stlPath, geometry => {
-      const material = new THREE.MeshStandardMaterial({ color: 0x8ab4f8 });
-      const mesh = new THREE.Mesh(geometry, material);
+    loader.load(
+      stlPath,
+      geometry => {
+        const material = new THREE.MeshStandardMaterial({ color: 0x8ab4f8 });
+        const mesh = new THREE.Mesh(geometry, material);
 
-      // Center geometry
-      geometry.computeBoundingBox();
-      const center = new THREE.Vector3();
-      geometry.boundingBox.getCenter(center);
-      mesh.position.sub(center);
+        // Center geometry
+        geometry.computeBoundingBox();
+        const center = new THREE.Vector3();
+        geometry.boundingBox.getCenter(center);
+        mesh.position.sub(center);
 
-      scene.add(mesh);
+        scene.add(mesh);
 
-      const animate = function() {
-        requestAnimationFrame(animate);
-        mesh.rotation.y += 0.01;
-        renderer.render(scene, camera);
-      };
-      animate();
-    });
+        const animate = function() {
+          requestAnimationFrame(animate);
+          mesh.rotation.y += 0.01;
+          renderer.render(scene, camera);
+        };
+        animate();
+      },
+      undefined,
+      error => {
+        console.warn('Failed to load STL:', stlPath, error);
+        container.innerHTML = `<img src="./Thumbs/Thumb.png" alt="Preview" style="width:${width}px;height:${height}px;border-radius:6px;">`;
+      }
+    );
   }
 </script>
 </head>
@@ -169,7 +177,7 @@ dropdown.addEventListener("change", () => {
     }
 });
 
-// Initialize STL previews
+// Initialize STL previews with fallback to PH
 createSTLPreview('preview-bottom-tray', './Files/Side_Bin_Bottom_Tray.stl');
 createSTLPreview('preview-closed-top', './Files/Side_Bin_Closed_Top.stl');
 createSTLPreview('preview-nozzle-tray', './Files/Side_Bin_Nozzle_Tray.stl');
