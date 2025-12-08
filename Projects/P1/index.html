@@ -12,6 +12,7 @@
 
 </head>
 <body>
+
 <header>
 <nav class="nav-container">
 <a href="../../index.html" class="logo">My Portfolio</a>
@@ -26,13 +27,25 @@
 
 <main>
 <div class="box">
+
 <h1>Project One</h1>
 <p>This is a test Project 1 page.</p>
 
 <h2>Gallery</h2>
 
-<!-- Improved Visibility Model Viewer -->
+<!-- Environment Dropdown -->
+<div class="env-select-wrapper">
+    <select id="envSelect" class="env-select">
+        <option value="studio">Studio Light</option>
+        <option value="city">City</option>
+        <option value="industrial">Industrial</option>
+        <option value="sunset">Sunset</option>
+    </select>
+</div>
+
+<!-- Model Viewer -->
 <model-viewer
+    id="modelView"
     alt="Project 1 3D Model"
     src="./Glb/SideBin V2.glb"
     poster="./Thumbs/Thumb.png"
@@ -41,8 +54,7 @@
     shadow-intensity="1"
     exposure="1.35"
     environment-image="https://modelviewer.dev/shared-assets/environments/studio_small_08_1k.hdr"
-    touch-action="pan-y"
-    style="width:100%; height:400px; border-radius:8px; margin-bottom:20px;">
+    touch-action="pan-y">
 </model-viewer>
 
 <h2>Details</h2>
@@ -92,6 +104,23 @@
 <footer>
 <p>© 2025 DiccChops.com — All Rights Reserved.</p>
 </footer>
+
+<!-- Environment Selector Script -->
+<script>
+const viewer = document.getElementById("modelView");
+const envSelect = document.getElementById("envSelect");
+
+const environments = {
+    studio: "https://modelviewer.dev/shared-assets/environments/studio_small_08_1k.hdr",
+    city: "https://modelviewer.dev/shared-assets/environments/urban_alley_1k.hdr",
+    industrial: "https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k.hdr",
+    sunset: "https://modelviewer.dev/shared-assets/environments/moon_1k.hdr"
+};
+
+envSelect.addEventListener("change", () => {
+    viewer.environmentImage = environments[envSelect.value];
+});
+</script>
 
 </body>
 </html>
