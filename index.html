@@ -6,7 +6,6 @@
 <title>DiccChops</title>
 <link rel="icon" href="Icon.webp" type="image/webp">
 <link rel="stylesheet" href="styles.css">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1925199488400006" crossorigin="anonymous"></script>
 
 <!-- Open Graph -->
 <meta property="og:title" content="My Portfolio">
@@ -51,14 +50,15 @@
 
 <script>
 /* -----------------------------------------
-   Load /Projects/projects.json dynamically
+   Load Projects dynamically (GitHub Pages safe)
 ----------------------------------------- */
 async function loadProjects() {
     const container = document.getElementById("projectGrid");
 
     let list;
     try {
-        list = await fetch("/Projects/projects.json").then(r => r.json());
+        // Relative path works for GitHub Pages
+        list = await fetch("Projects/projects.json").then(r => r.json());
     } catch (e) {
         container.innerHTML = "<p>Could not load project list.</p>";
         return;
@@ -66,29 +66,38 @@ async function loadProjects() {
 
     for (const entry of list) {
         const folder = entry.folder;
-        const base = `/Projects/${folder}/`;
+        const base = `Projects/${folder}/`; // relative path
 
         // Load settings.cfg
-        let cfg = await loadCFG(base + "settings.cfg");
+        let cfg;
+        try {
+            cfg = await loadCFG(base + "settings.cfg");
+        } catch (e) {
+            console.warn(`Could not load ${base}settings.cfg`, e);
+            continue;
+        }
 
         let name = cfg.meta?.name || folder;
-        let glb = cfg.files?.Glb ? `${base}Files/${cfg.files.Glb}` : "/Placeholder.glb";
-        let thumbnail = cfg.files?.thumbnail ? `${base}Files/${cfg.files.thumbnail}` : "/Placeholder.png";
+        // Use relative path to "Files" folder inside each project
+        let glb = cfg.files?.Glb ? `${base}Files/${cfg.files.Glb}` : "Placeholder.glb";
+        let thumbnail = cfg.files?.thumbnail ? `${base}Files/${cfg.files.thumbnail}` : "Placeholder.png";
 
         // Build card
         const card = document.createElement("a");
         card.href = base + "index.html";
         card.className = "card";
         card.innerHTML = `
-            <model-viewer
-                alt="${name}"
-                src="${glb}"
-                poster="${thumbnail}"
-                shadow-intensity="1"
-                camera-controls
-                auto-rotate
-                touch-action="pan-y">
-            </model-viewer>
+            <div class="model-wrapper">
+                <model-viewer
+                    alt="${name}"
+                    src="${glb}"
+                    poster="${thumbnail}"
+                    shadow-intensity="1"
+                    camera-controls
+                    auto-rotate
+                    touch-action="pan-y">
+                </model-viewer>
+            </div>
             <h3>${name}</h3>
         `;
         container.appendChild(card);
