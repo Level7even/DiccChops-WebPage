@@ -47,66 +47,64 @@
     <p>© 2025 DiccChops.com — All Rights Reserved.</p>
 </footer>
 
+code
+Html
 <script>
-/* ------------------------------------------------------------------
-   Squarespace / GitHub Pages use root "/" paths.
-------------------------------------------------------------------- */
-const ROOT = "/";
-
-/* ------------------------------------------------------------------
-   Run AFTER the page is fully loaded
-------------------------------------------------------------------- */
 document.addEventListener("DOMContentLoaded", () => {
     loadProjects();
 });
 
-/* ------------------------------------------------------------------
-   Load project list from Projects/projects.json
-------------------------------------------------------------------- */
+// -----------------------------
+// Load Projects dynamically
+// -----------------------------
 async function loadProjects() {
     const container = document.getElementById("projectGrid");
-    if (!container) {
-        console.error("projectGrid element missing!");
-        return;
-    }
+    if (!container) return console.error("projectGrid not found!");
 
-    let list;
+    let projectList;
     try {
-        list = await fetch(`${ROOT}Projects/projects.json`).then(r => r.json());
+        // FIXED: Removed leading slash. Now looks in "Projects" folder relative to this file.
+        // Ensure your folder is named "Projects" (Capital P) or change this string to "projects".
+        projectList = await fetch("Projects/projects.json").then(r => r.json());
     } catch (e) {
         container.innerHTML = "<p style='text-align:center;'>Could not load project list.</p>";
+        console.error("Failed to load projects.json. Check folder name and json format.", e);
         return;
     }
 
-    for (const entry of list) {
+    for (const entry of projectList) {
         const folder = entry.folder;
-        const base = `${ROOT}Projects/${folder}/`;
+        // FIXED: Removed leading slash to make path relative
+        const base = `Projects/${folder}/`; 
 
-        // LOAD settings.cfg
+        // Load settings.cfg
         let cfg;
         try {
             cfg = await loadCFG(base + "settings.cfg");
         } catch (e) {
-            console.warn("⚠ Failed to load settings.cfg for:", folder);
+            console.warn(`Could not load ${base}settings.cfg`, e);
             continue;
         }
 
         const name = cfg.meta?.name || folder;
 
-        // Build file paths
-        const glb = cfg.files?.Glb
-            ? `${base}Files/${cfg.files.Glb}`
-            : `${ROOT}Placeholder.glb`;
+        // FIXED: Robust Key Handling
+        // We look for 'glb' or 'Glb' to prevent capitalization errors
+        const glbFile = cfg.files?.Glb || cfg.files?.glb; 
+        const thumbFile = cfg.files?.thumbnail || cfg.files?.Thumbnail;
 
-        const thumbnail = cfg.files?.thumbnail
-            ? `${base}Files/${cfg.files.thumbnail}`
-            : `${ROOT}Placeholder.png`;
+        // Build Paths
+        // If the CFG has a file, append it to base + "Files/"
+        const glb = glbFile ? `${base}Files/${glbFile}` : "Placeholder.glb";
+        const thumbnail = thumbFile ? `${base}Files/${thumbFile}` : "Placeholder.png";
 
-        // Create card
+        // Debugging: Check your console to see exactly what path is being generated
+        console.log(`Loading Project: ${name}`, { glbPath: glb, thumbPath: thumbnail });
+
+        // Create project card
         const card = document.createElement("a");
         card.href = `${base}index.html`;
         card.className = "card";
-
         card.innerHTML = `
             <div class="model-wrapper">
                 <model-viewer
@@ -116,28 +114,31 @@ async function loadProjects() {
                     shadow-intensity="1"
                     camera-controls
                     auto-rotate
-                    touch-action="pan-y">
+                    touch-action="pan-y"
+                    style="width:100%; height:200px; border-radius:8px; background-color: #222;"
+                    loading="eager">
                 </model-viewer>
             </div>
             <h3>${name}</h3>
         `;
-
         container.appendChild(card);
     }
 }
 
-/* ------------------------------------------------------------------
-   INI-like cfg reader for settings.cfg
-------------------------------------------------------------------- */
+// -----------------------------
+// Load settings.cfg (INI-style)
+// -----------------------------
 async function loadCFG(url) {
-    const text = await fetch(url).then(r => r.text());
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    
+    const text = await response.text();
     const lines = text.split(/\r?\n/);
     const cfg = {};
     let section = null;
 
     for (let raw of lines) {
         let line = raw.trim();
-
         if (!line || line.startsWith("#") || line.startsWith(";")) continue;
 
         if (line.startsWith("[") && line.endsWith("]")) {
@@ -148,12 +149,11 @@ async function loadCFG(url) {
 
         if (section && line.includes("=")) {
             let [key, val] = line.split("=");
-            key = key.trim();
-            val = val.trim().replace(/^"|"$/g, "");
-            cfg[section][key] = val;
+            // We keep the key case-sensitive here to match your other script, 
+            // but we handled the lookup (Glb vs glb) in the main function above.
+            cfg[section][key.trim()] = val.trim().replace(/^"|"$/g, "");
         }
     }
-
     return cfg;
 }
 </script>

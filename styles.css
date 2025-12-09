@@ -1,20 +1,30 @@
 /* ---------------------------
-   Dark Mode Base
+   Global Reset & Base
 ---------------------------- */
+* {
+    box-sizing: border-box; /* Critical for grid layouts */
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     background: #121212;
     color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
+/* ---------------------------
+   Header & Nav
+---------------------------- */
 header {
     background: #1f1f1f;
     padding: 15px 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
     position: sticky;
     top: 0;
-    z-index: 999;
+    z-index: 1000; /* Increased to ensure it stays above 3D models */
 }
 
 .nav-container {
@@ -41,15 +51,27 @@ header {
 .links a {
     color: #e0e0e0;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 5px 10px;
+    transition: color 0.2s, background 0.2s;
+    border-radius: 4px;
 }
 
 .links a:hover {
     color: #8ab4f8;
+    background: rgba(255, 255, 255, 0.05);
 }
 
+/* ---------------------------
+   Main Content
+---------------------------- */
 main {
-    padding: 30px;
+    padding: 30px 20px;
+    flex: 1; /* Pushes footer to bottom even if content is short */
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
 }
 
 .box {
@@ -57,91 +79,123 @@ main {
     padding: 25px;
     border-radius: 14px;
     box-shadow: 0 3px 10px rgba(0,0,0,0.5);
-    max-width: 700px;
-    margin: auto;
+    max-width: 800px; /* Increased slightly for better text flow */
+    margin: 0 auto 40px auto;
+    text-align: center;
 }
 
-footer {
-    background: #1f1f1f;
+.section-title {
     text-align: center;
-    padding: 25px;
-    margin-top: 40px;
-    color: #bbb;
-    border-top: 1px solid #333;
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #f0f0f0;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    display: inline-block;
+    left: 50%;
+    position: relative;
+    transform: translateX(-50%);
 }
 
 /* ---------------------------
    Portfolio Grid
 ---------------------------- */
-.section-title {
-    text-align: center;
-    margin-bottom: 25px;
-    font-size: 28px;
-    color: #f0f0f0;
-}
-
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
+    /* Improved grid logic to prevent tiny cards */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 10px 0;
 }
 
 .card {
     display: flex;
-    flex-direction: column; /* stack model + title */
-    align-items: center;    /* center horizontally */
-    padding: 10px;
+    flex-direction: column;
+    padding: 15px;
     border-radius: 12px;
-    background: #1a1a1a;
-    text-decoration: none;
+    background: #1e1e1e; /* Slightly lighter than bg for pop */
+    border: 1px solid #333;
+    text-decoration: none; /* Removes underline from the whole card */
     color: white;
-    transition: all 0.3s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+    overflow: hidden;
 }
 
-.card model-viewer {
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    border-color: #8ab4f8;
+}
+
+/* 
+   Model Wrapper 
+   This ensures the viewer stays within bounds
+*/
+.model-wrapper {
     width: 100%;
-    max-width: 250px;   /* restrict width to fit card */
-    height: 160px;
+    height: 220px; /* Fixed height for consistency */
+    background: #121212; /* Darker bg behind model */
     border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+model-viewer {
+    width: 100%;
+    height: 100%;
     display: block;
-    background: black;
+    --poster-color: transparent;
+}
+
+/* Removes the blue outline when clicking the model */
+model-viewer:focus {
+    outline: none;
 }
 
 .card h3 {
-    margin-top: 15px;
+    margin: 15px 0 5px 0;
     font-size: 20px;
     text-align: center;
+    color: #fff;
 }
 
-/* Card Hover Effect */
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
-}
-
-/* Responsive Images if used */
-.card img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 8px;
+/* ---------------------------
+   Footer
+---------------------------- */
+footer {
+    background: #1f1f1f;
+    text-align: center;
+    padding: 20px;
+    color: #888;
+    font-size: 14px;
+    border-top: 1px solid #333;
 }
 
 /* ---------------------------
    Mobile Responsive
 ---------------------------- */
 @media (max-width: 600px) {
-    nav {
+    .nav-container {
         flex-direction: column;
-        gap: 10px;
+        gap: 15px;
+    }
+    
+    .links {
+        flex-wrap: wrap;
+        justify-content: center;
     }
 
     .box {
         padding: 20px;
+        width: 100%;
     }
 
     .grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Full width cards on mobile */
+        gap: 20px;
+    }
+
+    .model-wrapper {
+        height: 200px;
     }
 }
