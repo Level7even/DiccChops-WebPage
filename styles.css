@@ -2,29 +2,30 @@
    Global Reset & Base
 ---------------------------- */
 * {
-    box-sizing: border-box; /* Critical for grid layouts */
+    box-sizing: border-box; /* Ensures padding doesn't break grid sizing */
 }
 
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background: #121212;
-    color: #e0e0e0;
+    padding: 0;
+    background: #121212; /* Deep dark background */
+    color: #e0e0e0;      /* Light grey text */
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* pushes footer to bottom */
 }
 
 /* ---------------------------
-   Header & Nav
+   Header & Navigation
 ---------------------------- */
 header {
     background: #1f1f1f;
     padding: 15px 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    position: sticky;
+    position: sticky; /* Keeps nav at top while scrolling */
     top: 0;
-    z-index: 1000; /* Increased to ensure it stays above 3D models */
+    z-index: 1000; /* Ensures nav stays ABOVE 3D models */
 }
 
 .nav-container {
@@ -59,16 +60,16 @@ header {
 }
 
 .links a:hover {
-    color: #8ab4f8;
+    color: #8ab4f8; /* Light blue accent */
     background: rgba(255, 255, 255, 0.05);
 }
 
 /* ---------------------------
-   Main Content
+   Main Content Area
 ---------------------------- */
 main {
     padding: 30px 20px;
-    flex: 1; /* Pushes footer to bottom even if content is short */
+    flex: 1; /* Takes up remaining space to push footer down */
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
@@ -79,8 +80,8 @@ main {
     padding: 25px;
     border-radius: 14px;
     box-shadow: 0 3px 10px rgba(0,0,0,0.5);
-    max-width: 800px; /* Increased slightly for better text flow */
-    margin: 0 auto 40px auto;
+    max-width: 800px;
+    margin: 0 auto 40px auto; /* Centers the welcome box */
     text-align: center;
 }
 
@@ -92,30 +93,33 @@ main {
     border-bottom: 2px solid #333;
     padding-bottom: 10px;
     display: inline-block;
-    left: 50%;
     position: relative;
+    left: 50%;
     transform: translateX(-50%);
 }
 
 /* ---------------------------
-   Portfolio Grid
+   Portfolio Grid System
 ---------------------------- */
 .grid {
     display: grid;
-    /* Improved grid logic to prevent tiny cards */
+    /* Creates columns that fit automatically, min 280px wide */
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 25px;
     padding: 10px 0;
 }
 
+/* ---------------------------
+   Project Cards
+---------------------------- */
 .card {
     display: flex;
     flex-direction: column;
     padding: 15px;
     border-radius: 12px;
-    background: #1e1e1e; /* Slightly lighter than bg for pop */
+    background: #1e1e1e;
     border: 1px solid #333;
-    text-decoration: none; /* Removes underline from the whole card */
+    text-decoration: none; /* Removes underline from links */
     color: white;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
     overflow: hidden;
@@ -128,35 +132,42 @@ main {
 }
 
 /* 
-   Model Wrapper 
-   This ensures the viewer stays within bounds
+   Model Wrapper (Crucial Fixes)
+   1. font-size: 0 & line-height: 0 -> Removes "ghost whitespace" gap below canvas
+   2. background: transparent -> Prevents black bars if model loads small
 */
 .model-wrapper {
     width: 100%;
     height: 220px; /* Fixed height for consistency */
-    background: #121212; /* Darker bg behind model */
+    background: transparent; 
+    font-size: 0; 
+    line-height: 0;
     border-radius: 8px;
     overflow: hidden;
     position: relative;
+    border: 1px solid #2a2a2a; /* Subtle frame */
 }
 
 model-viewer {
     width: 100%;
     height: 100%;
-    display: block;
+    display: block; /* Prevents inline alignment issues */
+    background-color: #121212; /* Matches page theme */
     --poster-color: transparent;
+    outline: none; /* Removes blue border on click */
 }
 
-/* Removes the blue outline when clicking the model */
+/* Focus state for accessibility (optional, usually preferred hidden for 3D) */
 model-viewer:focus {
     outline: none;
 }
 
 .card h3 {
     margin: 15px 0 5px 0;
-    font-size: 20px;
+    font-size: 18px;
     text-align: center;
     color: #fff;
+    line-height: 1.4; /* Reset line-height for text */
 }
 
 /* ---------------------------
@@ -166,6 +177,7 @@ footer {
     background: #1f1f1f;
     text-align: center;
     padding: 20px;
+    margin-top: auto;
     color: #888;
     font-size: 14px;
     border-top: 1px solid #333;
@@ -191,11 +203,11 @@ footer {
     }
 
     .grid {
-        grid-template-columns: 1fr; /* Full width cards on mobile */
+        grid-template-columns: 1fr; /* 1 column on mobile */
         gap: 20px;
     }
 
     .model-wrapper {
-        height: 200px;
+        height: 200px; /* Slightly shorter on phone */
     }
 }
