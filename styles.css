@@ -95,14 +95,26 @@ footer {
 }
 
 .card {
-    background: #1e1e1e;
+    display: flex;
+    flex-direction: column; /* stack model + title */
+    align-items: center;    /* center horizontally */
+    padding: 10px;
     border-radius: 12px;
-    overflow: hidden;
+    background: #1a1a1a;
     text-decoration: none;
-    color: #e0e0e0;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.5);
-    transition: transform 0.2s, box-shadow 0.2s;
+    color: white;
+    transition: 0.2s;
 }
+
+.card model-viewer {
+    width: 100%;
+    max-width: 250px;   /* optional: limit width */
+    height: 160px;
+    border-radius: 8px;
+
+    display: block;
+}
+
 
 .card:hover {
     transform: translateY(-5px);

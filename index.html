@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,21 +8,18 @@
 <link rel="stylesheet" href="styles.css">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1925199488400006" crossorigin="anonymous"></script>
 
-
-<!-- Open Graph / Discord Embed -->
+<!-- Open Graph -->
 <meta property="og:title" content="My Portfolio">
 <meta property="og:description" content="Check out my projects, portfolio, and more!">
-<meta property="og:image" content="https://DiccChops.com/Icon.webp">
-<meta property="og:url" content="https://DiccChops.com">
+<meta property="og:image" content="https://diccchops.com/Icon.webp">
+<meta property="og:url" content="https://diccchops.com">
 <meta property="og:type" content="website">
 
-
-<!-- Model Viewer Script -->
+<!-- Model Viewer -->
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
-
-
 </head>
 <body>
+
 <header>
 <nav class="nav-container">
 <a href="index.html" class="logo">My Portfolio</a>
@@ -36,59 +32,101 @@
 </nav>
 </header>
 
-
 <main>
 <div class="box">
 <h1>Welcome!</h1>
-<p>This is my Webpage it is currently under construction. Please check back later. there might be updates soon!</p>
+<p>This is my Webpage it is currently under construction. Please check back later. There might be updates soon!</p>
 </div>
-
 
 <section id="portfolio">
 <h2 class="section-title">My Projects</h2>
-<div class="grid">
-
-<!-- PROJECT ONE — Updated with model-viewer -->
-<a class="card" href="/Projects/P1/index.html">
-<model-viewer
-    alt="Project 1 3D Model"
-    src="./Projects/P1/Glb/SideBin V2.glb"
-    poster="/Projects/P1/Thumbs/Thumb.png"
-    shadow-intensity="1"
-    camera-controls
-    auto-rotate
-    touch-action="pan-y"
-    style="width:100%; height:160px; border-radius:8px;">
-</model-viewer>
-<h3>Ender 3 Side Bin</h3>
-</a>
-
-
-<!-- PROJECT TWO — Updated with model-viewer -->
-<a class="card" href="/Projects/P2/index.html">
-<model-viewer
-    alt="Project 2 3D Model"
-    src="./Projects/P2/Glb/Blob.glb"
-    poster="/Projects/P2/Thumbs/Thumb.png"
-    shadow-intensity="1"
-    camera-controls
-    auto-rotate
-    touch-action="pan-y"
-    style="width:100%; height:160px; border-radius:8px;">
-</model-viewer>
-<h3>Blob</h3>
-</a>
-
-
-</div>
+<div class="grid" id="projectGrid"></div>
 </section>
 
-
 </main>
-
 
 <footer>
 <p>© 2025 DiccChops.com — All Rights Reserved.</p>
 </footer>
+
+<script>
+/* -----------------------------------------
+   Load /Projects/projects.json dynamically
+----------------------------------------- */
+async function loadProjects() {
+    const container = document.getElementById("projectGrid");
+
+    let list;
+    try {
+        list = await fetch("/Projects/projects.json").then(r => r.json());
+    } catch (e) {
+        container.innerHTML = "<p>Could not load project list.</p>";
+        return;
+    }
+
+    for (const entry of list) {
+        const folder = entry.folder;
+        const base = `/Projects/${folder}/`;
+
+        // Load settings.cfg
+        let cfg = await loadCFG(base + "settings.cfg");
+
+        let name = cfg.meta?.name || folder;
+        let glb = cfg.files?.Glb ? `${base}Files/${cfg.files.Glb}` : "/Placeholder.glb";
+        let thumbnail = cfg.files?.thumbnail ? `${base}Files/${cfg.files.thumbnail}` : "/Placeholder.png";
+
+        // Build card
+        const card = document.createElement("a");
+        card.href = base + "index.html";
+        card.className = "card";
+        card.innerHTML = `
+            <model-viewer
+                alt="${name}"
+                src="${glb}"
+                poster="${thumbnail}"
+                shadow-intensity="1"
+                camera-controls
+                auto-rotate
+                touch-action="pan-y">
+            </model-viewer>
+            <h3>${name}</h3>
+        `;
+        container.appendChild(card);
+    }
+}
+
+/* -----------------------------------------
+   Parse settings.cfg (INI-style)
+----------------------------------------- */
+async function loadCFG(url) {
+    const text = await fetch(url).then(r => r.text());
+    const lines = text.split(/\r?\n/);
+    const cfg = {};
+    let section = null;
+
+    for (let raw of lines) {
+        let line = raw.trim();
+        if (!line || line.startsWith("#") || line.startsWith(";")) continue;
+
+        if (line.startsWith("[") && line.endsWith("]")) {
+            section = line.slice(1, -1);
+            cfg[section] = {};
+            continue;
+        }
+
+        if (section && line.includes("=")) {
+            let [key, val] = line.split("=");
+            key = key.trim();
+            val = val.trim().replace(/^"|"$/g, "");
+            cfg[section][key] = val;
+        }
+    }
+
+    return cfg;
+}
+
+loadProjects();
+</script>
+
 </body>
 </html>
