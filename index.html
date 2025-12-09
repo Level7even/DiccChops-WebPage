@@ -7,40 +7,33 @@
 <link rel="icon" href="Icon.webp" type="image/webp">
 <link rel="stylesheet" href="styles.css">
 
-<!-- Open Graph -->
-<meta property="og:title" content="My Portfolio">
-<meta property="og:description" content="Check out my projects, portfolio, and more!">
-<meta property="og:image" content="https://diccchops.com/Icon.webp">
-<meta property="og:url" content="https://diccchops.com">
-<meta property="og:type" content="website">
-
 <!-- Model Viewer -->
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 </head>
 <body>
 
 <header>
-    <nav class="nav-container">
-        <a href="index.html" class="logo">My Portfolio</a>
-        <div class="links">
-            <a href="index.html">Home</a>
-            <a href="#about">About</a>
-            <a href="#portfolio">Portfolio</a>
-            <a href="#contact">Contact</a>
-        </div>
-    </nav>
+<nav class="nav-container">
+<a href="index.html" class="logo">My Portfolio</a>
+<div class="links">
+<a href="index.html">Home</a>
+<a href="#about">About</a>
+<a href="#portfolio">Portfolio</a>
+<a href="#contact">Contact</a>
+</div>
+</nav>
 </header>
 
 <main>
-    <div class="box">
-        <h1>Welcome!</h1>
-        <p>This is my Webpage it is currently under construction. Please check back later. There might be updates soon!</p>
-    </div>
+<div class="box">
+<h1>Welcome!</h1>
+<p>This website is under construction — check back for updates!</p>
+</div>
 
-    <section id="portfolio">
-        <h2 class="section-title">My Projects</h2>
-        <div class="grid" id="projectGrid"></div>
-    </section>
+<section id="portfolio">
+<h2 class="section-title">My Projects</h2>
+<div class="grid" id="projectGrid"></div>
+</section>
 
 </main>
 
@@ -48,19 +41,18 @@
 <p>© 2025 DiccChops.com — All Rights Reserved.</p>
 </footer>
 
-
 <script>
-/* --------------------------------------------------------
-   GitHub Pages / Localhost / Custom Domain Path Fix
---------------------------------------------------------- */
-const ROOT = (
-    location.hostname.includes("github.io")
-        ? "/DiccChops-WebPage/"
-        : "/"
-);
 
 /* --------------------------------------------------------
-   Load Projects
+   IMPORTANT:
+   Squarespace serves from root "/"
+   so all paths must be relative to the root.
+--------------------------------------------------------- */
+
+const ROOT = "/";
+
+/* --------------------------------------------------------
+   Load Projects List
 --------------------------------------------------------- */
 async function loadProjects() {
     const container = document.getElementById("projectGrid");
@@ -75,6 +67,8 @@ async function loadProjects() {
 
     for (const entry of list) {
         const folder = entry.folder;
+
+        // Base path to project folder
         const base = `${ROOT}Projects/${folder}/`;
 
         // Load settings.cfg
@@ -88,13 +82,13 @@ async function loadProjects() {
 
         const name = cfg.meta?.name || folder;
 
-        // Correct URLs for GitHub Pages
+        // Build paths to files
         const glb = cfg.files?.Glb
-            ? `${base}files/${cfg.files.Glb}`
+            ? `${base}Files/${cfg.files.Glb}`
             : `${ROOT}Placeholder.glb`;
 
         const thumbnail = cfg.files?.thumbnail
-            ? `${base}files/${cfg.files.thumbnail}`
+            ? `${base}Files/${cfg.files.thumbnail}`
             : `${ROOT}Placeholder.png`;
 
         // Build card
@@ -109,8 +103,7 @@ async function loadProjects() {
                     poster="${thumbnail}"
                     shadow-intensity="1"
                     camera-controls
-                    auto-rotate
-                    touch-action="pan-y">
+                    auto-rotate>
                 </model-viewer>
             </div>
             <h3>${name}</h3>
@@ -150,6 +143,7 @@ async function loadCFG(url) {
 }
 
 loadProjects();
+
 </script>
 
 </body>
