@@ -20,27 +20,27 @@
 <body>
 
 <header>
-<nav class="nav-container">
-<a href="index.html" class="logo">My Portfolio</a>
-<div class="links">
-<a href="index.html">Home</a>
-<a href="#about">About</a>
-<a href="#portfolio">Portfolio</a>
-<a href="#contact">Contact</a>
-</div>
-</nav>
+    <nav class="nav-container">
+        <a href="index.html" class="logo">My Portfolio</a>
+        <div class="links">
+            <a href="index.html">Home</a>
+            <a href="#about">About</a>
+            <a href="#portfolio">Portfolio</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
 </header>
 
 <main>
-<div class="box">
-<h1>Welcome!</h1>
-<p>This is my Webpage it is currently under construction. Please check back later. There might be updates soon!</p>
-</div>
+    <div class="box">
+        <h1>Welcome!</h1>
+        <p>This is my Webpage it is currently under construction. Please check back later. There might be updates soon!</p>
+    </div>
 
-<section id="portfolio">
-<h2 class="section-title">My Projects</h2>
-<div class="grid" id="projectGrid"></div>
-</section>
+    <section id="portfolio">
+        <h2 class="section-title">My Projects</h2>
+        <div class="grid" id="projectGrid"></div>
+    </section>
 
 </main>
 
@@ -48,17 +48,26 @@
 <p>© 2025 DiccChops.com — All Rights Reserved.</p>
 </footer>
 
+
 <script>
-/* -----------------------------------------
-   Load Projects dynamically (GitHub Pages safe)
------------------------------------------ */
+/* --------------------------------------------------------
+   GitHub Pages / Localhost / Custom Domain Path Fix
+--------------------------------------------------------- */
+const ROOT = (
+    location.hostname.includes("github.io")
+        ? "/DiccChops-WebPage/"
+        : "/"
+);
+
+/* --------------------------------------------------------
+   Load Projects
+--------------------------------------------------------- */
 async function loadProjects() {
     const container = document.getElementById("projectGrid");
 
     let list;
     try {
-        // Relative path works for GitHub Pages
-        list = await fetch("Projects/projects.json").then(r => r.json());
+        list = await fetch(`${ROOT}Projects/projects.json`).then(r => r.json());
     } catch (e) {
         container.innerHTML = "<p>Could not load project list.</p>";
         return;
@@ -66,7 +75,7 @@ async function loadProjects() {
 
     for (const entry of list) {
         const folder = entry.folder;
-        const base = `Projects/${folder}/`; // relative path
+        const base = `${ROOT}Projects/${folder}/`;
 
         // Load settings.cfg
         let cfg;
@@ -77,14 +86,20 @@ async function loadProjects() {
             continue;
         }
 
-        let name = cfg.meta?.name || folder;
-        // Use relative path to "Files" folder inside each project
-        let glb = cfg.files?.Glb ? `${base}Files/${cfg.files.Glb}` : "Placeholder.glb";
-        let thumbnail = cfg.files?.thumbnail ? `${base}Files/${cfg.files.thumbnail}` : "Placeholder.png";
+        const name = cfg.meta?.name || folder;
+
+        // Correct URLs for GitHub Pages
+        const glb = cfg.files?.Glb
+            ? `${base}Files/${cfg.files.Glb}`
+            : `${ROOT}Placeholder.glb`;
+
+        const thumbnail = cfg.files?.thumbnail
+            ? `${base}Files/${cfg.files.thumbnail}`
+            : `${ROOT}Placeholder.png`;
 
         // Build card
         const card = document.createElement("a");
-        card.href = base + "index.html";
+        card.href = `${base}index.html`;
         card.className = "card";
         card.innerHTML = `
             <div class="model-wrapper">
@@ -104,9 +119,9 @@ async function loadProjects() {
     }
 }
 
-/* -----------------------------------------
-   Parse settings.cfg (INI-style)
------------------------------------------ */
+/* --------------------------------------------------------
+   settings.cfg Reader
+--------------------------------------------------------- */
 async function loadCFG(url) {
     const text = await fetch(url).then(r => r.text());
     const lines = text.split(/\r?\n/);
