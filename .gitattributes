@@ -1,0 +1,4 @@
+*.glb binary
+*.gltf text/plain
+*.bin binary
+*.glb filter=lfs diff=lfs merge=lfs -text
