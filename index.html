@@ -90,11 +90,11 @@ async function loadProjects() {
 
         // Correct URLs for GitHub Pages
         const glb = cfg.files?.Glb
-            ? `${base}Files/${cfg.files.Glb}`
+            ? `${base}files/${cfg.files.Glb}`
             : `${ROOT}Placeholder.glb`;
 
         const thumbnail = cfg.files?.thumbnail
-            ? `${base}Files/${cfg.files.thumbnail}`
+            ? `${base}files/${cfg.files.thumbnail}`
             : `${ROOT}Placeholder.png`;
 
         // Build card
