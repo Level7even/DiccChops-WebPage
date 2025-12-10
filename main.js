@@ -1,10 +1,33 @@
-document.addEventListener("DOMContentLoaded", () => {
-    loadProjects();
-});
+// Encode paths safely for URLs
+function safePath(path) {
+    return path.split("/").map(encodeURIComponent).join("/");
+}
 
-// -----------------------------
-// Load Projects dynamically
-// -----------------------------
+// Load settings.cfg
+async function loadCFG(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
+    const text = await response.text();
+    const lines = text.split(/\r?\n/);
+    const cfg = {};
+    let section = null;
+    for (let raw of lines) {
+        let line = raw.trim();
+        if (!line || line.startsWith("#") || line.startsWith(";")) continue;
+        if (line.startsWith("[") && line.endsWith("]")) {
+            section = line.slice(1, -1);
+            cfg[section] = {};
+            continue;
+        }
+        if (section && line.includes("=")) {
+            let [key, val] = line.split("=");
+            cfg[section][key.trim()] = val.trim().replace(/^"|"$/g, "");
+        }
+    }
+    return cfg;
+}
+
+// Load all project cards dynamically
 async function loadProjects() {
     const container = document.getElementById("projectGrid");
     if (!container) return console.error("projectGrid not found!");
@@ -14,15 +37,14 @@ async function loadProjects() {
         projectList = await fetch("Projects/projects.json").then(r => r.json());
     } catch (e) {
         container.innerHTML = "<p style='text-align:center;'>Could not load project list.</p>";
-        console.error("Failed to load projects.json. Check folder name and json format.", e);
+        console.error("Failed to load projects.json", e);
         return;
     }
 
     for (const entry of projectList) {
         const folder = entry.folder;
-        const base = `Projects/${folder}/`; 
+        const base = `Projects/${folder}/`;
 
-        // Load settings.cfg
         let cfg;
         try {
             cfg = await loadCFG(base + "settings.cfg");
@@ -32,22 +54,18 @@ async function loadProjects() {
         }
 
         const name = cfg.meta?.name || folder;
-
-        const glbFile = cfg.files?.Glb || cfg.files?.glb; 
+        const glbFile = cfg.files?.Glb || cfg.files?.glb;
         const thumbFile = cfg.files?.thumbnail || cfg.files?.Thumbnail;
 
-        const glb = glbFile ? encodeURI(`${base}Files/${glbFile}`) : "Placeholder.glb";
-        const thumbnail = thumbFile ? encodeURI(`${base}Files/${thumbFile}`) : "Placeholder.png";
+        const glb = glbFile ? safePath(`${base}Files/${glbFile}`) : "Placeholder.glb";
+        const thumbnail = thumbFile ? safePath(`${base}Files/${thumbFile}`) : "Placeholder.png";
 
-
-        console.log(`Loading Project: ${name}`, { glbPath: glb, thumbPath: thumbnail });
-
-        // Create project card
+        // Create card
         const card = document.createElement("a");
-        card.href = `${base}index.html`;
+        card.href = `${safePath(base)}index.html`;
         card.className = "card";
 
-        // Model wrapper with tooltip
+        // Model wrapper
         const wrapper = document.createElement("div");
         wrapper.className = "model-wrapper";
 
@@ -63,13 +81,12 @@ async function loadProjects() {
         mv.setAttribute("shadow-intensity", "1");
         mv.setAttribute("camera-controls", "");
         mv.setAttribute("auto-rotate", "");
-        mv.setAttribute("touch-action", "pan-y");
         mv.style.width = "100%";
         mv.style.height = "200px";
         mv.style.borderRadius = "8px";
         mv.style.backgroundColor = "#222";
-
         wrapper.appendChild(mv);
+
         card.appendChild(wrapper);
 
         const title = document.createElement("h3");
@@ -80,32 +97,4 @@ async function loadProjects() {
     }
 }
 
-// -----------------------------
-// Load settings.cfg (INI-style)
-// -----------------------------
-async function loadCFG(url) {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    
-    const text = await response.text();
-    const lines = text.split(/\r?\n/);
-    const cfg = {};
-    let section = null;
-
-    for (let raw of lines) {
-        let line = raw.trim();
-        if (!line || line.startsWith("#") || line.startsWith(";")) continue;
-
-        if (line.startsWith("[") && line.endsWith("]")) {
-            section = line.slice(1, -1);
-            cfg[section] = {};
-            continue;
-        }
-
-        if (section && line.includes("=")) {
-            let [key, val] = line.split("=");
-            cfg[section][key.trim()] = val.trim().replace(/^"|"$/g, "");
-        }
-    }
-    return cfg;
-}
+document.addEventListener("DOMContentLoaded", loadProjects);
