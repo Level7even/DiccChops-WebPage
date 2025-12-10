@@ -36,8 +36,9 @@ async function loadProjects() {
         const glbFile = cfg.files?.Glb || cfg.files?.glb; 
         const thumbFile = cfg.files?.thumbnail || cfg.files?.Thumbnail;
 
-        const glb = glbFile ? `${base}Files/${glbFile}` : "Placeholder.glb";
-        const thumbnail = thumbFile ? `${base}Files/${thumbFile}` : "Placeholder.png";
+        const glb = glbFile ? encodeURI(`${base}Files/${glbFile}`) : "Placeholder.glb";
+        const thumbnail = thumbFile ? encodeURI(`${base}Files/${thumbFile}`) : "Placeholder.png";
+
 
         console.log(`Loading Project: ${name}`, { glbPath: glb, thumbPath: thumbnail });
 
