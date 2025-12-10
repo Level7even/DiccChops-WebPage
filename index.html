@@ -16,6 +16,34 @@
 <meta property="og:image" content="https://diccchops.com/Icon.webp">
 <meta property="og:url" content="https://diccchops.com">
 <meta property="og:type" content="website">
+
+<style>
+/* ---------------------------
+   Tooltip for Model Viewer
+---------------------------- */
+.model-wrapper {
+    position: relative; /* needed for absolute tooltip positioning */
+}
+
+.model-tooltip {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 10;
+}
+
+.model-wrapper:hover .model-tooltip {
+    opacity: 1;
+}
+</style>
 </head>
 <body>
 
@@ -47,8 +75,6 @@
     <p>© 2025 DiccChops.com — All Rights Reserved.</p>
 </footer>
 
-code
-Html
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     loadProjects();
@@ -63,8 +89,6 @@ async function loadProjects() {
 
     let projectList;
     try {
-        // FIXED: Removed leading slash. Now looks in "Projects" folder relative to this file.
-        // Ensure your folder is named "Projects" (Capital P) or change this string to "projects".
         projectList = await fetch("Projects/projects.json").then(r => r.json());
     } catch (e) {
         container.innerHTML = "<p style='text-align:center;'>Could not load project list.</p>";
@@ -74,7 +98,6 @@ async function loadProjects() {
 
     for (const entry of projectList) {
         const folder = entry.folder;
-        // FIXED: Removed leading slash to make path relative
         const base = `Projects/${folder}/`; 
 
         // Load settings.cfg
@@ -88,39 +111,48 @@ async function loadProjects() {
 
         const name = cfg.meta?.name || folder;
 
-        // FIXED: Robust Key Handling
-        // We look for 'glb' or 'Glb' to prevent capitalization errors
         const glbFile = cfg.files?.Glb || cfg.files?.glb; 
         const thumbFile = cfg.files?.thumbnail || cfg.files?.Thumbnail;
 
-        // Build Paths
-        // If the CFG has a file, append it to base + "Files/"
         const glb = glbFile ? `${base}Files/${glbFile}` : "Placeholder.glb";
         const thumbnail = thumbFile ? `${base}Files/${thumbFile}` : "Placeholder.png";
 
-        // Debugging: Check your console to see exactly what path is being generated
         console.log(`Loading Project: ${name}`, { glbPath: glb, thumbPath: thumbnail });
 
         // Create project card
         const card = document.createElement("a");
         card.href = `${base}index.html`;
         card.className = "card";
-        card.innerHTML = `
-            <div class="model-wrapper">
-                <model-viewer
-                    alt="${name}"
-                    src="${glb}"
-                    poster="${thumbnail}"
-                    shadow-intensity="1"
-                    camera-controls
-                    auto-rotate
-                    touch-action="pan-y"
-                    style="width:100%; height:200px; border-radius:8px; background-color: #222;"
-                    loading="eager">
-                </model-viewer>
-            </div>
-            <h3>${name}</h3>
-        `;
+
+        // Model wrapper with tooltip
+        const wrapper = document.createElement("div");
+        wrapper.className = "model-wrapper";
+
+        const tooltip = document.createElement("div");
+        tooltip.className = "model-tooltip";
+        tooltip.textContent = "Controls: Orbit = Drag, Zoom = Scroll, Pan = Shift + Drag";
+        wrapper.appendChild(tooltip);
+
+        const mv = document.createElement("model-viewer");
+        mv.setAttribute("alt", name);
+        mv.setAttribute("src", glb);
+        mv.setAttribute("poster", thumbnail);
+        mv.setAttribute("shadow-intensity", "1");
+        mv.setAttribute("camera-controls", "");
+        mv.setAttribute("auto-rotate", "");
+        mv.setAttribute("touch-action", "pan-y");
+        mv.style.width = "100%";
+        mv.style.height = "200px";
+        mv.style.borderRadius = "8px";
+        mv.style.backgroundColor = "#222";
+
+        wrapper.appendChild(mv);
+        card.appendChild(wrapper);
+
+        const title = document.createElement("h3");
+        title.textContent = name;
+        card.appendChild(title);
+
         container.appendChild(card);
     }
 }
@@ -149,14 +181,11 @@ async function loadCFG(url) {
 
         if (section && line.includes("=")) {
             let [key, val] = line.split("=");
-            // We keep the key case-sensitive here to match your other script, 
-            // but we handled the lookup (Glb vs glb) in the main function above.
             cfg[section][key.trim()] = val.trim().replace(/^"|"$/g, "");
         }
     }
     return cfg;
 }
 </script>
-
 </body>
 </html>
