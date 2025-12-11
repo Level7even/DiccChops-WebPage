@@ -1,51 +1,54 @@
 const base = "https://copyparty.dankserver.net/diccchops/";
 
-// 1. Get folder name from URL
-const params = new URLSearchParams(window.location.search);
-const project = params.get("project");
+async function main() {
+    const params = new URLSearchParams(window.location.search);
+    const project = params.get("project");
 
-if (project) {
+    if (!project) {
+        document.getElementById("projectName").textContent = "No project specified";
+        return;
+    }
+
     try {
-        // 2. Load settings.cfg from Copyparty
+        // Fetch settings.cfg
         const cfgText = await fetch(`${base}${project}/settings.cfg`).then(r => r.text());
         const cfg = parseCfg(cfgText);
 
-        // 3. Populate the page
-        document.getElementById("projectName").textContent = cfg.meta.name;
-        document.getElementById("projectDescription").textContent = cfg.meta.description;
-        document.getElementById("projectTags").textContent = cfg.meta.tags;
-        document.getElementById("projectAuthor").textContent = cfg.meta.author;
-        document.getElementById("projectVisibility").textContent = cfg.visibility.mode;
+        // Populate text
+        document.getElementById("projectName").textContent = cfg.meta.name || project;
+        document.getElementById("projectDescription").textContent = cfg.meta.description || "";
+        document.getElementById("projectTags").textContent = cfg.meta.tags || "";
+        document.getElementById("projectAuthor").textContent = cfg.meta.author || "";
+        document.getElementById("projectVisibility").textContent = cfg.visibility?.mode || "unknown";
 
         // Set model-viewer src
         const viewer = document.getElementById("viewer");
-        viewer.src = `${base}${project}/${cfg.files.primary}`;
-        viewer.poster = `${base}${project}/${cfg.files.thumbnail}`;
+        if (cfg.files.primary) viewer.src = `${base}${project}/${cfg.files.primary}`;
+        if (cfg.files.thumbnail) viewer.poster = `${base}${project}/${cfg.files.thumbnail}`;
 
         // Populate file list
         const fileList = document.getElementById("fileList");
-        for (const file of Object.values(cfg.files)) {
+        Object.values(cfg.files).forEach(file => {
             const div = document.createElement("div");
             div.className = "file-item";
             div.innerHTML = `<span>${file}</span>
-                            <button onclick="window.open('${base}${project}/${file}', '_blank')">Open</button>`;
+                             <button onclick="window.open('${base}${project}/${file}', '_blank')">Open</button>`;
             fileList.appendChild(div);
-        }
+        });
+
     } catch (err) {
         console.error("Failed to load project:", project, err);
         document.getElementById("projectName").textContent = "Failed to load project";
     }
-} else {
-    document.getElementById("projectName").textContent = "No project specified";
 }
 
-// Reuse your existing parseCfg from main.js
+// Simple INI parser
 function parseCfg(text) {
     const result = {};
     let section = "";
     text.split(/\r?\n/).forEach(line => {
         line = line.trim();
-        if (!line || line.startsWith("#")) return;
+        if (!line || line.startsWith("#") || line.startsWith(";")) return;
         if (line.startsWith("[") && line.endsWith("]")) {
             section = line.slice(1, -1);
             result[section] = {};
@@ -56,3 +59,6 @@ function parseCfg(text) {
     });
     return result;
 }
+
+// Wait for DOM
+document.addEventListener("DOMContentLoaded", main);
