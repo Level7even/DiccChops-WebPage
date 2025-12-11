@@ -14,6 +14,16 @@ async function main() {
         const cfgText = await fetch(`${base}${project}/settings.cfg`).then(r => r.text());
         const cfg = parseCfg(cfgText);
 
+        // Auto-detect model if primary not defined
+        let primaryModel = cfg.files.primary;
+        if (!primaryModel) {
+            primaryModel = await autoDetectModel(project);
+        }
+
+        if (!primaryModel) {
+            console.warn(`No primary model found for project ${project}`);
+        }
+
         // Populate text
         document.getElementById("projectName").textContent = cfg.meta.name || project;
         document.getElementById("projectDescription").textContent = cfg.meta.description || "";
@@ -23,7 +33,7 @@ async function main() {
 
         // Set model-viewer src
         const viewer = document.getElementById("viewer");
-        if (cfg.files.primary) viewer.src = `${base}${project}/${cfg.files.primary}`;
+        if (primaryModel) viewer.src = `${base}${project}/${primaryModel}`;
         if (cfg.files.thumbnail) viewer.poster = `${base}${project}/${cfg.files.thumbnail}`;
 
         // Populate file list
@@ -58,6 +68,25 @@ function parseCfg(text) {
         }
     });
     return result;
+}
+
+// Auto-detect .glb or .gltf in Copyparty folder
+async function autoDetectModel(project) {
+    try {
+        const html = await fetch(`${base}${project}/`).then(r => r.text());
+        const files = [];
+        const fileRegex = /href="([^"]+)"/gi;
+        let m;
+        while ((m = fileRegex.exec(html)) !== null) {
+            const f = m[1];
+            if (!f.includes("/")) files.push(f);
+        }
+        // Return first .glb or .gltf
+        return files.find(f => f.toLowerCase().endsWith(".glb") || f.toLowerCase().endsWith(".gltf"));
+    } catch (err) {
+        console.warn("Failed to auto-detect model for", project, err);
+        return null;
+    }
 }
 
 // Wait for DOM
