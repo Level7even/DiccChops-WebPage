@@ -38,11 +38,14 @@ async function main() {
 
         // Populate file list
         const fileList = document.getElementById("fileList");
-        Object.values(cfg.files).forEach(file => {
+        Object.entries(cfg.files).forEach(([key, file]) => {
+            // Skip thumbnail
+            if (key.toLowerCase() === "thumbnail") return;
+
             const div = document.createElement("div");
             div.className = "file-item";
             div.innerHTML = `<span>${file}</span>
-                             <button onclick="window.open('${base}${project}/${file}', '_blank')">Open</button>`;
+                            <button onclick="window.open('${base}${project}/${file}', '_blank')">Open</button>`;
             fileList.appendChild(div);
         });
 
