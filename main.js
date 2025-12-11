@@ -4,7 +4,7 @@ async function loadProjects() {
     // 1. Load Copyparty directory HTML
     const html = await fetch(base).then(r => r.text());
 
-    // Extract folder names (Copyparty supports multiple formats)
+    // Extract folder names
     const folders = extractFolders(html);
 
     for (const folder of folders) {
@@ -16,6 +16,15 @@ async function loadProjects() {
             });
 
             const cfg = parseCfg(cfgText);
+
+            // Skip hidden projects
+            const visibilityMode = cfg.visibility?.mode?.toLowerCase();
+            const isPublic = cfg.visibility?.public === "true";
+
+            if (visibilityMode === "hidden" || visibilityMode === "linkonly" || !isPublic) {
+                console.log(`Skipping hidden project: ${folder}`);
+                continue;
+            }
 
             // Build card
             createCard(folder, cfg, base);
@@ -32,8 +41,6 @@ async function loadProjects() {
 
 function extractFolders(html) {
     const folders = [];
-
-    // Matches <a href="FolderName/">
     const folderRegex = /href="([^"?\/]+)\//gi;
 
     let m;
@@ -41,7 +48,7 @@ function extractFolders(html) {
         const name = m[1];
         if (!name.startsWith(".")) folders.push(name);
     }
-    return [...new Set(folders)]; // remove dupes
+    return [...new Set(folders)]; // remove duplicates
 }
 
 /* -------------------------------------------------------------------------- */
@@ -56,14 +63,12 @@ function parseCfg(text) {
         line = line.trim();
         if (!line || line.startsWith("#") || line.startsWith(";")) return;
 
-        // Section [meta], [files], ...
         if (line.startsWith("[") && line.endsWith("]")) {
             section = line.slice(1, -1);
             result[section] = {};
             return;
         }
 
-        // Key = Value
         const eq = line.indexOf("=");
         if (eq !== -1) {
             const key = line.slice(0, eq).trim();
@@ -83,11 +88,10 @@ function parseCfg(text) {
 async function createCard(folder, cfg, base) {
     const container = document.querySelector(".grid");
 
-    // Try loading model: cfg.files.primary OR auto-detect
     let model = cfg?.files?.primary;
 
     if (!model) {
-        model = await autoDetectModel(base, folder); // fallback
+        model = await autoDetectModel(base, folder);
     }
 
     if (!model) {
@@ -110,7 +114,6 @@ async function createCard(folder, cfg, base) {
                 auto-rotate>
             </model-viewer>
         </div>
-
         <h3>${cfg?.meta?.name || folder}</h3>
     `;
 
@@ -123,7 +126,6 @@ async function createCard(folder, cfg, base) {
 
 async function autoDetectModel(base, folder) {
     const html = await fetch(`${base}${folder}/`).then(r => r.text());
-
     const files = [];
     const fileRegex = /href="([^"]+)"/gi;
     let m;
@@ -138,7 +140,6 @@ async function autoDetectModel(base, folder) {
         f.toLowerCase().endsWith(".gltf")
     );
 }
-
 
 /* -------------------------------------------------------------------------- */
 
