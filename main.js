@@ -1,100 +1,145 @@
-// Encode paths safely for URLs
-function safePath(path) {
-    return path.split("/").map(encodeURIComponent).join("/");
-}
+async function loadProjects() {
+    const base = "https://copyparty.dankserver.net/diccchops/";
 
-// Load settings.cfg
-async function loadCFG(url) {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
-    const text = await response.text();
-    const lines = text.split(/\r?\n/);
-    const cfg = {};
-    let section = null;
-    for (let raw of lines) {
-        let line = raw.trim();
-        if (!line || line.startsWith("#") || line.startsWith(";")) continue;
-        if (line.startsWith("[") && line.endsWith("]")) {
-            section = line.slice(1, -1);
-            cfg[section] = {};
-            continue;
-        }
-        if (section && line.includes("=")) {
-            let [key, val] = line.split("=");
-            cfg[section][key.trim()] = val.trim().replace(/^"|"$/g, "");
+    // 1. Load Copyparty directory HTML
+    const html = await fetch(base).then(r => r.text());
+
+    // Extract folder names (Copyparty supports multiple formats)
+    const folders = extractFolders(html);
+
+    for (const folder of folders) {
+        try {
+            const cfgURL = `${base}${folder}/settings.cfg`;
+            const cfgText = await fetch(cfgURL).then(r => {
+                if (!r.ok) throw new Error();
+                return r.text();
+            });
+
+            const cfg = parseCfg(cfgText);
+
+            // Build card
+            createCard(folder, cfg, base);
+
+        } catch (err) {
+            console.warn(`Skipping ${folder} (No settings.cfg)`);
         }
     }
-    return cfg;
 }
 
-// Load all project cards dynamically
-async function loadProjects() {
-    const container = document.getElementById("projectGrid");
-    if (!container) return console.error("projectGrid not found!");
+/* -------------------------------------------------------------------------- */
+/*                           1. Extract Copyparty Folders                     */
+/* -------------------------------------------------------------------------- */
 
-    let projectList;
-    try {
-        projectList = await fetch("Projects/projects.json").then(r => r.json());
-    } catch (e) {
-        container.innerHTML = "<p style='text-align:center;'>Could not load project list.</p>";
-        console.error("Failed to load projects.json", e);
+function extractFolders(html) {
+    const folders = [];
+
+    // Matches <a href="FolderName/">
+    const folderRegex = /href="([^"?\/]+)\//gi;
+
+    let m;
+    while ((m = folderRegex.exec(html)) !== null) {
+        const name = m[1];
+        if (!name.startsWith(".")) folders.push(name);
+    }
+    return [...new Set(folders)]; // remove dupes
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              2. CFG PARSER                                 */
+/* -------------------------------------------------------------------------- */
+
+function parseCfg(text) {
+    const result = {};
+    let section = "";
+
+    text.split(/\r?\n/).forEach(line => {
+        line = line.trim();
+        if (!line || line.startsWith("#") || line.startsWith(";")) return;
+
+        // Section [meta], [files], ...
+        if (line.startsWith("[") && line.endsWith("]")) {
+            section = line.slice(1, -1);
+            result[section] = {};
+            return;
+        }
+
+        // Key = Value
+        const eq = line.indexOf("=");
+        if (eq !== -1) {
+            const key = line.slice(0, eq).trim();
+            let val = line.slice(eq + 1).trim();
+            val = val.replace(/^"|"$/g, ""); // remove quotes
+            result[section][key] = val;
+        }
+    });
+
+    return result;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              3. CREATE CARD                                */
+/* -------------------------------------------------------------------------- */
+
+async function createCard(folder, cfg, base) {
+    const container = document.querySelector(".grid");
+
+    // Try loading model: cfg.files.primary OR auto-detect
+    let model = cfg?.files?.primary;
+
+    if (!model) {
+        model = await autoDetectModel(base, folder); // fallback
+    }
+
+    if (!model) {
+        console.warn("No model found in", folder);
         return;
     }
 
-    for (const entry of projectList) {
-        const folder = entry.folder;
-        const base = `Projects/${folder}/`;
+    const thumb = cfg?.files?.thumbnail;
 
-        let cfg;
-        try {
-            cfg = await loadCFG(base + "settings.cfg");
-        } catch (e) {
-            console.warn(`Could not load ${base}settings.cfg`, e);
-            continue;
-        }
+    const card = document.createElement("a");
+    card.className = "card";
+    card.href = `/ModelPage/PageV1/index.html?project=${encodeURIComponent(folder)}`;
 
-        const name = cfg.meta?.name || folder;
-        const glbFile = cfg.files?.Glb || cfg.files?.glb;
-        const thumbFile = cfg.files?.thumbnail || cfg.files?.Thumbnail;
+    card.innerHTML = `
+        <div class="model-wrapper">
+            <model-viewer 
+                src="${base}${folder}/${model}" 
+                poster="${thumb ? base + folder + '/' + thumb : ''}"
+                camera-controls 
+                auto-rotate>
+            </model-viewer>
+        </div>
 
-        const glb = glbFile ? safePath(`${base}Files/${glbFile}`) : "Placeholder.glb";
-        const thumbnail = thumbFile ? safePath(`${base}Files/${thumbFile}`) : "Placeholder.png";
+        <h3>${cfg?.meta?.name || folder}</h3>
+    `;
 
-        // Create card
-        const card = document.createElement("a");
-        card.href = `${safePath(base)}index.html`;
-        card.className = "card";
-
-        // Model wrapper
-        const wrapper = document.createElement("div");
-        wrapper.className = "model-wrapper";
-
-        const tooltip = document.createElement("div");
-        tooltip.className = "model-tooltip";
-        tooltip.textContent = "Controls: Orbit = Drag, Zoom = Scroll, Pan = Shift + Drag";
-        wrapper.appendChild(tooltip);
-
-        const mv = document.createElement("model-viewer");
-        mv.setAttribute("alt", name);
-        mv.setAttribute("src", glb);
-        mv.setAttribute("poster", thumbnail);
-        mv.setAttribute("shadow-intensity", "1");
-        mv.setAttribute("camera-controls", "");
-        mv.setAttribute("auto-rotate", "");
-        mv.style.width = "100%";
-        mv.style.height = "200px";
-        mv.style.borderRadius = "8px";
-        mv.style.backgroundColor = "#222";
-        wrapper.appendChild(mv);
-
-        card.appendChild(wrapper);
-
-        const title = document.createElement("h3");
-        title.textContent = name;
-        card.appendChild(title);
-
-        container.appendChild(card);
-    }
+    container.appendChild(card);
 }
 
-document.addEventListener("DOMContentLoaded", loadProjects);
+/* -------------------------------------------------------------------------- */
+/*                        AUTO-DETECT .glb OR .gltf                           */
+/* -------------------------------------------------------------------------- */
+
+async function autoDetectModel(base, folder) {
+    const html = await fetch(`${base}${folder}/`).then(r => r.text());
+
+    const files = [];
+    const fileRegex = /href="([^"]+)"/gi;
+    let m;
+
+    while ((m = fileRegex.exec(html)) !== null) {
+        const f = m[1];
+        if (!f.includes("/")) files.push(f);
+    }
+
+    return files.find(f => 
+        f.toLowerCase().endsWith(".glb") ||
+        f.toLowerCase().endsWith(".gltf")
+    );
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+loadProjects();
