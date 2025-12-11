@@ -24,11 +24,11 @@ if (project) {
 
         // Populate file list
         const fileList = document.getElementById("fileList");
-        for (const [key, file] of Object.entries(cfg.files)) {
+        for (const file of Object.values(cfg.files)) {
             const div = document.createElement("div");
             div.className = "file-item";
-            div.innerHTML = `<span>${key}: ${file}</span>
-                             <button onclick="window.open('${base}${project}/${file}', '_blank')">Open</button>`;
+            div.innerHTML = `<span>${file}</span>
+                            <button onclick="window.open('${base}${project}/${file}', '_blank')">Open</button>`;
             fileList.appendChild(div);
         }
     } catch (err) {
