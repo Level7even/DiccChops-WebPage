@@ -1,10 +1,10 @@
 const base = "https://copyparty.dankserver.net/diccchops/";
 
-// Map dropdown values to HDR paths
-const HDR_MAP = {
-    "neutral": "../Projects/HDRs/kloofendal_misty_morning_puresky_4k.hdr",
-    "sunset": "../Projects/HDRs/qwantani_sunset_puresky_4k.hdr",
-    "studio": "../Projects/HDRs/table_mountain_2_puresky_4k.hdr"
+// Environment presets with safe public HDR URLs
+const environments = {
+    neutral: "../../Projects/HDRs/qwantani_moon_noon_pureskyr_4k.hdr",
+    sunset: "../../Projects/HDRs/qwantani_sunset_puresky_4k.hdr",
+    studio: "../../Projects/HDRs/table_mountain_2_puresky_4k.hdr"
 };
 
 async function main() {
@@ -38,20 +38,19 @@ async function main() {
         document.getElementById("projectAuthor").textContent = cfg.meta.author || "";
         document.getElementById("projectVisibility").textContent = cfg.visibility?.mode || "unknown";
 
+        // Set model-viewer src
         const viewer = document.getElementById("viewer");
-
-        // Set model and poster
         if (primaryModel) viewer.src = `${base}${project}/${primaryModel}`;
         if (cfg.files.thumbnail) viewer.poster = `${base}${project}/${cfg.files.thumbnail}`;
 
-        // Set default HDR environment (Neutral)
-        viewer.environmentImage = HDR_MAP["neutral"];
+        // Set default environment
+        viewer.environmentImage = environments["neutral"];
 
-        // Environment dropdown
+        // Environment dropdown listener
         const envSelect = document.getElementById("envSelect");
         envSelect.addEventListener("change", () => {
             const val = envSelect.value.toLowerCase();
-            viewer.environmentImage = HDR_MAP[val] || HDR_MAP["neutral"];
+            viewer.environmentImage = environments[val] || environments["neutral"];
         });
 
         // Populate file list
