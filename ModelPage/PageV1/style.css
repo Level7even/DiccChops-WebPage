@@ -101,13 +101,7 @@ header {
 }
 
 
-/* ---------------------------
-   Model Viewer Section
----------------------------- */
-.model-viewer-section {
-    margin-bottom: 40px;
-    text-align: center;
-}
+
 .model-wrapper {
     width: 100%;
     max-width: 800px;
@@ -120,13 +114,9 @@ header {
 
 model-viewer {
     width: 100%;
-    max-width: 800px;
     height: 450px;
+    display: block;
     border-radius: 12px;
-    background: #1e1e1e;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-    margin-bottom: 20px;
-    color-space: linear;
 }
 
 /* Environment Dropdown */

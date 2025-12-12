@@ -49,22 +49,17 @@
 
     <!-- Model Viewer Section -->
     <section class="model-viewer-section">
-      <div class="model-wrapper">
-          <model-viewer id="viewer"
-              src=""
-              poster=""
-              alt="3D Model"
-              camera-controls
-              auto-rotate
-              shadow-intensity="2"
-              exposure="1.5"
-              interaction-prompt="auto"
-              reveal="auto"
-              environment-image="neutral.hdr"
-          ></model-viewer>
-         </div>
-
-        <!-- Environment Switch -->
+        <div class="model-wrapper">
+            <model-viewer id="viewer"
+                src=""
+                poster=""
+                alt="3D Model"
+                camera-controls
+                auto-rotate
+                shadow-intensity="1"
+                interaction-prompt="auto">
+            </model-viewer>
+        </div>
         <div class="env-select-wrapper">
             <label for="envSelect">Environment:</label>
             <select id="envSelect" class="env-select">
