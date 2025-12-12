@@ -36,6 +36,7 @@
 <main>
 <div class="container">
 
+    <!-- Project Header -->
     <section class="project-header">
         <h1 id="projectName">Loading…</h1>
         <p id="projectDescription" class="description"></p>
@@ -46,17 +47,19 @@
         </div>
     </section>
 
+    <!-- Model Viewer Section -->
     <section class="model-viewer-section">
-        <model-viewer id="viewer"
-            src=""
-            poster=""
-            alt="3D Model"
-            camera-controls
-            auto-rotate
-            shadow-intensity="1"
-            interaction-prompt="auto"
-        ></model-viewer>
-
+        <div class="model-wrapper">
+            <model-viewer id="viewer"
+                src=""
+                poster=""
+                alt="3D Model"
+                camera-controls
+                auto-rotate
+                shadow-intensity="1"
+                interaction-prompt="auto">
+            </model-viewer>
+        </div>
         <div class="env-select-wrapper">
             <label for="envSelect">Environment:</label>
             <select id="envSelect" class="env-select">
@@ -67,6 +70,7 @@
         </div>
     </section>
 
+    <!-- Files Section -->
     <section class="files-section">
         <h2>Project Files</h2>
         <div id="fileList" class="file-list"></div>
