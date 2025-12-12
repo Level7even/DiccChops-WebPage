@@ -1,4 +1,5 @@
 const base = "https://copyparty.dankserver.net/diccchops/";
+const hdrBase = "../../Projects/HDRs/"; // local HDR folder
 
 async function main() {
     const params = new URLSearchParams(window.location.search);
@@ -20,9 +21,7 @@ async function main() {
             primaryModel = await autoDetectModel(project);
         }
 
-        if (!primaryModel) {
-            console.warn(`No primary model found for project ${project}`);
-        }
+        if (!primaryModel) console.warn(`No primary model found for project ${project}`);
 
         // Populate text
         document.getElementById("projectName").textContent = cfg.meta.name || project;
@@ -39,7 +38,6 @@ async function main() {
         // Populate file list
         const fileList = document.getElementById("fileList");
         Object.entries(cfg.files).forEach(([key, file]) => {
-            // Skip thumbnail
             if (key.toLowerCase() === "thumbnail") return;
 
             const div = document.createElement("div");
@@ -48,6 +46,27 @@ async function main() {
                             <button onclick="window.open('${base}${project}/${file}', '_blank')">Open</button>`;
             fileList.appendChild(div);
         });
+
+        // HDR environment select
+        const envSelect = document.getElementById("envSelect");
+
+        // dynamically add HDRs from folder
+        const hdrFiles = ["kloofendal_misty_morning_puresky_4k.hdr", "qwantani_sunset_puresky_4k.hdr", "table_mountain_2_puresky_4k.hdr"];
+        envSelect.innerHTML = ""; // clear default
+        hdrFiles.forEach((hdr, index) => {
+            const option = document.createElement("option");
+            option.value = `${hdrBase}${hdr}`;
+            option.textContent = `HDR ${index + 1}`;
+            envSelect.appendChild(option);
+        });
+
+        // Listen for HDR change
+        envSelect.addEventListener("change", () => {
+            viewer.environmentImage = envSelect.value;
+        });
+
+        // Set initial HDR
+        viewer.environmentImage = envSelect.value;
 
     } catch (err) {
         console.error("Failed to load project:", project, err);
@@ -84,7 +103,6 @@ async function autoDetectModel(project) {
             const f = m[1];
             if (!f.includes("/")) files.push(f);
         }
-        // Return first .glb or .gltf
         return files.find(f => f.toLowerCase().endsWith(".glb") || f.toLowerCase().endsWith(".gltf"));
     } catch (err) {
         console.warn("Failed to auto-detect model for", project, err);
@@ -92,5 +110,4 @@ async function autoDetectModel(project) {
     }
 }
 
-// Wait for DOM
 document.addEventListener("DOMContentLoaded", main);
