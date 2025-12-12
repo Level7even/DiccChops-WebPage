@@ -1,12 +1,5 @@
 const base = "https://copyparty.dankserver.net/diccchops/";
 
-// Environment presets with safe public HDR URLs
-const environments = {
-    neutral: "../../Projects/HDRs/qwantani_moon_noon_pureskyr_4k.hdr",
-    sunset: "../../Projects/HDRs/qwantani_sunset_puresky_4k.hdr",
-    studio: "../../Projects/HDRs/table_mountain_2_puresky_4k.hdr"
-};
-
 async function main() {
     const params = new URLSearchParams(window.location.search);
     const project = params.get("project");
@@ -43,27 +36,16 @@ async function main() {
         if (primaryModel) viewer.src = `${base}${project}/${primaryModel}`;
         if (cfg.files.thumbnail) viewer.poster = `${base}${project}/${cfg.files.thumbnail}`;
 
-        // Set default environment
-        viewer.environmentImage = environments["neutral"];
-
-        // Environment dropdown listener
-        const envSelect = document.getElementById("envSelect");
-        envSelect.addEventListener("change", () => {
-            const val = envSelect.value.toLowerCase();
-            viewer.environmentImage = environments[val] || environments["neutral"];
-        });
-
         // Populate file list
         const fileList = document.getElementById("fileList");
         Object.entries(cfg.files).forEach(([key, file]) => {
+            // Skip thumbnail
             if (key.toLowerCase() === "thumbnail") return;
 
             const div = document.createElement("div");
             div.className = "file-item";
-            div.innerHTML = `
-                <span>${file}</span>
-                <button onclick="window.open('${base}${project}/${file}', '_blank')">Open</button>
-            `;
+            div.innerHTML = `<span>${file}</span>
+                            <button onclick="window.open('${base}${project}/${file}', '_blank')">Open</button>`;
             fileList.appendChild(div);
         });
 
@@ -102,6 +84,7 @@ async function autoDetectModel(project) {
             const f = m[1];
             if (!f.includes("/")) files.push(f);
         }
+        // Return first .glb or .gltf
         return files.find(f => f.toLowerCase().endsWith(".glb") || f.toLowerCase().endsWith(".gltf"));
     } catch (err) {
         console.warn("Failed to auto-detect model for", project, err);
