@@ -9,25 +9,53 @@ body {
     min-height: 100vh;
 }
 
-/* Header / Navbar */
+/* ---------------------------
+   Header & Navigation
+---------------------------- */
 header {
-    background: #111;
-    padding: 15px 25px;
-    border-bottom: 2px solid #222;
-    text-align: left;
+    background: #1f1f1f;
+    padding: 15px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    position: sticky;
+    top: 0;
+    z-index: 1000; 
 }
 
-header a {
-    color: #fff;
-    text-decoration: none;
+.nav-container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo {
     font-size: 22px;
     font-weight: bold;
+    color: #fff;
+    text-decoration: none;
 }
 
-header a:hover {
-    color: #4a90e2;
+.links {
+    display: flex;
+    gap: 20px;
 }
 
+.links a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 5px 10px;
+    transition: color 0.2s, background 0.2s;
+    border-radius: 4px;
+}
+
+.links a:hover {
+    color: #8ab4f8;
+    background: rgba(255, 255, 255, 0.05);
+}
 /* Main content */
 main {
     flex: 1;

@@ -1,0 +1,153 @@
+/* ============================================
+   GLOBAL BASE
+============================================ */
+body {
+    margin: 0;
+    background: #0d0d0d;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* ---------------------------
+   Header & Navigation
+---------------------------- */
+header {
+    background: #1f1f1f;
+    padding: 15px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    position: sticky;
+    top: 0;
+    z-index: 1000; 
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+}
+
+.links {
+    display: flex;
+    gap: 20px;
+}
+
+.links a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 5px 10px;
+    transition: color 0.2s, background 0.2s;
+    border-radius: 4px;
+}
+
+.links a:hover {
+    color: #8ab4f8;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================
+   ROADMAP PAGE
+============================================ */
+.roadmap-container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 20px;
+}
+
+.roadmap-container h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    opacity: 0.7;
+    margin-bottom: 40px;
+}
+
+/* Sections */
+.section {
+    margin-bottom: 50px;
+}
+
+.section h2 {
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #222;
+}
+
+/* States */
+.done {
+    color: #4ade80; /* Green */
+}
+
+.progress {
+    color: #facc15; /* Yellow */
+}
+
+.future {
+    color: #60a5fa; /* Blue */
+}
+
+/* Roadmap Items */
+.item {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    margin-bottom: 12px;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: 0.2s ease;
+}
+
+.item:hover {
+    border-color: #4a90e2;
+    background: #161616;
+}
+
+/* ============================================
+   FOOTER
+============================================ */
+footer {
+    text-align: center;
+    padding: 25px;
+    margin-top: 60px;
+    color: #888;
+    background: #111;
+    border-top: 2px solid #222;
+}
+
+/* ============================================
+   MOBILE
+============================================ */
+@media (max-width: 600px) {
+
+    .nav-container {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .roadmap-container {
+        padding: 10px;
+    }
+
+    .item {
+        font-size: 14px;
+    }
+}
