@@ -87,6 +87,9 @@ body {
     cursor: pointer;
     transition: 0.2s ease;
 }
+.commercial-form textarea {
+    resize: none;
+}
 
 .commercial-form button:hover {
     background: #3b78ba;
