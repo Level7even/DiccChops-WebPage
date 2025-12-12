@@ -5,18 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DiccChops</title>
 <link rel="icon" href="Icon.webp" type="image/webp">
+
+<!-- Global Styles -->
 <link rel="stylesheet" href="styles.css">
+
+<!-- Card System Styles -->
+<link rel="stylesheet" href="./Comps/ModelCards/Cards.css">
 
 <!-- Model Viewer -->
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
-<!-- Google tag (gtag.js) -->
+<!-- Google Tag -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7F5XKKSWJZ"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-7F5XKKSWJZ');
 </script>
 
@@ -27,17 +31,18 @@
 <meta property="og:url" content="https://diccchops.com">
 <meta property="og:type" content="website">
 </head>
+
 <body>
 
 <header>
     <nav class="nav-container">
-        <a href="index.html" class="logo">My Portfolio</a>
+        <a href="index.html" class="logo">DiccChops</a>
         <div class="links">
             <a href="index.html">Home</a>
             <a href="#portfolio">Portfolio</a>
             <a href="./Pages/AboutTOS/index.html">About & TOS</a>
             <a href="./Pages/ContactMe/contact.html">Contact</a>
-            <a href="./Pages/RoadMap/RoadMap.HTML">Roadmap</a>
+            <a href="./Pages/RoadMap/RoadMap.html">Roadmap</a>
         </div>
     </nav>
 </header>
@@ -48,8 +53,11 @@
         <p>Displayed .stls are simplified for faster loading. The original models are smoother than they appear here.</p>
     </div>
 
+    <!-- Portfolio Container -->
     <section id="portfolio">
         <h2 class="section-title">My Projects</h2>
+
+        <!-- Card Grid is auto-populated by JS -->
         <div class="grid" id="projectGrid"></div>
     </section>
 </main>
@@ -58,7 +66,6 @@
     <p>© 2025 DiccChops.com — All Rights Reserved.</p>
 </footer>
 
-<!-- External JS -->
 <script src="main.js"></script>
 </body>
 </html>
