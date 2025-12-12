@@ -1,10 +1,7 @@
 const base = "https://copyparty.dankserver.net/diccchops/";
 
 async function loadProjects() {
-    // 1. Load Copyparty directory HTML
     const html = await fetch(base).then(r => r.text());
-
-    // Extract folder names
     const folders = extractFolders(html);
 
     for (const folder of folders) {
@@ -17,16 +14,13 @@ async function loadProjects() {
 
             const cfg = parseCfg(cfgText);
 
-            // Skip hidden projects
             const visibilityMode = cfg.visibility?.mode?.toLowerCase();
             const isPublic = cfg.visibility?.public === "true";
 
             if (visibilityMode === "hidden" || visibilityMode === "linkonly" || !isPublic) {
-                console.log(`Skipping hidden project: ${folder}`);
                 continue;
             }
 
-            // Build card
             createCard(folder, cfg, base);
 
         } catch (err) {
@@ -35,23 +29,20 @@ async function loadProjects() {
     }
 }
 
-/* ---------------------------
-   Extract Copyparty Folders
----------------------------- */
+/* --------------------------- */
+
 function extractFolders(html) {
-    const folders = [];
-    const folderRegex = /href="([^"?\/]+)\//gi;
+    const out = [];
+    const reg = /href="([^"?\/]+)\//gi;
     let m;
-    while ((m = folderRegex.exec(html)) !== null) {
-        const name = m[1];
-        if (!name.startsWith(".")) folders.push(name);
+    while ((m = reg.exec(html)) !== null) {
+        if (!m[1].startsWith(".")) out.push(m[1]);
     }
-    return [...new Set(folders)];
+    return [...new Set(out)];
 }
 
-/* ---------------------------
-   Parse settings.cfg
----------------------------- */
+/* --------------------------- */
+
 function parseCfg(text) {
     const result = {};
     let section = "";
@@ -78,36 +69,81 @@ function parseCfg(text) {
     return result;
 }
 
-/* ---------------------------
-   Auto-detect .glb or .gltf
----------------------------- */
+/* --------------------------- */
+
 async function autoDetectModel(base, folder) {
     const html = await fetch(`${base}${folder}/`).then(r => r.text());
     const files = [];
-    const fileRegex = /href="([^"]+)"/gi;
+    const reg = /href="([^"]+)"/gi;
     let m;
-    while ((m = fileRegex.exec(html)) !== null) {
+    while ((m = reg.exec(html)) !== null) {
         const f = m[1];
         if (!f.includes("/")) files.push(f);
     }
 
-    return files.find(f => f.toLowerCase().endsWith(".glb") || f.toLowerCase().endsWith(".gltf"));
+    return files.find(f =>
+        f.toLowerCase().endsWith(".glb") ||
+        f.toLowerCase().endsWith(".gltf")
+    );
 }
 
-/* ---------------------------
-   Create Card with Hover Rotation
----------------------------- */
+/* ----------------------------------------------------------
+   Smooth Hover Rotation (NO SNAP, CORRECT PC DIRECTION)
+----------------------------------------------------------- */
+function enableSmoothRotation(card, viewer) {
+    let targetAz = 0;
+    let targetEl = 75;
+    let currentAz = 0;
+    let currentEl = 75;
+
+    let animating = false;
+
+    function animate() {
+        currentAz += (targetAz - currentAz) * 0.12;
+        currentEl += (targetEl - currentEl) * 0.12;
+
+        viewer.cameraOrbit = `${currentAz}deg ${currentEl}deg auto`;
+
+        if (Math.abs(currentAz - targetAz) > 0.05 ||
+            Math.abs(currentEl - targetEl) > 0.05) {
+            requestAnimationFrame(animate);
+        } else {
+            animating = false;
+        }
+    }
+
+    card.addEventListener("mouseenter", () => {
+        viewer.autoRotate = false;
+    });
+
+    card.addEventListener("mousemove", e => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+
+        // FIXED: correct horizontal rotation direction for PC
+        targetAz = -(x - 0.5) * 120;
+        targetEl = 70 - y * 30;
+
+        if (!animating) {
+            animating = true;
+            requestAnimationFrame(animate);
+        }
+    });
+
+    card.addEventListener("mouseleave", () => {
+        viewer.autoRotate = true;
+    });
+}
+
+/* --------------------------- */
+
 async function createCard(folder, cfg, base) {
     const container = document.querySelector(".grid");
 
     let model = cfg?.files?.primary;
-    if (!model) {
-        model = await autoDetectModel(base, folder);
-    }
-    if (!model) {
-        console.warn("No model found in", folder);
-        return;
-    }
+    if (!model) model = await autoDetectModel(base, folder);
+    if (!model) return;
 
     const thumb = cfg?.files?.thumbnail;
 
@@ -120,8 +156,9 @@ async function createCard(folder, cfg, base) {
             <model-viewer 
                 src="${base}${folder}/${model}" 
                 poster="${thumb ? base + folder + '/' + thumb : ''}"
-                camera-controls 
-                auto-rotate>
+                camera-controls
+                auto-rotate
+                disable-zoom>
             </model-viewer>
         </div>
         <h3>${cfg?.meta?.name || folder}</h3>
@@ -131,23 +168,9 @@ async function createCard(folder, cfg, base) {
 
     const viewer = card.querySelector("model-viewer");
 
-    // Hover-based rotation
-    card.addEventListener("mousemove", (e) => {
-        const rect = card.getBoundingClientRect();
-        const xPercent = (e.clientX - rect.left) / rect.width;
-        const yPercent = (e.clientY - rect.top) / rect.height;
-
-        const azimuth = (xPercent - 0.5) * 180;   // left-right rotation
-        const elevation = 75 - yPercent * 50;     // up-down rotation
-        viewer.cameraOrbit = `${azimuth}deg ${elevation}deg 2.5m`;
-    });
-
-    card.addEventListener("mouseleave", () => {
-        viewer.cameraOrbit = '0deg 75deg 2.5m';
-    });
+    enableSmoothRotation(card, viewer);
 }
 
-/* ---------------------------
-   Start Loading
----------------------------- */
+/* --------------------------- */
+
 loadProjects();
