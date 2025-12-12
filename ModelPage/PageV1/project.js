@@ -14,34 +14,30 @@ async function main() {
         const cfgText = await fetch(`${base}${project}/settings.cfg`).then(r => r.text());
         const cfg = parseCfg(cfgText);
 
-        // Auto-detect model if primary not defined
-        let primaryModel = cfg.files.primary;
-        if (!primaryModel) {
-            primaryModel = await autoDetectModel(project);
-        }
+        let primaryModel = cfg.files.primary || await autoDetectModel(project);
 
-        if (!primaryModel) {
-            console.warn(`No primary model found for project ${project}`);
-        }
-
-        // Populate text
+        // Populate project info
         document.getElementById("projectName").textContent = cfg.meta.name || project;
         document.getElementById("projectDescription").textContent = cfg.meta.description || "";
         document.getElementById("projectTags").textContent = cfg.meta.tags || "";
         document.getElementById("projectAuthor").textContent = cfg.meta.author || "";
         document.getElementById("projectVisibility").textContent = cfg.visibility?.mode || "unknown";
 
-        // Set model-viewer src
+        // Setup model viewer
         const viewer = document.getElementById("viewer");
         if (primaryModel) viewer.src = `${base}${project}/${primaryModel}`;
         if (cfg.files.thumbnail) viewer.poster = `${base}${project}/${cfg.files.thumbnail}`;
 
-        // Populate file list
+        // Environment switching
+        const envSelect = document.getElementById("envSelect");
+        envSelect.addEventListener("change", () => {
+            viewer.environmentImage = `${base}envs/${envSelect.value}.hdr`;
+        });
+
+        // Populate files
         const fileList = document.getElementById("fileList");
         Object.entries(cfg.files).forEach(([key, file]) => {
-            // Skip thumbnail
             if (key.toLowerCase() === "thumbnail") return;
-
             const div = document.createElement("div");
             div.className = "file-item";
             div.innerHTML = `<span>${file}</span>
@@ -55,7 +51,6 @@ async function main() {
     }
 }
 
-// Simple INI parser
 function parseCfg(text) {
     const result = {};
     let section = "";
@@ -73,7 +68,6 @@ function parseCfg(text) {
     return result;
 }
 
-// Auto-detect .glb or .gltf in Copyparty folder
 async function autoDetectModel(project) {
     try {
         const html = await fetch(`${base}${project}/`).then(r => r.text());
@@ -84,13 +78,10 @@ async function autoDetectModel(project) {
             const f = m[1];
             if (!f.includes("/")) files.push(f);
         }
-        // Return first .glb or .gltf
         return files.find(f => f.toLowerCase().endsWith(".glb") || f.toLowerCase().endsWith(".gltf"));
-    } catch (err) {
-        console.warn("Failed to auto-detect model for", project, err);
+    } catch {
         return null;
     }
 }
 
-// Wait for DOM
 document.addEventListener("DOMContentLoaded", main);
