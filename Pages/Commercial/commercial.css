@@ -100,3 +100,24 @@ footer {
     color: #888;
     font-size: 14px;
 }
+/* Responsive */
+@media (max-width: 600px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .box {
+        padding: 20px;
+    }
+
+    .file-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    model-viewer {
+        height: 300px;
+    }
+}
