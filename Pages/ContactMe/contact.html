@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact | DiccChops</title>
+<link rel="icon" href="../Icon.webp" type="image/webp">
+<link rel="stylesheet" href="contact.css">
+
+<!-- Model Viewer -->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7F5XKKSWJZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7F5XKKSWJZ');
+</script>
+</head>
+
+<body>
+
+<header>
+    <nav class="nav-container">
+        <a href="../index.html" class="logo">DiccChops</a>
+        <div class="links">
+            <a href="../index.html">Home</a>
+            <a href="../Projects/index.html">Projects</a>
+            <a href="../About/About.html">About</a>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section class="contact-box">
+        <h2>Contact Me</h2>
+        <p>Have a question? Need help? Want a custom model? Send me a message.</p>
+
+        <form action="https://formsubmit.co/ChopsDicc@Gmail.com" method="POST">
+
+            <!-- FormSubmit controls -->
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" value="https://diccchops.com/thankyou.html">
+
+            <label>Your Name</label>
+            <input type="text" name="name" required>
+
+            <label>Your Email</label>
+            <input type="email" name="email" required>
+
+            <label>Message</label>
+            <textarea name="message" rows="4" required></textarea>
+
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+</main>
+
+<footer>
+    <p>© 2025 DiccChops.com — All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

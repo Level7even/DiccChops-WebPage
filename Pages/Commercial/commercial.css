@@ -1,0 +1,102 @@
+/* General page styling */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0d0d0d;
+    color: white;
+}
+
+/* Navbar */
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: #111;
+    border-bottom: 2px solid #222;
+}
+
+.nav-container a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+    font-size: 16px;
+}
+
+.nav-container .logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.nav-container a:hover {
+    color: #4a90e2;
+}
+
+/* Form container */
+.commercial-form {
+    max-width: 650px;
+    margin: 60px auto;
+    padding: 30px;
+    background: #1a1a1a;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #000;
+}
+
+.commercial-form h2 {
+    margin-bottom: 10px;
+}
+
+.commercial-form p {
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.commercial-form label {
+    display: block;
+    margin-top: 15px;
+    font-size: 15px;
+}
+
+.commercial-form input,
+.commercial-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+}
+
+.commercial-form input:focus,
+.commercial-form textarea:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+.commercial-form button {
+    margin-top: 25px;
+    padding: 15px;
+    width: 100%;
+    background: #4a90e2;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.commercial-form button:hover {
+    background: #3b78ba;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 60px;
+    color: #888;
+    font-size: 14px;
+}

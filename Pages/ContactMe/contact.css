@@ -1,0 +1,107 @@
+/* Base */
+body {
+    margin: 0;
+    background: #0d0d0d;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar */
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: #111;
+    border-bottom: 2px solid #222;
+}
+
+.nav-container a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+    font-size: 16px;
+}
+
+.nav-container .logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.nav-container a:hover {
+    color: #4a90e2;
+}
+
+/* Contact card */
+.contact-box {
+    max-width: 550px;
+    margin: 70px auto;
+    padding: 30px;
+    background: #1a1a1a;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #000;
+}
+
+.contact-box h2 {
+    margin-bottom: 10px;
+}
+
+.contact-box p {
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+/* Inputs */
+.contact-box label {
+    display: block;
+    margin-top: 15px;
+}
+
+.contact-box input,
+.contact-box textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+}
+
+/* Lock textarea size */
+.contact-box textarea {
+    resize: none;
+}
+
+.contact-box input:focus,
+.contact-box textarea:focus {
+    border-color: #4a90e2;
+    outline: none;
+}
+
+/* Button */
+.contact-box button {
+    margin-top: 25px;
+    padding: 15px;
+    background: #4a90e2;
+    border: none;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.contact-box button:hover {
+    background: #3b78ba;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 25px;
+    margin-top: 60px;
+    color: #888;
+}

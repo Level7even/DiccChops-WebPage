@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commercial Request | DiccChops</title>
+<link rel="icon" href="../Icon.webp" type="image/webp">
+<link rel="stylesheet" href="commercial.css">
+
+<!-- Model Viewer -->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7F5XKKSWJZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7F5XKKSWJZ');
+</script>
+
+</head>
+<body>
+
+<header>
+    <nav class="nav-container">
+        <a href="../index.html" class="logo">DiccChops</a>
+        <div class="links">
+            <a href="../index.html">Home</a>
+            <a href="../AboutTOS/index.html">About & TOS</a>
+            <a href="../Projects/index.html">Projects</a>
+            <a href="../ContactMe/contact.html">Contact</a>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section class="commercial-form">
+        <h2>Commercial Use Request</h2>
+        <p>Fill out this form if you want to use any of my models commercially.</p>
+
+        <form action="https://formsubmit.co/YOUR_EMAIL_HERE" method="POST">
+
+            <!-- Anti-spam -->
+            <input type="hidden" name="_captcha" value="false">
+
+            <!-- Redirect after submit -->
+            <input type="hidden" name="_next" value="https://diccchops.com/thankyou.html">
+
+            <label>Name</label>
+            <input type="text" name="name" required>
+
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <label>Company / Brand (optional)</label>
+            <input type="text" name="company">
+
+            <label>Which model do you want to use commercially? Please Add link.</label>
+            <input type="text" name="model" required>
+
+            <label>How do you plan to use it?</label>
+            <textarea name="usage" rows="4" required></textarea>
+
+            <label>Estimated sales volume (optional)</label>
+            <input type="text" name="volume">
+
+            <button type="submit">Send Request</button>
+        </form>
+    </section>
+</main>
+
+<footer>
+    <p>© 2025 DiccChops.com — All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

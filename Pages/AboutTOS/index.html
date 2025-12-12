@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Loading…</title>
+
+<link rel="icon" href="../../Icon.webp" type="image/webp">
+<link rel="stylesheet" href="../../styles.css">
+
+<!-- Model Viewer -->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7F5XKKSWJZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7F5XKKSWJZ');
+</script>
+
+<script>
+    // Set proper title after load
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("pageTitle").textContent = "About & Terms – DiccChops";
+    });
+</script>
+
+</head>
+
+<body>
+
+<header>
+    <div class="nav-container">
+        <a href="/" class="logo">DiccChops</a>
+        <div class="links">
+            <a href="../../index.html">Home</a>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <!-- ABOUT SECTION -->
+    <h2 class="section-title">About Me</h2>
+    <div class="box">
+        <p style="font-size: 17px; line-height: 1.6; text-align: left;">
+            Hey! I'm <strong>DiccChops</strong>.  
+            I create custom 3D models, prints, game assets, and other digital projects.  
+            Everything on this site is built by me, and I share a lot of my work so others can
+            download, explore, and build cool stuff with it.
+            <br><br>
+            If you use my models, all I ask is that you give credit.  
+            Thanks for supporting the work — more projects drop all the time!
+        </p>
+    </div>
+
+    <!-- TERMS SECTION -->
+    <h2 class="section-title">Terms of Service & Model License</h2>
+    <div class="box">
+        <p style="font-size: 17px; line-height: 1.7; text-align: left;">
+
+            <strong>Last updated:</strong> 12/11/2025<br><br>
+
+            By downloading, viewing, or using any 3D model from <strong>DiccChops.com</strong>, you agree to the following terms:
+
+            <br><br><strong>✔ 1. What You Are Allowed To Do</strong><br>
+            • Download the models  
+            • Use them in personal projects  
+            • Modify or remix them  
+            • Use them in videos, games, renders, or other media  
+            • Use them <strong>commercially ONLY if requested and approved</strong>  
+            <br>
+            To request commercial use, contact me here:<br>
+            <a href="../Commercial/commercial.html" style="color:#8ab4f8;">Commercial Use Request Page</a><br>
+            Or email me directly at: <strong>DiccChops@Hotmail.com</strong>
+            <br><br>
+
+            <strong>✔ 2. Credit Requirement</strong><br>
+            If you use any of my models publicly or commercially, you must give visible credit:
+            <br><br>
+            <code>Model by DiccChops – www.DiccChops.com</code>
+            <br><br>
+
+            <br><br><strong>✘ 3. What You May NOT Do</strong><br>
+            • Do NOT claim the models as your own  
+            • Do NOT re-upload or redistribute the model files  
+            • Do NOT sell or resell the digital model files  
+            • Do NOT use the models in illegal or harmful content  
+            <br><br>
+
+            <strong>✔ Selling physical prints is allowed — with credit AND commercial approval.</strong>
+            <br><br>
+
+            <strong>4. Ownership</strong><br>
+            All 3D models remain the intellectual property of <strong>DiccChops</strong>.  
+            You receive permission to use them — not ownership of the files.
+
+            <br><br><strong>5. No Warranty</strong><br>
+            All models are provided “as is.”  
+            I am not responsible for any damages, issues, or failures.
+
+            <br><br><strong>6. Changes to Terms</strong><br>
+            These terms may update at any time. Continued use means you accept the latest version.
+        </p>
+    </div>
+
+</main>
+
+<footer>
+    © <span id="year"></span> DiccChops — All Rights Reserved
+</footer>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
