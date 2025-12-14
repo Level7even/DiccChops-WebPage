@@ -2,18 +2,26 @@
 <link rel="stylesheet" href="Cards.css">
 
 <section id="portfolio">
-    <h2 class="section-title">My Projects</h2>
 
     <div class="grid" id="projectGrid">
 
-        <!-- Example Card (your JS will replace these automatically) -->
-        <a class="card" href="#">
+        <!-- Example Card (NOT clickable) -->
+        <div class="card">
             <div class="model-wrapper">
-                <model-viewer src="demo.glb" camera-controls disable-zoom></model-viewer>
+                <model-viewer 
+                    src="../../Placeholder.glb"
+                    camera-controls
+                    disable-zoom>
+                </model-viewer>
+
                 <div class="model-tooltip">Click & Rotate</div>
             </div>
+
             <h3>Example Model</h3>
-        </a>
+
+            <!-- Accent Line -->
+            <span class="accent"></span>
+        </div>
 
     </div>
 </section>
