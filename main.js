@@ -145,7 +145,8 @@ async function createCard(folder, cfg, base) {
     if (!model) model = await autoDetectModel(base, folder);
     if (!model) return;
 
-    const thumb = cfg?.files?.thumbnail;
+    // Always use the MP4 as the thumbnail
+    const thumb = "./Loading.mp4";
 
     const card = document.createElement("a");
     card.className = "card";
@@ -155,7 +156,7 @@ async function createCard(folder, cfg, base) {
         <div class="model-wrapper">
             <model-viewer 
                 src="${base}${folder}/${model}" 
-                poster="${thumb ? base + folder + '/' + thumb : ''}"
+                poster="${thumb}"
                 camera-controls
                 auto-rotate
                 disable-zoom>
