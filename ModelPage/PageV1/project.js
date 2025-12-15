@@ -33,10 +33,13 @@ async function main() {
         // Set model-viewer src
         const viewer = document.getElementById("viewer");
         if (primaryModel) viewer.src = `${base}${project}/${primaryModel}`;
-        if (cfg.files.thumbnail) viewer.poster = `${base}${project}/${cfg.files.thumbnail}`;
+
+        // Always use Loading.mp4 as poster/placeholder
+        viewer.poster = "./Loading.mp4";
 
         // Populate file list
         const fileList = document.getElementById("fileList");
+        fileList.innerHTML = ""; // clear old items
         Object.entries(cfg.files).forEach(([key, file]) => {
             if (key.toLowerCase() === "thumbnail") return;
 
@@ -51,7 +54,11 @@ async function main() {
         const envSelect = document.getElementById("envSelect");
 
         // dynamically add HDRs from folder
-        const hdrFiles = ["kloofendal_misty_morning_puresky_4k.hdr", "qwantani_sunset_puresky_4k.hdr", "table_mountain_2_puresky_4k.hdr"];
+        const hdrFiles = [
+            "kloofendal_misty_morning_puresky_4k.hdr",
+            "qwantani_sunset_puresky_4k.hdr",
+            "table_mountain_2_puresky_4k.hdr"
+        ];
         envSelect.innerHTML = ""; // clear default
         hdrFiles.forEach((hdr, index) => {
             const option = document.createElement("option");
