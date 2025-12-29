@@ -198,6 +198,46 @@ model-viewer {
 }
 
 /* ---------------------------
+   Loading Overlay
+---------------------------- */
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(20,20,20,0.92);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    font-size: 1.1em;
+    color: #fff;
+    transition: opacity 0.3s;
+}
+
+.loading-bar {
+    width: 120px;
+    height: 8px;
+    background: #222;
+    border-radius: 4px;
+    margin-top: 16px;
+    overflow: hidden;
+}
+
+.loading-bar-inner {
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(90deg, #8ab4f8, #fff);
+    border-radius: 4px;
+    animation: loading-bar-move 1.2s linear infinite;
+    will-change: transform;
+}
+
+@keyframes loading-bar-move {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(230%); }
+}
+
+/* ---------------------------
    Footer
 ---------------------------- */
 footer {

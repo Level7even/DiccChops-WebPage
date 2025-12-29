@@ -118,3 +118,16 @@ async function autoDetectModel(project) {
 }
 
 document.addEventListener("DOMContentLoaded", main);
+
+// Loading overlay logic
+const overlay = document.getElementById("loadingOverlay");
+const barInner = document.getElementById("loadingBarInner");
+const viewer = document.getElementById("viewer");
+
+if (overlay && barInner && viewer) {
+    overlay.style.display = "flex";
+    barInner.classList.add("animated");
+    viewer.addEventListener("model-visibility", () => {
+        overlay.style.display = "none";
+    });
+}

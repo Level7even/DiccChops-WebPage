@@ -192,3 +192,56 @@ footer {
         padding: 20px;
     }
 }
+
+/* ---------------------------
+   Loading UI
+---------------------------- */
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(20,20,20,0.92);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    font-size: 1.1em;
+    color: #fff;
+    transition: opacity 0.3s;
+}
+
+.loading-bar {
+    width: 120px;
+    height: 8px;
+    background: #222;
+    border-radius: 4px;
+    margin-top: 16px;
+    overflow: hidden;
+}
+
+.loading-bar-inner {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #8ab4f8, #fff);
+    border-radius: 4px;
+    animation: loading-bar-anim 1.2s linear infinite;
+}
+
+.loading-bar-inner.animated {
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, #4fc3f7, #1976d2);
+  border-radius: 4px;
+  animation: loading-bar-move 1.2s linear infinite;
+}
+
+@keyframes loading-bar-anim {
+    0% { width: 0%; }
+    50% { width: 90%; }
+    100% { width: 0%; }
+}
+
+@keyframes loading-bar-move {
+  0% { margin-left: 0%; }
+  100% { margin-left: 70%; }
+}

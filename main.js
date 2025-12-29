@@ -152,24 +152,49 @@ async function createCard(folder, cfg, base) {
     card.className = "card";
     card.href = `/ModelPage/PageV1/index.html?project=${encodeURIComponent(folder)}`;
 
+    // Only render the poster and loading overlay initially
     card.innerHTML = `
         <div class="model-wrapper">
-            <model-viewer 
-                src="${base}${folder}/${model}" 
-                poster="${thumb}"
-                camera-controls
-                auto-rotate
-                disable-zoom>
-            </model-viewer>
+            <div class="loading-overlay">
+                <span>Loading...</span>
+                <div class="loading-bar"><div class="loading-bar-inner animated"></div></div>
+            </div>
+            <div class="model-poster" style="width:100%;height:220px;background:#181818 url('${thumb}') center/cover no-repeat;"></div>
         </div>
         <h3>${cfg?.meta?.name || folder}</h3>
     `;
 
     container.appendChild(card);
 
-    const viewer = card.querySelector("model-viewer");
+    // Lazy-load model-viewer when card is visible
+    const wrapper = card.querySelector(".model-wrapper");
+    const overlay = card.querySelector(".loading-overlay");
+    const poster = card.querySelector(".model-poster");
+    let loaded = false;
 
-    enableSmoothRotation(card, viewer);
+    const observer = new window.IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !loaded) {
+                loaded = true;
+                // Replace poster with model-viewer
+                const mv = document.createElement("model-viewer");
+                mv.setAttribute("src", `${base}${folder}/${model}`);
+                mv.setAttribute("poster", thumb);
+                mv.setAttribute("camera-controls", "");
+                mv.setAttribute("auto-rotate", "");
+                mv.setAttribute("disable-zoom", "");
+                mv.style.width = "100%";
+                mv.style.height = "220px";
+                poster.replaceWith(mv);
+                mv.addEventListener("model-visibility", () => {
+                    overlay.style.display = "none";
+                });
+                enableSmoothRotation(card, mv);
+                obs.disconnect();
+            }
+        });
+    }, { threshold: 0.1 });
+    observer.observe(card);
 }
 
 /* --------------------------- */
