@@ -1,0 +1,22 @@
+{
+  "name": "dead-drop-collective-webpage",
+  "version": "1.0.0",
+  "description": "Webpage for DeadDrop Collective detailing their contract-based retrieval service in ARC Raiders.",
+  "main": "src/index.html",
+  "scripts": {
+    "start": "live-server src",
+    "build": "echo 'Build step can be added here'"
+  },
+  "keywords": [
+    "DeadDrop",
+    "Collective",
+    "ARC Raiders",
+    "retrieval service"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  }
+}
