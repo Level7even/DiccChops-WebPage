@@ -32,6 +32,16 @@ function createCard({ image, name, amount, price, rarity, type }) {
     img.src = image;
     img.alt = name;
 
+    const imgWrapper = document.createElement('div');
+    imgWrapper.className = 'item-img-wrapper';
+    const bgImg = document.createElement('img');
+    bgImg.src = 'https://arcraiders.wiki/w/images/5/55/UI_Blueprint_background.png';
+    bgImg.alt = '';
+    bgImg.className = 'item-bg-img';
+    img.className = 'item-img';
+    imgWrapper.appendChild(bgImg);
+    imgWrapper.appendChild(img);
+
     const nameDiv = document.createElement('div');
     nameDiv.className = 'item-name';
     nameDiv.textContent = name;
@@ -48,7 +58,7 @@ function createCard({ image, name, amount, price, rarity, type }) {
     rarityDiv.className = 'item-rarity';
     rarityDiv.textContent = rarity ? `Rarity: ${rarity}` : '';
 
-    card.appendChild(img);
+    card.appendChild(imgWrapper);
     card.appendChild(nameDiv);
     if (type) card.appendChild(typeDiv);
     card.appendChild(priceDiv);
