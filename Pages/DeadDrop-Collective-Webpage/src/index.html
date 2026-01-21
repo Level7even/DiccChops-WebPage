@@ -7,35 +7,74 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-    <header>
-        <img src="DeadDropNbg.png" alt="DeadDrop Banner" class="banner">
-        <img src="DeadDrop.png" alt="DeadDrop Collective Logo" class="brand-logo">
-        <h1>Welcome to DeadDrop Collective</h1>
-        <p>Your trusted partner for contract-based retrieval services in ARC Raiders.</p>
+
+    <!-- Ambient background -->
+    <div class="noise-overlay"></div>
+
+    <header class="hero">
+        <img src="DeadDrop.png" alt="DeadDrop Banner" class="hero-bg">
+        
+        <div class="hero-content">
+            <img src="DeadDropNbg.png" alt="DeadDrop Collective Logo" class="brand-logo">
+            <h1>DeadDrop Collective</h1>
+            <p class="tagline">
+                Contract-based retrieval services in hostile ARC zones.
+            </p>
+
+            <div class="hero-stats">
+                <div><span>24/7</span> Active Crews</div>
+                <div><span>Zero</span> Item Ownership</div>
+                <div><span>100%</span> Discretion</div>
+            </div>
+        </div>
     </header>
+
     <main>
-        <section id="services">
-            <h2>Our Services</h2>
-            <p>We specialize in providing reliable and efficient retrieval services tailored to your needs. Our team is equipped to handle various contract types, ensuring that your objectives are met with precision.</p>
+
+        <section id="services" class="panel">
+            <h2>Services</h2>
+            <p>
+                We don’t sell items — we sell <strong>time, risk, and execution</strong>.
+                You submit a request. We deploy. You receive results.
+            </p>
         </section>
-        <section id="contract-types">
+
+        <section id="contract-types" class="panel grid">
             <h2>Contract Types</h2>
-            <ul>
-                <li>Standard Retrieval Contracts</li>
-                <li>Expedited Retrieval Contracts</li>
-                <li>Custom Retrieval Solutions</li>
-            </ul>
-        </section>
-        <section id="items">
-            <h2>Available Items</h2>
-            <div class="card-container" id="card-container">
-                <!-- Cards will be injected here by JS -->
+
+            <div class="contract-card">
+                <h3>Standard Retrieval</h3>
+                <p>Scheduled extraction under normal threat conditions.</p>
+            </div>
+
+            <div class="contract-card">
+                <h3>Expedited</h3>
+                <p>Priority deployment. Higher risk. Faster turnaround.</p>
+            </div>
+
+            <div class="contract-card">
+                <h3>Custom Ops</h3>
+                <p>High-value, multi-stage, or restricted-zone contracts.</p>
             </div>
         </section>
+
+        <section id="items" class="panel">
+            <h2>Available Requests</h2>
+            <p class="muted">
+                Items rotate based on zone activity and crew availability.
+            </p>
+
+            <div class="card-container" id="card-container">
+                <!-- Injected by JS -->
+            </div>
+        </section>
+
     </main>
+
     <footer>
-        <p>&copy; 2023 DeadDrop Collective. All rights reserved.</p>
+        <p>&copy; 2026 DeadDrop Collective — No affiliation. No questions asked.</p>
     </footer>
+
     <script src="scripts/main.js"></script>
 </body>
 </html>
