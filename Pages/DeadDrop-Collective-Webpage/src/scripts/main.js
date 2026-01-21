@@ -53,7 +53,7 @@ function parseCSV(text) {
     }).filter(item => item.image || item.name || item.amount || item.price);
 }
 
-fetch(SHEET_URL)
+fetch(SHEET_URL + '&_=' + new Date().getTime())
     .then(res => {
         if (!res.ok) throw new Error('Network response was not ok: ' + res.status);
         return res.text();
