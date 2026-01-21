@@ -3,6 +3,7 @@ const SHEET_GID = '0'; // Change if your data is not in the first sheet
 const SHEET_URL = 'https://corsproxy.io/?' + encodeURIComponent(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`);
 
 function createCard({ image, name, amount, price, rarity, type }) {
+    if (parseInt(amount, 10) < 1) return null; // Hide card if amount is 0 or less
     const card = document.createElement('div');
     card.className = 'item-card';
 
@@ -39,10 +40,6 @@ function createCard({ image, name, amount, price, rarity, type }) {
     typeDiv.className = 'item-type';
     typeDiv.textContent = type ? `Type: ${type}` : '';
 
-    const amountDiv = document.createElement('div');
-    amountDiv.className = 'item-amount';
-    amountDiv.textContent = `Amount: ${amount}`;
-
     const priceDiv = document.createElement('div');
     priceDiv.className = 'item-price';
     priceDiv.textContent = `Price: ${price}`;
@@ -54,7 +51,6 @@ function createCard({ image, name, amount, price, rarity, type }) {
     card.appendChild(img);
     card.appendChild(nameDiv);
     if (type) card.appendChild(typeDiv);
-    card.appendChild(amountDiv);
     card.appendChild(priceDiv);
     if (rarity) card.appendChild(rarityDiv);
 
@@ -83,7 +79,8 @@ function renderCards(items) {
         return (a.name || '').localeCompare(b.name || '');
     });
     items.forEach(item => {
-        container.appendChild(createCard(item));
+        const card = createCard(item);
+        if (card) container.appendChild(card);
     });
 }
 
