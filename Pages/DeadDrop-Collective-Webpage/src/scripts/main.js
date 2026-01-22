@@ -121,7 +121,9 @@ function parseCSV(text) {
             rarity: parts[4].trim(),
             type: parts[5].trim()
         };
-    }).filter(item => item.image || item.name || item.amount || item.price);
+    })
+    // Filter out summary/total rows (e.g., name contains 'total')
+    .filter(item => (item.image || item.name || item.amount || item.price) && !(item.name.toLowerCase().includes('total')));
 }
 
 fetch(SHEET_URL + (SHEET_URL.includes('?') ? '&' : '?') + '_=' + new Date().getTime())
