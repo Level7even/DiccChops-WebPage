@@ -2,8 +2,8 @@ const SHEET_ID = '1W8i3Mv5MlArFy5bVZzLDUgMMoHndZTEM533JMBKenzU';
 const SHEET_GID = '0'; // Change if your data is not in the first sheet
 const SHEET_URL = 'https://corsproxy.io/?' + encodeURIComponent(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`);
 
-function createCard({ image, name, amount, price, rarity, type }) {
-    if (parseInt(amount, 10) < 1) return null; // Hide card if amount is 0 or less
+function createCard({ image, name, amount, price, rarity, type }, ignoreAmount = false) {
+    if (!ignoreAmount && parseInt(amount, 10) < 1) return null; // Hide card if amount is 0 or less, unless ignoreAmount is true
     const card = document.createElement('div');
     card.className = 'item-card';
 
@@ -112,18 +112,156 @@ function parseCSV(text) {
             }
             lastIndex = regex.lastIndex;
         }
-        while (parts.length < 6) parts.push('');
+        while (parts.length < 8) parts.push(''); // Ensure at least 8 columns
         return {
             image: parts[0].trim(),
             name: parts[1].trim(),
             amount: parts[2].trim(),
             price: parts[3].trim(),
             rarity: parts[4].trim(),
-            type: parts[5].trim()
+            type: parts[5].trim(),
+            hot: parts[6].trim(), // G column
+            game: parts[7].trim().toLowerCase() // H column
         };
     })
-    // Filter out summary/total rows (e.g., name contains 'total')
     .filter(item => (item.image || item.name || item.amount || item.price) && !(item.name.toLowerCase().includes('total')));
+}
+
+// --- Hot Section at Top ---
+function renderHotSection() {
+    // Show hot items from ALL games, regardless of amount
+    let hotItems = allItems.filter(item => {
+        const val = (item.hot || '').toString().trim().toLowerCase();
+        return val === '1' || val === 'true' || val === 'yes' || val === 'on' || val === 'y';
+    });
+    let hotSection = document.getElementById('hot-section');
+    if (!hotSection) {
+        hotSection = document.createElement('section');
+        hotSection.id = 'hot-section';
+        hotSection.className = 'panel';
+        hotSection.innerHTML = `
+            <h2 style="display:flex;align-items:center;gap:0.5em;font-size:2rem;">
+                <span style="font-size:2.2rem;">🔥</span> Hot Session Highlights
+                <span style="font-size:1.1rem;color:var(--muted);font-weight:400;margin-left:0.5em;">(Recent extractions &amp; notable finds)</span>
+            </h2>
+            <div class="carousel-outer"><div class="card-container carousel-inner" id="hot-card-container"></div></div>
+        `;
+        const main = document.querySelector('main');
+        main.insertBefore(hotSection, main.firstChild);
+    }
+    const hotContainer = document.getElementById('hot-card-container');
+    hotContainer.innerHTML = '';
+
+    // Infinite carousel: clone last N to start and first N to end
+    const visibleCount = 4;
+    const total = hotItems.length;
+    if (total === 0) {
+        hotSection.style.display = 'none';
+        return;
+    } else {
+        hotSection.style.display = '';
+    }
+    // Clone last N
+    for (let i = total - visibleCount; i < total; i++) {
+        const idx = ((i % total) + total) % total;
+        const card = createCard(hotItems[idx], true);
+        if (card) {
+            const gameLabel = document.createElement('div');
+            gameLabel.className = 'hot-game-label';
+            gameLabel.textContent = hotItems[idx].game ? `Game: ${hotItems[idx].game}` : '';
+            card.appendChild(gameLabel);
+            hotContainer.appendChild(card);
+        }
+    }
+    // Real cards
+    hotItems.forEach(item => {
+        const card = createCard(item, true);
+        if (card) {
+            const gameLabel = document.createElement('div');
+            gameLabel.className = 'hot-game-label';
+            gameLabel.textContent = item.game ? `Game: ${item.game}` : '';
+            card.appendChild(gameLabel);
+            hotContainer.appendChild(card);
+        }
+    });
+    // Clone first N
+    for (let i = 0; i < visibleCount; i++) {
+        const idx = i % total;
+        const card = createCard(hotItems[idx], true);
+        if (card) {
+            const gameLabel = document.createElement('div');
+            gameLabel.className = 'hot-game-label';
+            gameLabel.textContent = hotItems[idx].game ? `Game: ${hotItems[idx].game}` : '';
+            card.appendChild(gameLabel);
+            hotContainer.appendChild(card);
+        }
+    }
+    // Carousel logic
+    let currentIndex = visibleCount;
+    const cards = hotContainer.children;
+    let isJumping = false;
+    let scrollOffset = currentIndex * (cards[0]?.offsetWidth || 0);
+    let cardWidth = cards[0]?.offsetWidth || 0;
+    let animationFrameId;
+    const speed = 0.7; // px per frame, adjust for faster/slower scroll
+
+    function updateCarousel(animate = true) {
+        if (!animate) {
+            hotContainer.style.transition = 'none';
+        } else {
+            hotContainer.style.transition = 'transform 0.7s cubic-bezier(0.4,0,0.2,1)';
+        }
+        hotContainer.style.transform = `translateX(-${scrollOffset}px)`;
+        if (!animate) {
+            void hotContainer.offsetWidth;
+            hotContainer.style.transition = 'transform 0.7s cubic-bezier(0.4,0,0.2,1)';
+        }
+    }
+
+    function smoothScroll() {
+        scrollOffset += speed;
+        // When we've scrolled past the last real card set, jump back
+        const maxOffset = (cards.length - visibleCount) * cardWidth;
+        if (scrollOffset >= maxOffset) {
+            scrollOffset = visibleCount * cardWidth;
+            updateCarousel(false);
+            // Wait for the next animation frame before resuming scroll
+            requestAnimationFrame(() => {
+                animationFrameId = requestAnimationFrame(smoothScroll);
+            });
+            return;
+        }
+        updateCarousel();
+        animationFrameId = requestAnimationFrame(smoothScroll);
+    }
+
+    // Start smooth scroll
+    if (window.hotCarouselInterval) cancelAnimationFrame(window.hotCarouselInterval);
+    if (cards.length > visibleCount * 2) {
+        animationFrameId = requestAnimationFrame(smoothScroll);
+        window.hotCarouselInterval = animationFrameId;
+    }
+}
+
+// --- Tab Filtering Logic ---
+let allItems = [];
+let currentTab = 'arc';
+
+function renderFilteredCards() {
+    let filtered = allItems.filter(item => item.game === currentTab);
+    renderCards(filtered);
+}
+
+function setupTabs() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentTab = btn.getAttribute('data-tab');
+            renderFilteredCards();
+        });
+    });
 }
 
 fetch(SHEET_URL + (SHEET_URL.includes('?') ? '&' : '?') + '_=' + new Date().getTime())
@@ -132,8 +270,10 @@ fetch(SHEET_URL + (SHEET_URL.includes('?') ? '&' : '?') + '_=' + new Date().getT
         return res.text();
     })
     .then(text => {
-        const items = parseCSV(text);
-        renderCards(items);
+        allItems = parseCSV(text);
+        setupTabs();
+        renderFilteredCards();
+        renderHotSection();
     })
     .catch(err => {
         document.getElementById('card-container').textContent = 'Failed to load items: ' + err;

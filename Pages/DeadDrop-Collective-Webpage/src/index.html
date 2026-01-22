@@ -41,7 +41,7 @@
             <p class="muted" style="margin-top:1rem;">
                 All loot is obtained via normal gameplay and is never sold, transferred, or guaranteed.<br>
                 We sell time, coordination, and continued co-op participation.<br>
-                <strong>No item guarantees. No delivery. No inventories. No promises of outcomes.</strong>
+                <strong>DeadDrop Collective is a player-run cooperative group. Not affiliated with ARC Raiders or its developers.</strong>
             </p>
         </section>
 
@@ -74,6 +74,11 @@
             <p class="muted" style="margin-bottom:1.5rem;">
                 Requests are based on zone activity and crew availability. All loot is obtained via normal gameplay and is never guaranteed or delivered. Requests describe zones &amp; conditions only.
             </p>
+            <div class="tabs" id="game-tabs">
+                <button class="tab-btn active" data-tab="arc">ARC</button>
+                <button class="tab-btn" data-tab="roblox">Roblox</button>
+                <button class="tab-btn" data-tab="test1">Test1</button>
+            </div>
             <div class="card-container" id="card-container">
                 <!-- Injected by JS: session requests, not "available items" -->
             </div>
@@ -112,7 +117,20 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 DeadDrop Collective — No affiliation. No questions asked.</p>
+        <p style="font-size:1.1rem; margin-bottom:0.5em;">
+            &copy; 2026 <strong>DeadDrop Collective</strong> &mdash; <span style="color:var(--muted);">No questions asked.</span>
+        </p>
+        <nav style="margin-bottom:0.5em;">
+            <a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" style="color:var(--accent);text-decoration:none;margin:0 1em;">Home</a>
+            <a href="#services" style="color:var(--accent);text-decoration:none;margin:0 1em;">Services</a>
+            <a href="#contract-types" style="color:var(--accent);text-decoration:none;margin:0 1em;">Contracts</a>
+            <a href="#session-availability" style="color:var(--accent);text-decoration:none;margin:0 1em;">Availability</a>
+            <a href="#disclaimer" style="color:var(--accent);text-decoration:none;margin:0 1em;">Disclaimer</a>
+            <a href="tos.html" style="color:var(--accent);text-decoration:none;margin:0 1em;">Terms of Service</a>
+        </nav>
+        <div style="font-size:0.95rem; color:var(--muted);">
+            Owned by <a href="https://l7studios.dev" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:bold;">L7 Studios</a>
+        </div>
     </footer>
 
     <script src="scripts/main.js"></script>
