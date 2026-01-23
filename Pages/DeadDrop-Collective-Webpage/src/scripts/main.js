@@ -279,3 +279,162 @@ fetch(SHEET_URL + (SHEET_URL.includes('?') ? '&' : '?') + '_=' + new Date().getT
         document.getElementById('card-container').textContent = 'Failed to load items: ' + err;
         console.error(err);
     });
+
+// --- ARC Raiders Map Data Integration ---
+const arcApiOutput = document.getElementById('arc-api-output');
+const arcMapOutput = document.createElement('div');
+arcMapOutput.id = 'arc-map-output';
+arcMapOutput.style = 'margin-top:2em;min-height:2em;color:var(--muted);';
+if (arcApiOutput && arcApiOutput.parentElement) {
+  arcApiOutput.parentElement.appendChild(arcMapOutput);
+}
+//fetchArcMapData();
+async function fetchArcMapData() {
+  arcMapOutput.textContent = 'Loading ARC Raiders map data...';
+  try {
+    let url = 'https://metaforge.app/api/game-map-data';
+    let fetchUrl = url;
+    try {
+      const res = await fetch(fetchUrl);
+      if (!res.ok) throw new Error('API error: ' + res.status);
+      const json = await res.json();
+      renderArcMapData(json.data || json);
+      console.log('ARC Map API response:', json);
+      return;
+    } catch (err) {
+      fetchUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+    }
+    const res = await fetch(fetchUrl);
+    if (!res.ok) throw new Error('API error: ' + res.status);
+    const json = await res.json();
+    renderArcMapData(json.data || json);
+    console.log('ARC Map API response (via proxy):', json);
+  } catch (err) {
+    arcMapOutput.innerHTML = `<span style='color:#e63946;'>Failed to load ARC Raiders map data.</span><br><span style='font-size:0.97em;'>${err.message || err}</span><br><span style='font-size:0.95em;color:#888;'>Check browser console for details.</span>`;
+    console.error('ARC Map API error:', err);
+  }
+}
+function renderArcMapData(data) {
+  if (!Array.isArray(data) || data.length === 0) {
+    arcMapOutput.textContent = 'No map data found.';
+    return;
+  }
+  let html = `<strong>ARC Raiders Map Data</strong><div style='display:flex;flex-wrap:wrap;gap:1em;margin-top:0.7em;'>`;
+  data.slice(0, 8).forEach(map => {
+    html += `<div class='arc-map-card' style='background:rgba(30,30,40,0.97);border-radius:8px;padding:1em 1.2em;min-width:220px;box-shadow:0 2px 8px #0002;border-left:4px solid var(--accent);'>`;
+    html += `<div style='font-size:1.1em;font-weight:600;margin-bottom:0.3em;'>${map.name || map.mapID || 'Unknown Map'}</div>`;
+    if (map.description) html += `<div style='font-size:0.98em;color:var(--muted);margin-bottom:0.3em;'>${map.description}</div>`;
+    if (map.zoneType) html += `<div style='font-size:0.97em;color:#ffd600;'>Zone: ${map.zoneType}</div>`;
+    html += `</div>`;
+  });
+  html += '</div>';
+  arcMapOutput.innerHTML = html;
+}
+
+// --- ARC Raiders Events Schedule Integration ---
+const arcEventsOutput = document.createElement('div');
+arcEventsOutput.id = 'arc-events-output';
+arcEventsOutput.style = 'margin-top:2em;min-height:2em;color:var(--muted);';
+if (arcMapOutput && arcMapOutput.parentElement) {
+  arcMapOutput.parentElement.appendChild(arcEventsOutput);
+}
+async function fetchArcEventsSchedule() {
+  arcEventsOutput.textContent = 'Loading ARC Raiders events schedule...';
+  try {
+    let url = 'https://metaforge.app/api/arc-raiders/events-schedule';
+    let fetchUrl = url;
+    try {
+      const res = await fetch(fetchUrl);
+      if (!res.ok) throw new Error('API error: ' + res.status);
+      const json = await res.json();
+      renderArcEventsSchedule(json.data || json);
+      console.log('ARC Events API response:', json);
+      return;
+    } catch (err) {
+      fetchUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+    }
+    const res = await fetch(fetchUrl);
+    if (!res.ok) throw new Error('API error: ' + res.status);
+    const json = await res.json();
+    renderArcEventsSchedule(json.data || json);
+    console.log('ARC Events API response (via proxy):', json);
+  } catch (err) {
+    arcEventsOutput.innerHTML = `<span style='color:#e63946;'>Failed to load ARC Raiders events schedule.</span><br><span style='font-size:0.97em;'>${err.message || err}</span><br><span style='font-size:0.95em;color:#888;'>Check browser console for details.</span>`;
+    console.error('ARC Events API error:', err);
+  }
+}
+function renderArcEventsSchedule(data) {
+  if (!Array.isArray(data) || data.length === 0) {
+    arcEventsOutput.textContent = 'No events schedule data found.';
+    return;
+  }
+  let html = `<div style='text-align:center;margin-bottom:0.5em;'>`;
+  html += `<span style='display:inline-block;font-size:1.35em;font-weight:800;letter-spacing:0.01em;color:var(--accent);background:rgba(30,30,40,0.97);padding:0.35em 1.5em 0.25em 1.5em;border-radius:10px;box-shadow:0 2px 8px #0002;'>ARC Raiders Events Schedule</span>`;
+  html += `</div>`;
+  html += `<div style='display:flex;flex-wrap:wrap;gap:1em;margin-top:0.2em;'>`;
+  window.arcEventCountdowns = [];
+  data.slice(0, 8).forEach((event, idx) => {
+    html += `<div class='arc-event-card' style='background:rgba(30,30,40,0.97);border-radius:8px;padding:1em 1.2em;min-width:240px;box-shadow:0 2px 8px #0002;border-left:4px solid var(--accent);display:flex;align-items:flex-start;gap:0.8em;'>`;
+    if (event.icon) html += `<img src='${event.icon}' alt='' style='height:2.2em;width:2.2em;vertical-align:middle;margin-right:0.5em;border-radius:4px;box-shadow:0 1px 4px #0003;'>`;
+    html += `<div>`;
+    html += `<div style='font-size:1.1em;font-weight:600;margin-bottom:0.2em;'>${event.name || 'Unknown Event'}</div>`;
+    html += `<div style='font-size:0.98em;color:var(--accent);font-weight:500;margin-bottom:0.2em;'>${event.map || 'Unknown Map'}</div>`;
+    if (event.startTime && event.endTime) {
+      const startDate = new Date(event.startTime);
+      const endDate = new Date(event.endTime);
+      const start = startDate.toLocaleString();
+      const end = endDate.toLocaleString();
+      html += `<div style='font-size:0.97em;color:#aaa;'>${start} &ndash; ${end}</div>`;
+      html += `<div style='font-size:0.97em;color:var(--accent);margin-top:0.1em;'><span id='event-timer-${idx}'></span></div>`;
+      window.arcEventCountdowns.push({
+        idx,
+        startDate,
+        endDate
+      });
+    }
+    html += `</div></div>`;
+  });
+  html += '</div>';
+  arcEventsOutput.innerHTML = html;
+  startArcEventCountdowns();
+}
+
+function startArcEventCountdowns() {
+  if (!window.arcEventCountdowns) return;
+  function updateCountdowns() {
+    const now = new Date();
+    window.arcEventCountdowns.forEach(ev => {
+      let msg = '';
+      if (now < ev.startDate) {
+        const diff = ev.startDate - now;
+        msg = `Starts in ${formatDuration(diff)}`;
+      } else if (now >= ev.startDate && now < ev.endDate) {
+        const diff = ev.endDate - now;
+        msg = `Ends in ${formatDuration(diff)}`;
+      } else {
+        msg = 'Event ended';
+      }
+      const el = document.getElementById(`event-timer-${ev.idx}`);
+      if (el) el.textContent = msg;
+    });
+  }
+  updateCountdowns();
+  if (window.arcEventCountdownInterval) clearInterval(window.arcEventCountdownInterval);
+  window.arcEventCountdownInterval = setInterval(updateCountdowns, 1000);
+}
+
+// Helper for formatting ms to human readable
+function formatDuration(ms) {
+  if (ms <= 0) return '0s';
+  const sec = Math.floor(ms / 1000) % 60;
+  const min = Math.floor(ms / (1000 * 60)) % 60;
+  const hr = Math.floor(ms / (1000 * 60 * 60)) % 24;
+  const day = Math.floor(ms / (1000 * 60 * 60 * 24));
+  let out = '';
+  if (day) out += day + 'd ';
+  if (hr) out += hr + 'h ';
+  if (min) out += min + 'm ';
+  if (sec && !day && !hr) out += sec + 's';
+  return out.trim();
+}
+fetchArcEventsSchedule();

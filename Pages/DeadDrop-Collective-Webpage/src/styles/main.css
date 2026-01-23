@@ -355,3 +355,67 @@ main.tos-content {
   text-decoration: none;
   font-weight: bold;
 }
+
+/* Header Bar styles */
+.header-bar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    background: rgba(18,22,33,0.96);
+    border-bottom: 1px solid #23283a;
+    box-shadow: 0 2px 12px #0003;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 2.5rem;
+    min-height: 58px;
+}
+
+.header-bar .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+}
+
+.header-bar nav {
+    display: flex;
+    gap: 1.5em;
+}
+
+.header-bar nav a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 1.05rem;
+    font-weight: 500;
+    transition: color 0.2s;
+    padding: 0.2em 0.5em;
+    border-radius: 4px;
+}
+
+.header-bar nav a:hover,
+.header-bar nav a.active {
+    color: var(--accent);
+    background: #181c27;
+}
+
+@media (max-width: 700px) {
+    .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.7rem 1rem;
+    }
+    .header-bar nav {
+        gap: 0.8em;
+        margin-top: 0.5em;
+    }
+    .header-bar .header-logo {
+        font-size: 1.05rem;
+    }
+}
