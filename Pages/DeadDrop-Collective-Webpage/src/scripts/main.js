@@ -341,18 +341,9 @@ if (arcMapOutput && arcMapOutput.parentElement) {
 async function fetchArcEventsSchedule() {
   arcEventsOutput.textContent = 'Loading ARC Raiders events schedule...';
   try {
+    // Always use the CORS proxy for this endpoint
     let url = 'https://metaforge.app/api/arc-raiders/events-schedule';
-    let fetchUrl = url;
-    try {
-      const res = await fetch(fetchUrl);
-      if (!res.ok) throw new Error('API error: ' + res.status);
-      const json = await res.json();
-      renderArcEventsSchedule(json.data || json);
-      console.log('ARC Events API response:', json);
-      return;
-    } catch (err) {
-      fetchUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
-    }
+    let fetchUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
     const res = await fetch(fetchUrl);
     if (!res.ok) throw new Error('API error: ' + res.status);
     const json = await res.json();
@@ -364,6 +355,9 @@ async function fetchArcEventsSchedule() {
   }
 }
 function renderArcEventsSchedule(data) {
+  console.log('renderArcEventsSchedule called', data);
+  const arcEventsOutput = window.arcEventsOutput;
+  if (!arcEventsOutput) return;
   if (!Array.isArray(data) || data.length === 0) {
     arcEventsOutput.textContent = 'No events schedule data found.';
     return;
@@ -371,10 +365,23 @@ function renderArcEventsSchedule(data) {
   let html = `<div style='text-align:center;margin-bottom:0.5em;'>`;
   html += `<span style='display:inline-block;font-size:1.35em;font-weight:800;letter-spacing:0.01em;color:var(--accent);background:rgba(30,30,40,0.97);padding:0.35em 1.5em 0.25em 1.5em;border-radius:10px;box-shadow:0 2px 8px #0002;'>ARC Raiders Events Schedule</span>`;
   html += `</div>`;
-  html += `<div style='display:flex;flex-wrap:wrap;gap:1em;margin-top:0.2em;'>`;
+  html += `<div class='arc-events-grid'>`;
   window.arcEventCountdowns = [];
+  const now = new Date();
   data.slice(0, 8).forEach((event, idx) => {
-    html += `<div class='arc-event-card' style='background:rgba(30,30,40,0.97);border-radius:8px;padding:1em 1.2em;min-width:240px;box-shadow:0 2px 8px #0002;border-left:4px solid var(--accent);display:flex;align-items:flex-start;gap:0.8em;'>`;
+    let borderColor = 'var(--accent)';
+    if (event.startTime && event.endTime) {
+      const startDate = new Date(event.startTime);
+      const endDate = new Date(event.endTime);
+      if (now < startDate) {
+        borderColor = '#2196f3'; // blue for upcoming
+      } else if (now >= startDate && now <= endDate) {
+        borderColor = '#4caf50'; // green for running
+      } else if (now > endDate) {
+        borderColor = '#e63946'; // red for ended
+      }
+    }
+    html += `<div class='arc-event-card' style='background:rgba(30,30,40,0.97);border-radius:8px;padding:1em 1.2em;min-width:0;max-width:100%;width:100%;box-shadow:0 2px 8px #0002;border-left:4px solid ${borderColor};display:flex;align-items:flex-start;gap:0.8em;'>`;
     if (event.icon) html += `<img src='${event.icon}' alt='' style='height:2.2em;width:2.2em;vertical-align:middle;margin-right:0.5em;border-radius:4px;box-shadow:0 1px 4px #0003;'>`;
     html += `<div>`;
     html += `<div style='font-size:1.1em;font-weight:600;margin-bottom:0.2em;'>${event.name || 'Unknown Event'}</div>`;
@@ -399,42 +406,416 @@ function renderArcEventsSchedule(data) {
   startArcEventCountdowns();
 }
 
+// --- Countdown Timers for Events ---
 function startArcEventCountdowns() {
-  if (!window.arcEventCountdowns) return;
-  function updateCountdowns() {
-    const now = new Date();
-    window.arcEventCountdowns.forEach(ev => {
-      let msg = '';
-      if (now < ev.startDate) {
-        const diff = ev.startDate - now;
-        msg = `Starts in ${formatDuration(diff)}`;
-      } else if (now >= ev.startDate && now < ev.endDate) {
-        const diff = ev.endDate - now;
-        msg = `Ends in ${formatDuration(diff)}`;
-      } else {
-        msg = 'Event ended';
+  const now = new Date();
+  window.arcEventCountdowns.forEach(({ idx, startDate, endDate }) => {
+    const timerEl = document.getElementById(`event-timer-${idx}`);
+    if (!timerEl) return;
+    const updateTimer = () => {
+      const now = new Date();
+      const diff = endDate - now;
+      if (diff < 0) {
+        timerEl.textContent = 'Event Ended';
+        clearInterval(timerEl.timerInterval);
+        return;
       }
-      const el = document.getElementById(`event-timer-${ev.idx}`);
-      if (el) el.textContent = msg;
-    });
-  }
-  updateCountdowns();
-  if (window.arcEventCountdownInterval) clearInterval(window.arcEventCountdownInterval);
-  window.arcEventCountdownInterval = setInterval(updateCountdowns, 1000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      timerEl.textContent = `${hours}h ${minutes}m ${seconds}s`;
+    };
+    updateTimer();
+    timerEl.timerInterval = setInterval(updateTimer, 1000);
+  });
 }
 
-// Helper for formatting ms to human readable
-function formatDuration(ms) {
-  if (ms <= 0) return '0s';
-  const sec = Math.floor(ms / 1000) % 60;
-  const min = Math.floor(ms / (1000 * 60)) % 60;
-  const hr = Math.floor(ms / (1000 * 60 * 60)) % 24;
-  const day = Math.floor(ms / (1000 * 60 * 60 * 24));
-  let out = '';
-  if (day) out += day + 'd ';
-  if (hr) out += hr + 'h ';
-  if (min) out += min + 'm ';
-  if (sec && !day && !hr) out += sec + 's';
-  return out.trim();
+// --- Debugging and Utility Functions ---
+function downloadObjectAsCSV(exportObj, fileName) {
+    const csv = Object.keys(exportObj[0]).join(',') + '\n' + exportObj.map(row => Object.values(row).map(value => `"${value}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', fileName + '.csv');
+    a.click();
+    URL.revokeObjectURL(url);
 }
-fetchArcEventsSchedule();
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function hexToRgbA(hex, alpha = 1) {
+    let r = 0, g = 0, b = 0;
+    if (hex.length === 4) {
+        r = parseInt(hex[1] + hex[1], 16);
+        g = parseInt(hex[2] + hex[2], 16);
+        b = parseInt(hex[3] + hex[3], 16);
+    } else if (hex.length === 7) {
+        r = parseInt(hex[1] + hex[2], 16);
+        g = parseInt(hex[3] + hex[4], 16);
+        b = parseInt(hex[5] + hex[6], 16);
+    }
+    return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function rgbToHex(rgb) {
+    const result = rgb.match(/\d+/g).map(x => {
+        const hex = parseInt(x).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    });
+    return '#' + result.join('');
+}
+
+function lightenDarkenColor(color, amount) {
+    const rgb = color.match(/\d+/g);
+    const r = Math.min(255, Math.max(0, parseInt(rgb[0]) + amount));
+    const g = Math.min(255, Math.max(0, parseInt(rgb[1]) + amount));
+    const b = Math.min(255, Math.max(0, parseInt(rgb[2]) + amount));
+    return `rgb(${r},${g},${b})`;
+}
+
+function isColorDark(color) {
+    const rgb = color.match(/\d+/g);
+    const brightness = Math.sqrt(
+        0.299 * (rgb[0] * rgb[0]) +
+        0.587 * (rgb[1] * rgb[1]) +
+        0.114 * (rgb[2] * rgb[2])
+    );
+    return brightness < 128;
+}
+
+function getContrastYIQ(hexcolor){
+    var r = parseInt(hexcolor[1]+hexcolor[2],16);
+    var g = parseInt(hexcolor[3]+hexcolor[4],16);
+    var b = parseInt(hexcolor[5]+hexcolor[6],16);
+    var yiq = ((r*299)+(g*587)+(b*114))/1000;
+    return (yiq >= 128 ? 'black' : 'white');
+}
+
+function randomIntFromRange(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randomColor() {
+    return `rgb(${randomIntFromRange(0, 255)}, ${randomIntFromRange(0, 255)}, ${randomIntFromRange(0, 255)})`;
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function uniqueArrayByKey(array, key) {
+    const seen = new Set();
+    return array.filter(item => {
+        const val = item[key];
+        if (seen.has(val)) {
+            return false;
+        }
+        seen.add(val);
+        return true;
+    });
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function throttle(func, limit) {
+    let lastFunc;
+    let lastRan;
+    return function() {
+        const context = this;
+        const args = arguments;
+        if (!lastRan) {
+            func.apply(context, args);
+            lastRan = Date.now();
+        }
+        clearTimeout(lastFunc);
+        lastFunc = setTimeout(() => {
+            if ((Date.now() - lastRan) >= limit) {
+                func.apply(context, args);
+                lastRan = Date.now();
+            }
+        }, limit - (Date.now() - lastRan));
+    };
+}
+
+function sortObjectKeys(obj) {
+    const sortedKeys = Object.keys(obj).sort();
+    const sortedObj = {};
+    sortedKeys.forEach(key => {
+        sortedObj[key] = obj[key];
+    });
+    return sortedObj;
+}
+
+function deepClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
+function mergeDeep(target, source) {
+    for (const key of Object.keys(source)) {
+        if (source[key] instanceof Object && key in target)
+            Object.assign(source[key], mergeDeep(target[key], source[key]));
+    }
+    Object.assign(target, source);
+    return target;
+}
+
+function escapeHtml(html) {
+    const text = document.createTextNode(html);
+    const div = document.createElement('div');
+    div.appendChild(text);
+    return div.innerHTML;
+}
+
+function unescapeHtml(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.innerText || div.textContent;
+}
+
+function csvToArray(csv, delimiter = ',') {
+    const lines = csv.split('\n');
+    return lines.map(line => line.split(delimiter).map(item => item.trim()));
+}
+
+function arrayToCsv(data, delimiter = ',') {
+    return data.map(row => row.join(delimiter)).join('\n');
+}
+
+function downloadCsv(data, filename = 'data.csv', delimiter = ',') {
+    const csv = arrayToCsv(data, delimiter);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', filename);
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function uploadCsv(callback) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    input.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const text = e.target.result;
+            const data = csvToArray(text);
+            callback(data);
+        };
+        reader.readAsText(file);
+    });
+    input.click();
+    document.body.removeChild(input);
+}
+
+// --- ARC Raiders Specific Functions ---
+function extractArcRaidersData(rawData) {
+    const extracted = rawData.map(item => {
+        return {
+            name: item.name,
+            image: item.image,
+            rarity: item.rarity,
+            type: item.type,
+            amount: item.amount,
+            price: item.price,
+            hot: item.hot,
+            game: item.game
+        };
+    });
+    return extracted;
+}
+
+function filterArcRaidersByRarity(data, rarity) {
+    return data.filter(item => item.rarity && item.rarity.toLowerCase() === rarity.toLowerCase());
+}
+
+function groupArcRaidersByType(data) {
+    return data.reduce((acc, item) => {
+        const type = item.type || 'Unknown Type';
+        if (!acc[type]) {
+            acc[type] = [];
+        }
+        acc[type].push(item);
+        return acc;
+    }, {});
+}
+
+function sortArcRaidersByName(data) {
+    return data.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function getArcRaidersPriceRange(data) {
+    const prices = data.map(item => parseFloat(item.price)).filter(price => !isNaN(price));
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    return { min, max };
+}
+
+function getArcRaidersAmountSummary(data) {
+    const total = data.reduce((sum, item) => sum + (parseInt(item.amount) || 0), 0);
+    const uniqueItems = new Set(data.map(item => item.name)).size;
+    return { total, uniqueItems };
+}
+
+function getArcRaidersHotItems(data) {
+    return data.filter(item => {
+        const val = (item.hot || '').toString().trim().toLowerCase();
+        return val === '1' || val === 'true' || val === 'yes' || val === 'on' || val === 'y';
+    });
+}
+
+function getArcRaidersLegendaryItems(data) {
+    return data.filter(item => item.rarity && item.rarity.toLowerCase() === 'legendary');
+}
+
+function getArcRaidersEpicItems(data) {
+    return data.filter(item => item.rarity && item.rarity.toLowerCase() === 'epic');
+}
+
+function getArcRaidersRareItems(data) {
+    return data.filter(item => item.rarity && item.rarity.toLowerCase() === 'rare');
+}
+
+function getArcRaidersUncommonItems(data) {
+    return data.filter(item => item.rarity && item.rarity.toLowerCase() === 'uncommon');
+}
+
+function getArcRaidersCommonItems(data) {
+    return data.filter(item => item.rarity && item.rarity.toLowerCase() === 'common');
+}
+
+function getArcRaidersItemsByType(data, type) {
+    return data.filter(item => item.type && item.type.toLowerCase() === type.toLowerCase());
+}
+
+function getArcRaidersItemByName(data, name) {
+    return data.find(item => item.name && item.name.toLowerCase() === name.toLowerCase());
+}
+
+function getArcRaidersItemsByGame(data, game) {
+    return data.filter(item => item.game && item.game.toLowerCase() === game.toLowerCase());
+}
+
+function getArcRaidersItemImage(item) {
+    return item.image || 'https://via.placeholder.com/150';
+}
+
+function getArcRaidersItemPrice(item) {
+    return parseFloat(item.price) || 0;
+}
+
+function getArcRaidersItemAmount(item) {
+    return parseInt(item.amount) || 0;
+}
+
+function isArcRaidersItemHot(item) {
+    const val = (item.hot || '').toString().trim().toLowerCase();
+    return val === '1' || val === 'true' || val === 'yes' || val === 'on' || val === 'y';
+}
+
+function isArcRaidersItemLegendary(item) {
+    return item.rarity && item.rarity.toLowerCase() === 'legendary';
+}
+
+function isArcRaidersItemEpic(item) {
+    return item.rarity && item.rarity.toLowerCase() === 'epic';
+}
+
+function isArcRaidersItemRare(item) {
+    return item.rarity && item.rarity.toLowerCase() === 'rare';
+}
+
+function isArcRaidersItemUncommon(item) {
+    return item.rarity && item.rarity.toLowerCase() === 'uncommon';
+}
+
+function isArcRaidersItemCommon(item) {
+    return item.rarity && item.rarity.toLowerCase() === 'common';
+}
+
+function arcRaidersItemRarityColor(rarity) {
+    switch ((rarity || '').toLowerCase()) {
+        case 'uncommon': return '#4caf50'; // Green
+        case 'rare': return '#2196f3'; // Blue
+        case 'epic': return '#ab47bc'; // Purple/Pink
+        case 'legendary': return '#ff9800'; // Orange
+        case 'common':
+        case '': return '#888'; // Grey
+        default: return '#888'; // Default to grey
+    }
+}
+
+function arcRaidersItemBorderStyle(rarity) {
+    if (!rarity) return '3px solid #888'; // Default grey
+    switch (rarity.toLowerCase()) {
+        case 'legendary': return '3px solid #ff9800'; // Orange
+        default: return `3px solid ${arcRaidersItemRarityColor(rarity)}`;
+    }
+}
+
+function arcRaidersItemBoxShadow(rarity) {
+    if (!rarity) return 'none';
+    switch (rarity.toLowerCase()) {
+        case 'legendary': return '0 0 12px 2px #ffd700, 0 0 0 4px #ff9800 inset'; // Orange glow
+        default: return 'none';
+    }
+}
+
+// --- End of ARC Raiders Specific Functions ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('card-container');
+    if (!container) return;
+    container.innerHTML = '<p style="text-align:center;color:var(--muted);">Loading items...</p>';
+});
+
+// --- Service Worker Registration for PWA ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            })
+            .catch(error => {
+                console.error('Service Worker registration failed:', error);
+            });
+    });
+}
+
+window.initArcApiSection = function initArcApiSection() {
+  console.log('initArcApiSection called');
+  const apiSection = document.getElementById('api-integration');
+  if (!apiSection) return;
+  // Use only the existing containers provided by the HTML
+  const arcApiOutput = document.getElementById('arc-api-output');
+  const arcMapOutput = document.getElementById('arc-map-output');
+  const arcEventsOutput = document.getElementById('arc-events-output');
+  if (!arcApiOutput || !arcMapOutput || !arcEventsOutput) return;
+  window.arcApiOutput = arcApiOutput;
+  window.arcMapOutput = arcMapOutput;
+  window.arcEventsOutput = arcEventsOutput;
+  fetchArcMapData();
+  fetchArcEventsSchedule();
+};

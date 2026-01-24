@@ -44,108 +44,12 @@
     </header>
 
     <main>
-        <section id="services" class="panel">
-            <h2>What We Offer</h2>
-            <ul>
-                <li>Escort &amp; protection</li>
-                <li>Recon &amp; scouting</li>
-                <li>Threat mitigation</li>
-                <li>Extraction overwatch</li>
-                <li>General co-op assistance</li>
-            </ul>
-            <p class="muted" style="margin-top:1rem;">
-                All loot is obtained via normal gameplay and is never sold, transferred, or guaranteed.<br>
-                We sell time, coordination, and continued co-op participation.<br>
-                <strong>DeadDrop Collective is a player-run cooperative group. Not affiliated with any game or its developers.</strong>
-            </p>
-        </section>
-
-        <section id="contract-types" class="panel grid">
-            <h2>Contract Types</h2>
-            <div class="contract-card">
-                <h3>Recon Support</h3>
-                <ul><li>Route scouting</li><li>Threat intel</li><li>Extraction timing</li><li>Situational awareness only</li></ul>
-            </div>
-            <div class="contract-card">
-                <h3>Escort Detail</h3>
-                <ul><li>Move with client</li><li>Threat suppression</li><li>Extraction overwatch</li><li>No loot guarantees</li></ul>
-            </div>
-            <div class="contract-card">
-                <h3>Hazard Mitigation</h3>
-                <ul><li>Aggro control</li><li>Clearing pressure</li><li>Creating safe movement windows</li></ul>
-            </div>
-            <div class="contract-card">
-                <h3>Session Assist</h3>
-                <ul><li>Flexible co-op support</li><li>Objective help without promises</li><li>Adaptive roles</li></ul>
-            </div>
-            <div class="contract-card">
-                <h3>High-Risk Operations</h3>
-                <ul><li>Heavily contested zones</li><li>Multi-stage movement</li><li>Increased failure probability</li><li>No priority or success guarantees</li></ul>
-            </div>
-        </section>
-
-        <section id="session-availability" class="panel">
-            <h2>Session Availability</h2>
-            <p class="muted" style="margin-bottom:1.5rem;">
-                Requests are based on zone activity and crew availability. All loot is obtained via normal gameplay and is never guaranteed or delivered. Requests describe zones &amp; conditions only.
-            </p>
-            <div class="tabs" id="game-tabs">
-                <button class="tab-btn active" data-tab="arc">ARC</button>
-                <button class="tab-btn" data-tab="roblox">Roblox</button>
-                <button class="tab-btn" data-tab="test1">Test1</button>
-            </div>
-            <div class="card-container" id="card-container">
-                <!-- Injected by JS: session requests, not "available items" -->
-            </div>
-        </section>
-
-        <section id="engagement-tiers" class="panel">
-            <h2>Engagement Tiers</h2>
-            <div class="grid">
-                <div class="contract-card" style="border-left:4px solid #4caf50;">
-                    <h3>🟢 Low-Intensity Operations</h3>
-                    <ul><li>Stable zones</li><li>Short sessions</li><li>Low threat</li></ul>
-                </div>
-                <div class="contract-card" style="border-left:4px solid #ffd600;">
-                    <h3>🟡 Elevated Risk Operations</h3>
-                    <ul><li>Active AI</li><li>Unstable extractions</li><li>Extended sessions</li></ul>
-                </div>
-                <div class="contract-card" style="border-left:4px solid #e63946;">
-                    <h3>🔴 High-Risk Operations</h3>
-                    <ul><li>Contested zones</li><li>Sustained pressure</li><li>Multi-session potential</li></ul>
-                </div>
-                <div class="contract-card" style="border-left:4px solid #222;">
-                    <h3>⚫ Extreme Conditions</h3>
-                    <ul><li>Volatile environments</li><li>Repeated deployments</li><li>Unpredictable outcomes</li></ul>
-                </div>
-            </div>
-        </section>
-
-        <section id="api-integration" class="panel">
-            <h2>Game API Integrations</h2>
-            <div class="api-section">
-                <h3>ARC Raiders API</h3>
-                <p>
-                    Explore live data and stats from ARC Raiders via the <a href="https://metaforge.app/arc-raiders/api" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">official API</a>.<br>
-                </p>
-                <div class="api-warning" style="background:rgba(255,200,0,0.08);border-left:4px solid #ffd600;padding:0.7em 1em;margin:1em 0 0.5em 0;border-radius:6px;font-size:0.98em;">
-                    <strong>Note:</strong> Large requests may be throttled. Endpoints may change or break without warning.<br>
-                    <a href="https://metaforge.app/arc-raiders" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">Data is community-maintained and not provided by Embark Studios.</a>
-                </div>
-                <div id="arc-api-output" style="margin-top:1em; min-height:2em; color:var(--muted);">
-                    <!-- Live ARC Raiders API data will appear here -->
-                </div>
-            </div>
-        </section>
-
-        <section id="disclaimer" class="panel" style="background:rgba(30,30,30,0.95);border-left:3px solid #888;">
-            <h2>Disclaimer</h2>
-            <p class="muted">
-                DeadDrop Collective is a player-run cooperative group. Not affiliated with ARC Raiders or its developers.<br>
-                All gameplay uses standard, unmodified mechanics and is subject to the game’s Terms of Service.
-            </p>
-        </section>
-
+        <section id="services" class="panel"></section>
+        <section id="contract-types" class="panel grid"></section>
+        <section id="session-availability" class="panel"></section>
+        <section id="engagement-tiers" class="panel"></section>
+        <section id="api-integration" class="panel"></section>
+        <section id="disclaimer" class="panel" style="background:rgba(30,30,30,0.95);border-left:3px solid #888;"></section>
     </main>
 
     <footer>
@@ -166,5 +70,6 @@
     </footer>
 
     <script src="scripts/main.js"></script>
+    <script src="loadComponents.js"></script>
 </body>
 </html>
