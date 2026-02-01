@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch API Integration</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .twitch-api-panel {
+            max-width: 500px;
+            margin: 3rem auto;
+            background: var(--panel, #181c27);
+            border-radius: 12px;
+            box-shadow: 0 2px 16px #0005;
+            padding: 2.5rem 2rem 2rem 2rem;
+        }
+        .twitch-api-panel h2 {
+            color: var(--accent, #9147ff);
+            margin-bottom: 1.2rem;
+        }
+        .twitch-api-panel label {
+            display: block;
+            margin-bottom: 0.5em;
+            color: var(--muted, #888);
+        }
+        .twitch-api-panel input {
+            width: 100%;
+            padding: 0.7em;
+            margin-bottom: 1.2em;
+            border-radius: 6px;
+            border: 1px solid #23283a;
+            background: #10131a;
+            color: var(--text, #fff);
+        }
+        .twitch-api-panel button {
+            background: var(--accent, #9147ff);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.7em 1.5em;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-bottom: 1.5em;
+        }
+        .twitch-api-output {
+            background: #121621;
+            border-radius: 8px;
+            padding: 1.2em;
+            color: var(--text, #fff);
+            min-height: 2em;
+        }
+        .twitch-link {
+            display: inline-block;
+            margin-bottom: 1em;
+            font-size: 1.08em;
+            color: #9147ff;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        .embed-section {
+            margin: 2.5em auto 0 auto;
+            max-width: 700px;
+            background: #181c27;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px #0003;
+            padding: 2rem 2rem 1.5rem 2rem;
+        }
+        .embed-section h3 {
+            color: #9147ff;
+            margin-bottom: 0.7em;
+        }
+        .embed-section label {
+            color: var(--muted, #aaa);
+            font-size: 1em;
+            margin-bottom: 0.2em;
+            display: block;
+        }
+        .embed-section textarea {
+            width: 100%;
+            min-height: 2.5em;
+            font-size: 1em;
+            background: #10131a;
+            color: #fff;
+            border: 1px solid #23283a;
+            border-radius: 6px;
+            padding: 0.5em;
+            margin-bottom: 1.2em;
+            resize: none;
+        }
+        .embed-preview {
+            margin: 1.2em 0 0.5em 0;
+            background: #23283a;
+            border-radius: 8px;
+            padding: 1em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="twitch-api-panel">
+        <h2>Twitch API Integration</h2>
+        <a class="twitch-link" href="https://www.twitch.tv/diccchop" target="_blank">Visit My Twitch Channel &rarr;</a>
+        <p class="muted">Enter your Twitch channel name to fetch stream info for your overlay or stream widgets.</p>
+        <form id="twitch-form">
+            <label for="twitch-channel">Twitch Channel Name</label>
+            <input type="text" id="twitch-channel" name="twitch-channel" placeholder="your_channel_name" value="diccchop" required>
+            <button type="submit">Get Stream Info</button>
+        </form>
+        <div class="twitch-api-output" id="twitch-api-output">Stream info will appear here.</div>
+    </div>
+    <div class="embed-section">
+        <h3>Embed Codes for Your Stream</h3>
+        <label for="chat-embed">Twitch Chat Embed (copy into OBS or your site):</label>
+        <textarea id="chat-embed" readonly><iframe src="https://www.twitch.tv/embed/diccchop/chat?parent=localhost" frameborder="0" scrolling="no" height="400" width="350"></iframe></textarea>
+        <div class="embed-preview">
+            <iframe src="https://www.twitch.tv/embed/diccchop/chat?parent=localhost" frameborder="0" scrolling="no" height="300" width="100%"></iframe>
+        </div>
+        <label for="video-embed">Twitch Video Embed:</label>
+        <textarea id="video-embed" readonly><iframe src="https://player.twitch.tv/?channel=diccchop&parent=localhost" frameborder="0" allowfullscreen="true" scrolling="no" height="378" width="620"></iframe></textarea>
+        <div class="embed-preview">
+            <iframe src="https://player.twitch.tv/?channel=diccchop&parent=localhost" frameborder="0" allowfullscreen="true" scrolling="no" height="200" width="100%"></iframe>
+        </div>
+        <label for="follow-embed">Twitch Follow Button (3rd party):</label>
+        <textarea id="follow-embed" readonly><iframe src="https://buttons.twitch.tv/v1/follow?channel=diccchop&theme=dark" frameborder="0" scrolling="no" height="30" width="150"></iframe></textarea>
+        <div class="embed-preview">
+            <iframe src="https://buttons.twitch.tv/v1/follow?channel=diccchop&theme=dark" frameborder="0" scrolling="no" height="30" width="150"></iframe>
+        </div>
+        <div style="color:var(--muted,#aaa);font-size:0.98em;margin-top:1em;">
+            <strong>Note:</strong> For OBS or your own site, replace <code>parent=localhost</code> with your actual domain if embedding on a live website.
+        </div>
+    </div>
+    <script>
+    document.getElementById('twitch-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const channel = document.getElementById('twitch-channel').value.trim();
+        const output = document.getElementById('twitch-api-output');
+        if (!channel) {
+            output.textContent = 'Please enter a channel name.';
+            return;
+        }
+        output.textContent = 'Loading...';
+        // Example: Fetch Twitch API public info (replace with your own logic or add OAuth for more data)
+        try {
+            const res = await fetch(`https://decapi.me/twitch/status/${encodeURIComponent(channel)}`);
+            if (!res.ok) throw new Error('Failed to fetch Twitch status');
+            const text = await res.text();
+            output.textContent = text;
+        } catch (err) {
+            output.textContent = 'Error: ' + err.message;
+        }
+    });
+    </script>
+</body>
+</html>

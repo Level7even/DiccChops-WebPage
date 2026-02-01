@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch API Integration</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .twitch-api-panel {
+            max-width: 500px;
+            margin: 3rem auto;
+            background: var(--panel, #181c27);
+            border-radius: 12px;
+            box-shadow: 0 2px 16px #0005;
+            padding: 2.5rem 2rem 2rem 2rem;
+        }
+        .twitch-api-panel h2 {
+            color: var(--accent, #9147ff);
+            margin-bottom: 1.2rem;
+        }
+        .twitch-api-panel label {
+            display: block;
+            margin-bottom: 0.5em;
+            color: var(--muted, #888);
+        }
+        .twitch-api-panel input {
+            width: 100%;
+            padding: 0.7em;
+            margin-bottom: 1.2em;
+            border-radius: 6px;
+            border: 1px solid #23283a;
+            background: #10131a;
+            color: var(--text, #fff);
+        }
+        .twitch-api-panel button {
+            background: var(--accent, #9147ff);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.7em 1.5em;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-bottom: 1.5em;
+        }
+        .twitch-api-output {
+            background: #121621;
+            border-radius: 8px;
+            padding: 1.2em;
+            color: var(--text, #fff);
+            min-height: 2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="twitch-api-panel">
+        <h2>Twitch API Integration</h2>
+        <p class="muted">Enter your Twitch channel name to fetch stream info for your overlay or stream widgets.</p>
+        <form id="twitch-form">
+            <label for="twitch-channel">Twitch Channel Name</label>
+            <input type="text" id="twitch-channel" name="twitch-channel" placeholder="your_channel_name" required>
+            <button type="submit">Get Stream Info</button>
+        </form>
+        <div class="twitch-api-output" id="twitch-api-output">Stream info will appear here.</div>
+    </div>
+    <script>
+    document.getElementById('twitch-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const channel = document.getElementById('twitch-channel').value.trim();
+        const output = document.getElementById('twitch-api-output');
+        if (!channel) {
+            output.textContent = 'Please enter a channel name.';
+            return;
+        }
+        output.textContent = 'Loading...';
+        // Example: Fetch Twitch API public info (replace with your own logic or add OAuth for more data)
+        try {
+            const res = await fetch(`https://decapi.me/twitch/status/${encodeURIComponent(channel)}`);
+            if (!res.ok) throw new Error('Failed to fetch Twitch status');
+            const text = await res.text();
+            output.textContent = text;
+        } catch (err) {
+            output.textContent = 'Error: ' + err.message;
+        }
+    });
+    </script>
+</body>
+</html>
