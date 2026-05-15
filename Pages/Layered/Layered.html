@@ -6,9 +6,19 @@
     <title>Layered — Python Image Editor for Game Devs</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="Layred.css">
+    <link rel="stylesheet" href="Layered.css">
 </head>
 <body>
+    <!-- Custom cursor -->
+    <div id="cursor-ring"></div>
+    <div id="cursor-dot"></div>
+
+    <!-- Scroll progress bar -->
+    <div id="scroll-progress"></div>
+
+    <!-- Particle field -->
+    <canvas id="particle-canvas"></canvas>
+
     <div class="glow-ring"></div>
 
     <!-- NAV -->
@@ -19,45 +29,47 @@
         </div>
         <ul class="nav-links">
             <li><a href="#features">Features</a></li>
+            <li><a href="#blends">Blends</a></li>
             <li><a href="#plugins">Plugins</a></li>
+            <li><a href="#releases">Releases</a></li>
             <li><a href="#download">Download</a></li>
             <li><a href="https://github.com/NightHawkHSI/Layered" target="_blank">GitHub ↗</a></li>
         </ul>
         <div class="nav-right">
             <span class="nav-badge" id="nav-version-badge">v1.0.4</span>
-            <a href="https://github.com/NightHawkHSI/Layered/releases/latest" target="_blank" rel="noopener" class="btn btn-orange">Download</a>
+            <a href="https://github.com/NightHawkHSI/Layered/releases/latest" target="_blank" rel="noopener" class="btn btn-orange" data-burst>Download</a>
         </div>
     </nav>
 
     <!-- HERO -->
-    <section style="position:relative;overflow:hidden;padding-top:64px">
+    <section class="hero-section-wrap">
         <div class="hero">
             <div>
                 <div class="hero-tag">Open Source · Python · PyQt6</div>
-                <h1>Image editing,<br>built for <em>game devs</em></h1>
+                <h1 data-scramble data-final="Image editing,<br>built for <em>game devs</em>">Image editing,<br>built for <em>game devs</em></h1>
                 <p class="hero-sub">
                     Non-destructive layers, 9 blend modes, full undo history, and a plugin API
-                    that lets you drop <code style="font-family:'IBM Plex Mono',monospace;font-size:0.88em;color:var(--orange2);background:rgba(255,154,92,0.1);padding:0.1rem 0.35rem;border-radius:3px">.py</code> files
+                    that lets you drop <code class="inline-code">.py</code> files
                     to extend everything — tools, filters, actions.
-                    Export per-layer PNGs with a <code style="font-family:'IBM Plex Mono',monospace;font-size:0.88em;color:var(--orange2);background:rgba(255,154,92,0.1);padding:0.1rem 0.35rem;border-radius:3px">manifest.json</code> ready for your engine.
+                    Export per-layer PNGs with a <code class="inline-code">manifest.json</code> ready for your engine.
                 </p>
                 <div class="install-cmd">
                     <span class="prompt">$</span>
                     <span class="cmd">pip install -r requirements.txt &amp;&amp; python main.py</span>
-                    <button class="copy-btn" onclick="navigator.clipboard.writeText('pip install -r requirements.txt && python main.py');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)">Copy</button>
+                    <button class="copy-btn" data-copy="pip install -r requirements.txt && python main.py">Copy</button>
                 </div>
                 <div class="hero-ctas">
-                    <a href="https://github.com/NightHawkHSI/Layered/releases/latest" target="_blank" rel="noopener" class="btn btn-orange btn-lg" id="dl-hero-btn">↓ Download v1.0.4</a>
+                    <a href="https://github.com/NightHawkHSI/Layered/releases/latest" target="_blank" rel="noopener" class="btn btn-orange btn-lg" id="dl-hero-btn" data-burst>↓ Download v1.0.4</a>
                     <a href="https://github.com/NightHawkHSI/Layered" class="btn btn-ghost btn-lg">View on GitHub</a>
                 </div>
                 <div class="hero-meta">
                     <div class="meta-item">
-                        <span class="meta-num">17</span>
+                        <span class="meta-num" data-count="17">0</span>
                         <span class="meta-label">Bundled plugins</span>
                     </div>
                     <div class="meta-sep"></div>
                     <div class="meta-item">
-                        <span class="meta-num">9</span>
+                        <span class="meta-num" data-count="9">0</span>
                         <span class="meta-label">Blend modes</span>
                     </div>
                     <div class="meta-sep"></div>
@@ -70,7 +82,7 @@
 
             <!-- ANIMATED LAYER STACK -->
             <div class="hero-visual">
-                <div class="layer-stack">
+                <div class="layer-stack" id="layer-stack">
                     <!-- Base layer -->
                     <div class="layer-card lc-base checker-bg" style="box-shadow:0 20px 60px rgba(0,0,0,0.5)">
                         <div class="lc-header">
@@ -150,7 +162,13 @@
         </div>
     </section>
 
-    <div class="wave-divider" style="max-width:1200px;margin:0 auto 0"></div>
+    <!-- MARQUEE -->
+    <div class="marquee-wrap">
+        <div class="marquee-track">
+            <div class="marquee-item">PyQt6 <span>◆</span> Pillow <span>◆</span> NumPy <span>◆</span> Non-destructive <span>◆</span> 9 Blend Modes <span>◆</span> Plugin API <span>◆</span> manifest.json <span>◆</span> Sandboxed <span>◆</span> MIT License <span>◆</span> Open Source <span>◆</span></div>
+            <div class="marquee-item">PyQt6 <span>◆</span> Pillow <span>◆</span> NumPy <span>◆</span> Non-destructive <span>◆</span> 9 Blend Modes <span>◆</span> Plugin API <span>◆</span> manifest.json <span>◆</span> Sandboxed <span>◆</span> MIT License <span>◆</span> Open Source <span>◆</span></div>
+        </div>
+    </div>
 
     <!-- FEATURES -->
     <section id="features" class="features">
@@ -159,32 +177,32 @@
         <p class="section-sub reveal">Designed for game asset pipelines from the ground up — Layered gives you the tools pros expect without the bloat.</p>
 
         <div class="features-grid reveal">
-            <div class="feat-card ac-orange">
+            <div class="feat-card ac-orange" data-tilt>
                 <div class="feat-icon ic-orange">🗂</div>
                 <h3>Non-Destructive Layers</h3>
                 <p>Per-layer opacity, visibility toggles, and reordering. Original pixel data is never destroyed — every operation is fully reversible. Reorder, rename, duplicate, and group with ease.</p>
             </div>
-            <div class="feat-card ac-purple">
+            <div class="feat-card ac-purple" data-tilt>
                 <div class="feat-icon ic-purple">↶</div>
                 <h3>Full Undo History</h3>
                 <p>Every brush stroke, filter, and layer operation is tracked and browsable in the side panel. Jump to any prior state instantly — not just one step back.</p>
             </div>
-            <div class="feat-card ac-teal">
+            <div class="feat-card ac-teal" data-tilt>
                 <div class="feat-icon ic-teal">📦</div>
                 <h3>Game-Ready Export</h3>
-                <p>Export a flattened composite <em>or</em> every layer as its own PNG with a <code style="font-family:monospace;font-size:0.85em;color:var(--teal)">manifest.json</code> carrying offsets, blend modes, and visibility — drop straight into any engine.</p>
+                <p>Export a flattened composite <em>or</em> every layer as its own PNG with a <code class="inline-code">manifest.json</code> carrying offsets, blend modes, and visibility — drop straight into any engine.</p>
             </div>
-            <div class="feat-card ac-orange">
+            <div class="feat-card ac-orange" data-tilt>
                 <div class="feat-icon ic-orange">🔌</div>
                 <h3>Plugin API</h3>
-                <p>Drop a <code style="font-family:monospace;font-size:0.85em;color:var(--orange2)">.py</code> file into <code style="font-family:monospace;font-size:0.85em;color:var(--orange2)">Plugins/</code> to add tools, filters, or menu actions. Plugins run sandboxed — crashes get logged and isolated, the editor stays alive.</p>
+                <p>Drop a <code class="inline-code">.py</code> file into <code class="inline-code">Plugins/</code> to add tools, filters, or menu actions. Plugins run sandboxed — crashes get logged and isolated, the editor stays alive.</p>
             </div>
-            <div class="feat-card ac-green">
+            <div class="feat-card ac-green" data-tilt>
                 <div class="feat-icon ic-green">🎨</div>
                 <h3>Drawing Toolkit</h3>
                 <p>Brush, eraser, fill bucket, line, rectangle, ellipse, color picker, and text — paint assets from scratch or retouch imports with a full suite of familiar tools.</p>
             </div>
-            <div class="feat-card ac-purple">
+            <div class="feat-card ac-purple" data-tilt>
                 <div class="feat-icon ic-purple">🖥</div>
                 <h3>Multi-Project Tabs</h3>
                 <p>Work on several files simultaneously in tabbed projects. Each project carries its full layer stack, history, and settings independently.</p>
@@ -199,7 +217,7 @@
                 <p class="section-label reveal">// Blending</p>
                 <h2 class="section-title reveal" style="max-width:360px">9 blend modes.<br>Powered by NumPy.</h2>
                 <p style="font-size:0.95rem;color:var(--dim);line-height:1.8;margin-bottom:2rem" class="reveal">
-                    All blend modes operate on premultiplied RGBA arrays via NumPy in <code style="font-family:'IBM Plex Mono',monospace;font-size:0.85em;color:var(--orange2)">app/blending.py</code> — fast, composable, and inspectable.
+                    All blend modes operate on premultiplied RGBA arrays via NumPy in <code class="inline-code">app/blending.py</code> — fast, composable, and inspectable.
                 </p>
                 <div class="blend-grid reveal">
                     <div class="blend-item">
@@ -224,20 +242,17 @@
                         <span class="blend-use">Glows</span>
                     </div>
                     <div class="blend-item">
-                        <div class="blend-swatch" style="background:linear-gradient(135deg,#0d0520,#7c3aed 50%,#ff7a2f)">
-                        </div>
+                        <div class="blend-swatch" style="background:linear-gradient(135deg,#0d0520,#7c3aed 50%,#ff7a2f)"></div>
                         <span class="blend-name">Overlay</span>
                         <span class="blend-use">Contrast boost</span>
                     </div>
                     <div class="blend-item">
-                        <div class="blend-swatch" style="background:linear-gradient(135deg,#050508,#1a1a2e)">
-                        </div>
+                        <div class="blend-swatch" style="background:linear-gradient(135deg,#050508,#1a1a2e)"></div>
                         <span class="blend-name">Darken</span>
                         <span class="blend-use">Keep darker</span>
                     </div>
                     <div class="blend-item">
-                        <div class="blend-swatch" style="background:linear-gradient(135deg,#e8e8ff,#fff)">
-                        </div>
+                        <div class="blend-swatch" style="background:linear-gradient(135deg,#e8e8ff,#fff)"></div>
                         <span class="blend-name">Lighten</span>
                         <span class="blend-use">Keep lighter</span>
                     </div>
@@ -288,29 +303,29 @@
                 <p class="section-label reveal">// Plugin API</p>
                 <h2 class="section-title reveal">Extend everything<br>with a single file.</h2>
                 <p style="font-size:1rem;color:var(--dim);line-height:1.8;margin-bottom:1.5rem" class="reveal">
-                    Drop a <code style="font-family:'IBM Plex Mono',monospace;font-size:0.88em;color:var(--orange2);background:rgba(255,154,92,0.1);padding:0.1rem 0.35rem;border-radius:3px">.py</code> file in <code style="font-family:'IBM Plex Mono',monospace;font-size:0.88em;color:var(--orange2);background:rgba(255,154,92,0.1);padding:0.1rem 0.35rem;border-radius:3px">Plugins/</code> and subclass <code style="font-family:'IBM Plex Mono',monospace;font-size:0.88em;color:var(--orange2);background:rgba(255,154,92,0.1);padding:0.1rem 0.35rem;border-radius:3px">Plugin</code>.
+                    Drop a <code class="inline-code">.py</code> file in <code class="inline-code">Plugins/</code> and subclass <code class="inline-code">Plugin</code>.
                     Declare typed settings and the host auto-builds a dialog. Plugins run in isolation — one crash can't take down the editor.
                 </p>
                 <div style="display:flex;flex-direction:column;gap:0.75rem" class="reveal">
-                    <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:1rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px">
-                        <span style="font-size:1.2rem">🔧</span>
+                    <div class="api-surface">
+                        <span class="api-surface-emoji">🔧</span>
                         <div>
-                            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:#fff;margin-bottom:0.3rem">Tools</div>
-                            <div style="font-size:0.8rem;color:var(--dim)">Add a new toolbox button via <code style="font-family:monospace;font-size:0.85em;color:var(--orange2)">ctx.register_tool()</code></div>
+                            <h4>Tools</h4>
+                            <p>Add a new toolbox button via <code class="inline-code">ctx.register_tool()</code></p>
                         </div>
                     </div>
-                    <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:1rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px">
-                        <span style="font-size:1.2rem">🎛</span>
+                    <div class="api-surface">
+                        <span class="api-surface-emoji">🎛</span>
                         <div>
-                            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:#fff;margin-bottom:0.3rem">Filters</div>
-                            <div style="font-size:0.8rem;color:var(--dim)">Appear in the Filters menu via <code style="font-family:monospace;font-size:0.85em;color:var(--orange2)">ctx.register_filter()</code></div>
+                            <h4>Filters</h4>
+                            <p>Appear in the Filters menu via <code class="inline-code">ctx.register_filter()</code></p>
                         </div>
                     </div>
-                    <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:1rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px">
-                        <span style="font-size:1.2rem">⚡</span>
+                    <div class="api-surface">
+                        <span class="api-surface-emoji">⚡</span>
                         <div>
-                            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:#fff;margin-bottom:0.3rem">Actions</div>
-                            <div style="font-size:0.8rem;color:var(--dim)">Live in the Plugins menu via <code style="font-family:monospace;font-size:0.85em;color:var(--orange2)">ctx.register_action()</code></div>
+                            <h4>Actions</h4>
+                            <p>Live in the Plugins menu via <code class="inline-code">ctx.register_action()</code></p>
                         </div>
                     </div>
                 </div>
@@ -322,27 +337,28 @@
                     <span style="margin-left:0.5rem">Plugins/grayscale.py</span>
                     <a href="https://github.com/NightHawkHSI/Layered/blob/main/docs/PLUGIN_API.md" target="_blank" style="margin-left:auto;color:var(--orange2);font-size:0.65rem">Plugin API docs ↗</a>
                 </div>
-                <div class="code-body">
-                    <span class="kw">from</span> PIL <span class="kw">import</span> Image, ImageOps<br>
-                    <span class="kw">from</span> app.plugin_api <span class="kw">import</span> <span class="cl">Plugin</span>, <span class="cl">PluginContext</span><br>
-                    <br>
-                    <span class="cm"># Runs sandboxed — crashes are logged,</span><br>
-                    <span class="cm"># the editor stays alive.</span><br>
-                    <br>
-                    <span class="kw">class</span> <span class="cl">GrayscalePlugin</span>(<span class="cl">Plugin</span>):<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="at">name</span> &nbsp;&nbsp;&nbsp;= <span class="st">"Grayscale"</span><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="at">version</span> = <span class="st">"1.0.0"</span><br>
-                    <br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="df">def</span> <span class="fn">register</span>(<span class="at">self</span>, ctx: <span class="cl">PluginContext</span>) -&gt; <span class="kw">None</span>:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctx.<span class="fn">register_filter</span>(<span class="st">"Grayscale"</span>, <span class="at">self</span>.apply)<br>
-                    <br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="at">@staticmethod</span><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="df">def</span> <span class="fn">apply</span>(image: <span class="cl">Image</span>) -&gt; <span class="cl">Image</span>:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> ImageOps.<span class="fn">grayscale</span>(<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;image.<span class="fn">convert</span>(<span class="st">"RGB"</span>)<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;).<span class="fn">convert</span>(<span class="st">"RGBA"</span>)
-                </div>
+                <div class="code-body" id="code-body" data-typed></div>
             </div>
+        </div>
+    </section>
+
+    <!-- RELEASES TIMELINE -->
+    <section id="releases" class="releases-section">
+        <div class="releases-inner">
+            <p class="section-label reveal" style="text-align:center">// Changelog</p>
+            <h2 class="section-title reveal" style="text-align:center">Shipping fast.</h2>
+            <p class="section-sub reveal" style="margin:0 auto 0;text-align:center">Latest changes pulled live from GitHub.</p>
+
+            <ul class="changelog-list reveal" id="changelog-list">
+                <li class="cl-item">
+                    <div class="cl-dot latest"></div>
+                    <div class="cl-body">
+                        <span class="cl-tag">Loading…</span>
+                        <div class="cl-date">Fetching releases from GitHub</div>
+                        <div class="cl-desc">If this doesn't load, GitHub API rate-limit hit. Check the <a href="https://github.com/NightHawkHSI/Layered/releases" style="color:var(--orange2)">releases page ↗</a>.</div>
+                    </div>
+                </li>
+            </ul>
         </div>
     </section>
 
@@ -372,7 +388,7 @@
             </div>
 
             <div class="dl-ctas reveal">
-                <a href="https://github.com/NightHawkHSI/Layered/releases/latest" target="_blank" rel="noopener" class="btn btn-orange btn-lg" id="dl-release-btn">↓ Download for Windows</a>
+                <a href="https://github.com/NightHawkHSI/Layered/releases/latest" target="_blank" rel="noopener" class="btn btn-orange btn-lg" id="dl-release-btn" data-burst>↓ Download for Windows</a>
                 <a href="https://github.com/NightHawkHSI/Layered/blob/main/docs/PLUGIN_API.md" class="btn btn-ghost btn-lg">Plugin API docs</a>
             </div>
             <p class="req-line reveal">Requires <span>Python 3.9+</span> · <span>PyQt6 ≥ 6.6</span> · <span>Pillow ≥ 10.0</span> · <span>NumPy ≥ 1.26</span></p>
@@ -396,36 +412,16 @@
         </div>
     </footer>
 
-    <script>
-        // Scroll reveal
-        const reveals = document.querySelectorAll('.reveal');
-        const io = new IntersectionObserver((entries) => {
-            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-        }, { threshold: 0.12 });
-        reveals.forEach(el => io.observe(el));
+    <!-- Version toast -->
+    <div id="version-toast">
+        <div class="toast-icon">L</div>
+        <div class="toast-text">
+            <strong id="toast-title">New version available</strong>
+            <span id="toast-sub">Click to view</span>
+        </div>
+        <button class="toast-close" id="toast-close">×</button>
+    </div>
 
-        // Also trigger elements already in view
-        setTimeout(() => {
-            reveals.forEach(el => {
-                const r = el.getBoundingClientRect();
-                if (r.top < window.innerHeight) el.classList.add('in');
-            });
-        }, 100);
-
-        // Fetch latest release tag from GitHub
-        fetch('https://api.github.com/repos/NightHawkHSI/Layered/releases/latest')
-            .then(r => r.ok ? r.json() : Promise.reject(r.status))
-            .then(data => {
-                const tag = data.tag_name || data.name;
-                if (!tag) return;
-                const btn = document.getElementById('dl-release-btn');
-                if (btn) btn.textContent = `↓ Download ${tag} for Windows`;
-                const badge = document.getElementById('nav-version-badge');
-                if (badge) badge.textContent = tag;
-                const hero = document.getElementById('dl-hero-btn');
-                if (hero) hero.textContent = `↓ Download ${tag}`;
-            })
-            .catch(() => {});
-    </script>
+    <script src="Layered.js"></script>
 </body>
 </html>
