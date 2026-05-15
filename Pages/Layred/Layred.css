@@ -357,7 +357,7 @@ nav {
     overflow: hidden
 }
 
-/* layer card bodies � checker pattern and colored fills */
+/* layer card bodies � checker pattern and colored fills */
 .layer-card.lc-base {
     background: var(--bg3);
     left: 0;
@@ -975,4 +975,261 @@ footer {
     background: radial-gradient(circle,rgba(255,122,47,0.04) 0%,transparent 70%);
     top: -200px;
     right: -200px;
+}
+
+/* RESPONSIVE — TABLET */
+@media (max-width: 1024px) {
+    nav {
+        padding: 0 1.5rem;
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        padding: 64px 1.5rem 3rem;
+        min-height: auto;
+    }
+
+    .hero-visual {
+        height: 460px;
+        order: 2;
+    }
+
+    .features,
+    .plugin-section {
+        padding: 5rem 1.5rem;
+    }
+
+    .blends-section {
+        padding: 5rem 1.5rem;
+    }
+
+    .blends-inner,
+    .plugin-inner {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dl-section {
+        padding: 5rem 1.5rem;
+    }
+}
+
+/* RESPONSIVE — MOBILE */
+@media (max-width: 720px) {
+    body {
+        font-size: 15px;
+    }
+
+    nav {
+        padding: 0 1rem;
+        height: 56px;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .nav-right {
+        gap: 0.6rem;
+    }
+
+    .nav-badge {
+        display: none;
+    }
+
+    .btn {
+        padding: 0.55rem 1rem;
+        font-size: 0.78rem;
+    }
+
+    .btn-lg {
+        font-size: 0.88rem;
+        padding: 0.75rem 1.4rem;
+    }
+
+    /* HERO */
+    section[style*="padding-top:64px"] {
+        padding-top: 56px !important;
+    }
+
+    .hero {
+        padding: 56px 1rem 2.5rem;
+        gap: 2rem;
+    }
+
+    .hero h1 {
+        font-size: clamp(2rem, 9vw, 2.6rem);
+    }
+
+    .hero-sub {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+    }
+
+    .install-cmd {
+        font-size: 0.7rem;
+        padding: 0.65rem 0.85rem;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+    }
+
+    .install-cmd .cmd {
+        word-break: break-all;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .install-cmd .copy-btn {
+        margin-left: 0;
+    }
+
+    .hero-ctas {
+        gap: 0.6rem;
+        margin-bottom: 2rem;
+    }
+
+    .hero-ctas .btn {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+
+    .hero-meta {
+        gap: 1.2rem;
+        flex-wrap: wrap;
+    }
+
+    .meta-num {
+        font-size: 1.2rem;
+    }
+
+    /* HERO VISUAL — shrink stack */
+    .hero-visual {
+        height: 380px;
+    }
+
+    .layer-stack {
+        width: 280px;
+        height: 360px;
+        transform: scale(0.85);
+        transform-origin: center;
+    }
+
+    .layer-card {
+        width: 220px;
+        height: 180px;
+    }
+
+    .layer-card.lc-ui {
+        width: 95px;
+        right: -10px;
+        height: 260px;
+    }
+
+    /* SECTIONS */
+    .features,
+    .plugin-section,
+    .blends-section,
+    .dl-section {
+        padding: 4rem 1rem;
+    }
+
+    .section-title {
+        font-size: clamp(1.6rem, 6vw, 2.2rem);
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .feat-card {
+        padding: 1.6rem;
+    }
+
+    .blend-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .blends-inner,
+    .plugin-inner {
+        gap: 3rem;
+    }
+
+    .code-body {
+        padding: 1rem;
+        font-size: 0.7rem;
+        line-height: 1.7;
+    }
+
+    .code-header {
+        padding: 0.6rem 0.9rem;
+        font-size: 0.62rem;
+        flex-wrap: wrap;
+    }
+
+    /* DOWNLOAD */
+    .steps {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .dl-ctas {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dl-ctas .btn {
+        justify-content: center;
+    }
+
+    .req-line {
+        font-size: 0.62rem;
+        line-height: 1.8;
+    }
+
+    /* FOOTER */
+    footer {
+        padding: 2rem 1rem;
+    }
+
+    .footer-inner {
+        flex-direction: column;
+        gap: 1.2rem;
+        text-align: center;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.2rem;
+    }
+
+    /* GLOW — keep off-canvas, smaller */
+    .glow-ring {
+        width: 360px;
+        height: 360px;
+        top: -150px;
+        right: -150px;
+    }
+}
+
+/* RESPONSIVE — SMALL PHONE */
+@media (max-width: 380px) {
+    .blend-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-meta {
+        gap: 0.9rem;
+    }
+
+    .meta-sep {
+        display: none;
+    }
 }
