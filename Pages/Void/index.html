@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level7even Studios — 3D Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #050508;
+            --surface: #0b0b10;
+            --gold: #c9aa6f;
+            --gold-dim: rgba(201,170,111,.22);
+            --blue: #3a8fff;
+            --text: #dbd6cc;
+            --muted: #4e4e66;
+            --white: #f0ece7;
+            --border: rgba(255,255,255,.05);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Barlow Condensed', sans-serif;
+            cursor: none;
+            overflow-x: hidden;
+        }
+
+            /* ?? GRAIN ???????????????????????????????????? */
+            body::after {
+                content: '';
+                position: fixed;
+                inset: 0;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+                opacity: .025;
+                pointer-events: none;
+                z-index: 9990;
+            }
+
+        /* ?? CURSOR ??????????????????????????????????? */
+        .c-dot, .c-ring {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%,-50%);
+        }
+
+        .c-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            z-index: 10000;
+            transition: width .15s, height .15s;
+        }
+
+        .c-ring {
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(201,170,111,.4);
+            z-index: 9999;
+            transition: width .3s, height .3s, border-color .3s;
+        }
+
+        body.hov .c-dot {
+            width: 10px;
+            height: 10px;
+        }
+
+        body.hov .c-ring {
+            width: 56px;
+            height: 56px;
+            border-color: var(--gold);
+        }
+
+        /* ?? LOADER ??????????????????????????????????? */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9997;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+            transition: opacity .9s, visibility .9s;
+        }
+
+            #loader.off {
+                opacity: 0;
+                visibility: hidden;
+            }
+
+        .ld-logo {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: clamp(1.8rem,4vw,3rem);
+            letter-spacing: .12em;
+            color: var(--white);
+        }
+
+            .ld-logo span {
+                color: var(--gold);
+            }
+
+        .ld-sub {
+            font-size: .65rem;
+            letter-spacing: .5em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .ld-track {
+            width: 200px;
+            height: 1px;
+            background: rgba(255,255,255,.07);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ld-fill {
+            position: absolute;
+            left: -100%;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gold);
+            animation: fill 1.4s ease forwards .3s;
+        }
+
+        @keyframes fill {
+            to {
+                left: 0;
+            }
+        }
+
+        /* ?? NAV ?????????????????????????????????????? */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            padding: 24px 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+            nav::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to bottom, rgba(5,5,8,.95) 0%, transparent 100%);
+                pointer-events: none;
+            }
+
+        .nav-logo {
+            font-family: 'Cinzel', serif;
+            font-size: .95rem;
+            font-weight: 900;
+            letter-spacing: .22em;
+            color: var(--white);
+            text-decoration: none;
+            position: relative;
+        }
+
+            .nav-logo .accent {
+                color: var(--gold);
+            }
+
+        .nav-links {
+            display: flex;
+            gap: 36px;
+            list-style: none;
+            position: relative;
+        }
+
+            .nav-links a {
+                font-size: .68rem;
+                letter-spacing: .28em;
+                text-transform: uppercase;
+                color: var(--muted);
+                text-decoration: none;
+                transition: color .3s;
+            }
+
+                .nav-links a:hover {
+                    color: var(--gold);
+                }
+
+        /* ?? HERO ????????????????????????????????????? */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 0 52px 88px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 70% 60% at 75% 35%, rgba(100,50,10,.2) 0%, transparent 65%), radial-gradient(ellipse 50% 50% at 15% 85%, rgba(30,20,70,.25) 0%, transparent 60%), var(--bg);
+        }
+
+        .hero-scan {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.007) 2px, rgba(255,255,255,.007) 4px);
+            pointer-events: none;
+        }
+
+        .hero-ghost {
+            position: absolute;
+            bottom: -60px;
+            right: -30px;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: clamp(10rem, 28vw, 34rem);
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(201,170,111,.035);
+            user-select: none;
+            line-height: 1;
+            pointer-events: none;
+            letter-spacing: -.03em;
+        }
+
+        .hero-eyebrow {
+            font-size: .62rem;
+            letter-spacing: .48em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            opacity: 0;
+            animation: up .8s 1.3s forwards;
+        }
+
+            .hero-eyebrow::before {
+                content: '';
+                width: 32px;
+                height: 1px;
+                background: var(--gold);
+            }
+
+        .hero-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(4rem, 13.5vw, 13rem);
+            font-weight: 900;
+            line-height: .86;
+            position: relative;
+            color: var(--white);
+            letter-spacing: -.025em;
+            opacity: 0;
+            animation: up .8s 1.5s forwards;
+        }
+
+            .hero-title .seven {
+                -webkit-text-stroke: 1.5px rgba(201,170,111,.4);
+                color: transparent;
+            }
+
+        .hero-sub {
+            margin-top: 34px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            opacity: 0;
+            animation: up .8s 1.7s forwards;
+        }
+
+        .hero-desc {
+            font-size: .88rem;
+            line-height: 1.9;
+            color: var(--muted);
+            max-width: 360px;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        .scroll-hint {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            font-size: .58rem;
+            letter-spacing: .3em;
+            text-transform: uppercase;
+        }
+
+        .s-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--gold), transparent);
+            animation: drop 2s ease-in-out infinite;
+        }
+
+        @keyframes drop {
+            0% {
+                transform: scaleY(0);
+                transform-origin: top;
+            }
+
+            49% {
+                transform: scaleY(1);
+                transform-origin: top;
+            }
+
+            50% {
+                transform: scaleY(1);
+                transform-origin: bottom;
+            }
+
+            100% {
+                transform: scaleY(0);
+                transform-origin: bottom;
+            }
+        }
+
+        @keyframes up {
+            from {
+                opacity: 0;
+                transform: translateY(26px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ?? STATS ???????????????????????????????????? */
+        .stats {
+            display: flex;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat {
+            flex: 1;
+            padding: 32px 0 32px 52px;
+            border-right: 1px solid var(--border);
+        }
+
+            .stat:last-child {
+                border-right: none;
+            }
+
+        .stat-n {
+            font-family: 'Cinzel', serif;
+            font-size: 2.3rem;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .stat-l {
+            font-size: .62rem;
+            letter-spacing: .28em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        /* ?? GALLERY ?????????????????????????????????? */
+        .gallery {
+            padding: 76px 52px;
+        }
+
+        .gal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .sec-label {
+            font-size: .65rem;
+            letter-spacing: .42em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* filters */
+        .filters {
+            display: flex;
+            border: 1px solid rgba(255,255,255,.07);
+        }
+
+        .fb {
+            background: none;
+            border: none;
+            border-right: 1px solid rgba(255,255,255,.07);
+            color: var(--muted);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: .66rem;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            padding: 9px 20px;
+            cursor: none;
+            transition: color .25s, background .25s;
+        }
+
+            .fb:last-child {
+                border-right: none;
+            }
+
+            .fb.on {
+                color: var(--bg);
+                background: var(--gold);
+            }
+
+            .fb:not(.on):hover {
+                color: var(--gold);
+            }
+
+        /* grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 3px;
+        }
+
+        /* loading/error */
+        .grid-msg {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 0;
+            color: var(--muted);
+            font-size: .8rem;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+        }
+
+            .grid-msg .spin {
+                display: inline-block;
+                width: 28px;
+                height: 28px;
+                border: 1px solid var(--gold-dim);
+                border-top-color: var(--gold);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-bottom: 16px;
+            }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* cards */
+        .card {
+            position: relative;
+            overflow: hidden;
+            cursor: none;
+            background: var(--surface);
+            animation: cardIn .5s ease both;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-thumb {
+            width: 100%;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            position: relative;
+            background: #0d0d14;
+        }
+
+            .card-thumb img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform .65s cubic-bezier(.25,.46,.45,.94), filter .4s;
+                filter: brightness(.85) saturate(.8);
+            }
+
+        .card:hover .card-thumb img {
+            transform: scale(1.06);
+            filter: brightness(.95) saturate(1.1);
+        }
+
+        /* torch light */
+        .card-light {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(201,170,111,.2), transparent 55%);
+            transition: opacity .45s;
+        }
+
+        .card:hover .card-light {
+            opacity: 1;
+        }
+
+        /* placeholder when no image */
+        .card-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: rgba(201,170,111,.12);
+            letter-spacing: .2em;
+        }
+
+        /* overlay */
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(5,5,8,.97) 0%, rgba(5,5,8,.08) 55%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px 22px;
+            transform: translateY(35%);
+            transition: transform .4s cubic-bezier(.25,.46,.45,.94);
+        }
+
+        .card:hover .card-overlay {
+            transform: translateY(0);
+        }
+
+        .card-cat {
+            font-size: .56rem;
+            letter-spacing: .35em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+
+        .card-name {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(.85rem,1.6vw,1.1rem);
+            color: var(--white);
+            line-height: 1.25;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 14px;
+            margin-top: 6px;
+            font-size: .58rem;
+            letter-spacing: .15em;
+            color: var(--muted);
+        }
+
+        /* view btn */
+        .card-view {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            font-size: .62rem;
+            letter-spacing: .25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-decoration: none;
+            opacity: 0;
+            transition: opacity .3s .1s, gap .3s;
+            cursor: none;
+        }
+
+        .card:hover .card-view {
+            opacity: 1;
+        }
+
+        .card-view:hover {
+            gap: 12px;
+        }
+
+        /* ?? MODAL ???????????????????????????????????? */
+        #modal {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            background: rgba(5,5,8,.94);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s, visibility .4s;
+            backdrop-filter: blur(6px);
+        }
+
+            #modal.open {
+                opacity: 1;
+                visibility: visible;
+            }
+
+        .modal-inner {
+            width: min(900px, 90vw);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform .4s;
+        }
+
+        #modal.open .modal-inner {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -44px;
+            right: 0;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: .65rem;
+            letter-spacing: .3em;
+            padding: 8px 16px;
+            cursor: none;
+            transition: color .3s, border-color .3s;
+        }
+
+            .modal-close:hover {
+                color: var(--gold);
+                border-color: var(--gold);
+            }
+
+        .modal-frame {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+            display: block;
+            background: var(--surface);
+        }
+
+        .modal-info {
+            padding: 14px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .modal-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--white);
+        }
+
+        .modal-link {
+            font-size: .62rem;
+            letter-spacing: .25em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-decoration: none;
+            border-bottom: 1px solid var(--gold-dim);
+            padding-bottom: 2px;
+            transition: border-color .3s;
+        }
+
+            .modal-link:hover {
+                border-color: var(--gold);
+            }
+
+        /* ?? ABOUT ???????????????????????????????????? */
+        .about {
+            padding: 100px 52px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .about-hed {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem,5vw,4rem);
+            color: var(--white);
+            line-height: 1.08;
+        }
+
+            .about-hed em {
+                color: var(--gold);
+                font-style: normal;
+            }
+
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 32px;
+            font-size: .7rem;
+            letter-spacing: .3em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-decoration: none;
+            border-bottom: 1px solid var(--gold-dim);
+            padding-bottom: 3px;
+            transition: gap .3s, border-color .3s;
+        }
+
+            .cta:hover {
+                gap: 20px;
+                border-color: var(--gold);
+            }
+
+        .about-body {
+            font-size: .92rem;
+            line-height: 1.95;
+            color: var(--muted);
+            font-weight: 300;
+        }
+
+            .about-body p + p {
+                margin-top: 18px;
+            }
+
+        /* ?? FOOTER ??????????????????????????????????? */
+        footer {
+            padding: 32px 52px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .foot-logo {
+            font-family: 'Cinzel', serif;
+            font-size: .85rem;
+            letter-spacing: .22em;
+            font-weight: 900;
+            color: var(--muted);
+        }
+
+            .foot-logo .accent {
+                color: var(--gold);
+            }
+
+        .foot-copy {
+            font-size: .62rem;
+            color: var(--muted);
+            letter-spacing: .1em;
+        }
+
+        /* ?? REVEAL ??????????????????????????????????? */
+        .rev {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity .7s ease, transform .7s ease;
+        }
+
+            .rev.in {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        /* card hide */
+        .card.hide {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            nav, .hero, .stats .stat, .gallery, .about, footer {
+                padding-left: 24px;
+                padding-right: 24px;
+            }
+
+            .about {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .stat {
+                padding-left: 24px;
+            }
+
+            .hero-title {
+                font-size: clamp(3rem, 16vw, 6rem);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div id="loader">
+        <div class="ld-logo">LEVEL<span>7</span>EVEN</div>
+        <div class="ld-sub">Studios &mdash; 3D Portfolio</div>
+        <div class="ld-track"><div class="ld-fill"></div></div>
+    </div>
+
+    <!-- CURSOR -->
+    <div class="c-dot" id="cDot"></div>
+    <div class="c-ring" id="cRing"></div>
+
+    <!-- NAV -->
+    <nav>
+        <a href="#" class="nav-logo">L<span class="accent">7</span>S</a>
+        <ul class="nav-links">
+            <li><a href="#work">Work</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="https://sketchfab.com/DiccChops" target="_blank">Sketchfab</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-scan"></div>
+        <div class="hero-ghost">L7</div>
+        <div class="hero-eyebrow">Level7even Studios &mdash; 3D Portfolio</div>
+        <h1 class="hero-title">
+            LEVEL<br>
+            <span class="seven">7EVEN</span>
+        </h1>
+        <div class="hero-sub">
+            <p class="hero-desc">Self-taught Blender artist out of Arizona. Vehicles, sci-fi, props, and everything in between — over 1,300 hours of craft.</p>
+            <div class="scroll-hint">
+                <div class="s-line"></div>
+                scroll
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats rev">
+        <div class="stat"><div class="stat-n">85</div><div class="stat-l">Models Created</div></div>
+        <div class="stat"><div class="stat-n">1.3k+</div><div class="stat-l">Hours in Blender</div></div>
+        <div class="stat"><div class="stat-n">10.8k</div><div class="stat-l">Total Views</div></div>
+        <div class="stat"><div class="stat-n">146</div><div class="stat-l">Likes</div></div>
+    </div>
+
+    <!-- GALLERY -->
+    <section class="gallery" id="work">
+        <div class="gal-head rev">
+            <span class="sec-label">All Models</span>
+            <div class="filters">
+                <button class="fb on" data-f="all">All</button>
+                <button class="fb" data-f="vehicles">Vehicles</button>
+                <button class="fb" data-f="scifi">Sci-Fi</button>
+                <button class="fb" data-f="props">Props</button>
+            </div>
+        </div>
+        <div class="grid" id="grid">
+            <div class="grid-msg"><div class="spin"></div><br>Loading models from Sketchfab…</div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about" id="about">
+        <div class="rev">
+            <h2 class="about-hed">Built from<br><em>the ground up</em>.</h2>
+            <a href="https://sketchfab.com/DiccChops" target="_blank" class="cta">View on Sketchfab &rarr;</a>
+        </div>
+        <div class="rev">
+            <div class="about-body">
+                <p>A self-taught Blender artist based in Arizona with 1,300+ hours of experience across vehicles, sci-fi machinery, architecture, and everyday props.</p>
+                <p>Every model starts with a reference and ends with obsession — from the door hinge to the exhaust tip. Hard-surface modeling is the specialty; detail is the standard.</p>
+                <p>Open to commissions, collaborations, and game-ready asset work.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="foot-logo">LEVEL<span class="accent">7</span>EVEN STUDIOS</div>
+        <div class="foot-copy">&copy; 2025 DiccChops &mdash; All rights reserved</div>
+    </footer>
+
+    <!-- MODAL -->
+    <div id="modal">
+        <div class="modal-inner">
+            <button class="modal-close" id="modalClose">&#10005; &nbsp;Close</button>
+            <iframe class="modal-frame" id="modalFrame" src="" allowfullscreen allow="autoplay; fullscreen; xr-spatial-tracking" loading="lazy"></iframe>
+            <div class="modal-info">
+                <div class="modal-name" id="modalName"></div>
+                <a class="modal-link" id="modalLink" href="#" target="_blank">View on Sketchfab &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ?? LOADER ??????????????????????????????????
+        setTimeout(() => document.getElementById('loader').classList.add('off'), 1800);
+
+        // ?? CURSOR ??????????????????????????????????
+        const dot = document.getElementById('cDot');
+        const ring = document.getElementById('cRing');
+        let rx = 0, ry = 0, mx = 0, my = 0;
+        document.addEventListener('mousemove', e => {
+            mx = e.clientX; my = e.clientY;
+            dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+        });
+        (function tick() {
+            rx += (mx - rx) * .11; ry += (my - ry) * .11;
+            ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+            requestAnimationFrame(tick);
+        })();
+        document.addEventListener('mouseover', e => {
+            if (e.target.closest('a, button, .card')) document.body.classList.add('hov');
+            else document.body.classList.remove('hov');
+        });
+
+        // ?? SCROLL REVEAL ????????????????????????????
+        const io = new IntersectionObserver(
+            entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }),
+            { threshold: .1 }
+        );
+        document.querySelectorAll('.rev').forEach(el => io.observe(el));
+
+        // ?? CATEGORY DETECTION ???????????????????????
+        const VEHICLE_KW = /vehicle|car|truck|hover|bike|racer|drift|subaru|vw|rabbit|toronado|wagon|rail|craft|engine|auto|jeep|tank|bus|van|camper|drift/i;
+        const SCIFI_KW = /satellite|rocket|space|orbital|drone|cannon|missile|weapon|ship|mech|robot|gun|turret|cyber|laser|pod|station|shuttle/i;
+        const PROPS_KW = /house|building|box|loot|floor|rack|mask|cube|arch|room|furniture|barrel|crate|lamp|door|window|prop|print|sign|tree|plant/i;
+
+        function getCategory(name, cats) {
+            // prefer Sketchfab categories
+            if (cats && cats.length) {
+                const c = cats.map(x => (x.name || x).toLowerCase()).join(' ');
+                if (/car|vehicle|transport/.test(c)) return 'vehicles';
+                if (/sci|tech|weapon|military/.test(c)) return 'scifi';
+                if (/architecture|furniture|food|nature/.test(c)) return 'props';
+            }
+            if (VEHICLE_KW.test(name)) return 'vehicles';
+            if (SCIFI_KW.test(name)) return 'scifi';
+            if (PROPS_KW.test(name)) return 'props';
+            return 'props';
+        }
+
+        // ?? SKETCHFAB API ????????????????????????????
+        const grid = document.getElementById('grid');
+
+        async function loadModels() {
+            let allModels = [];
+            let url = 'https://api.sketchfab.com/v3/search?type=models&user=DiccChops&count=24&sort_by=-publishedAt';
+
+                try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('API error ' + res.status);
+                const data = await res.json();
+                allModels = data.results || [];
+            } catch (err) {
+                grid.innerHTML = `<div class="grid-msg">Couldn't reach the Sketchfab API.<br><small style="margin-top:8px;display:block;font-size:.6rem;letter-spacing:.15em;">Open the file in a local server or check network settings.</small></div>`;
+                return;
+            }
+
+            if (!allModels.length) {
+                grid.innerHTML = `<div class="grid-msg">No models found.</div>`;
+                return;
+            }
+
+            grid.innerHTML = '';
+            allModels.forEach((m, i) => buildCard(m, i));
+            initCards();
+        }
+
+        function getBestThumb(thumbs) {
+            if (!thumbs || !thumbs.images || !thumbs.images.length) return '';
+            // pick 640-wide if available, otherwise largest
+            const sorted = [...thumbs.images].sort((a, b) => b.width - a.width);
+            const mid = sorted.find(t => t.width <= 640) || sorted[sorted.length - 1];
+            return mid.url;
+        }
+
+        function buildCard(m, idx) {
+            const uid = m.uid;
+            const name = m.name || 'Untitled';
+            const thumb = getBestThumb(m.thumbnails);
+            const views = m.viewCount ? fmtNum(m.viewCount) : '—';
+            const likes = m.likeCount ? fmtNum(m.likeCount) : '—';
+            const cat = getCategory(name, m.categories);
+            const catLabel = { vehicles: 'Vehicle', scifi: 'Sci-Fi', props: 'Prop' }[cat] || 'Model';
+            const sfUrl = `https://sketchfab.com/3d-models/${uid}`;
+            const embedUrl = `https://sketchfab.com/models/${uid}/embed?autostart=0&ui_theme=dark&preload=1`;
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.cat = cat;
+            card.dataset.uid = uid;
+            card.dataset.name = name;
+            card.dataset.embed = embedUrl;
+            card.dataset.url = sfUrl;
+            card.style.animationDelay = (idx * 40) + 'ms';
+
+            card.innerHTML = `
+          <div class="card-thumb">
+            ${thumb
+                    ? `<img src="${thumb}" alt="${escHtml(name)}" loading="lazy">`
+                    : `<div class="card-placeholder">L7</div>`}
+            <div class="card-light"></div>
+          </div>
+          <div class="card-overlay">
+            <div class="card-cat">${catLabel}</div>
+            <div class="card-name">${escHtml(name)}</div>
+            <div class="card-meta">
+              <span>&#9825; ${likes}</span>
+              <span>&#9654; ${views}</span>
+            </div>
+            <span class="card-view">View 3D Model &#8594;</span>
+          </div>
+        `;
+
+            grid.appendChild(card);
+        }
+
+        function initCards() {
+            // torch light
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const r = card.getBoundingClientRect();
+                    card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
+                    card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
+                });
+                card.addEventListener('click', () => openModal(card));
+            });
+
+            // filters
+            document.querySelectorAll('.fb').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.fb').forEach(b => b.classList.remove('on'));
+                    btn.classList.add('on');
+                    const f = btn.dataset.f;
+                    document.querySelectorAll('.card').forEach(c => {
+                        c.classList.toggle('hide', f !== 'all' && c.dataset.cat !== f);
+                    });
+                });
+            });
+        }
+
+        // ?? MODAL ????????????????????????????????????
+        const modal = document.getElementById('modal');
+        const modalFrame = document.getElementById('modalFrame');
+        const modalName = document.getElementById('modalName');
+        const modalLink = document.getElementById('modalLink');
+        const modalClose = document.getElementById('modalClose');
+
+        function openModal(card) {
+            modalFrame.src = card.dataset.embed;
+            modalName.textContent = card.dataset.name;
+            modalLink.href = card.dataset.url;
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+            setTimeout(() => { modalFrame.src = ''; }, 400);
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        // ?? HELPERS ??????????????????????????????????
+        function fmtNum(n) { return n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n; }
+        function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+        // ?? INIT ?????????????????????????????????????
+        loadModels();
+    </script>
+</body>
+</html>

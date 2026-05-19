@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STARFRONT — RTS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- TOP HUD -->
+        <div id="hud-top">
+            <div class="hud-group">
+                <div class="hud-resource">
+                    <span class="res-icon credits-icon">◈</span>
+                    <span class="res-label">CRED</span>
+                    <span class="res-val" id="val-credits">400</span>
+                </div>
+                <div class="hud-resource">
+                    <span class="res-icon energy-icon">⚡</span>
+                    <span class="res-label">PWR</span>
+                    <span class="res-val" id="val-energy">100<span class="res-dim">/100</span></span>
+                </div>
+                <div class="hud-resource">
+                    <span class="res-icon supply-icon">⚔</span>
+                    <span class="res-label">UNITS</span>
+                    <span class="res-val" id="val-supply">0<span class="res-dim">/10</span></span>
+                </div>
+            </div>
+
+            <div id="hud-title">
+                <span class="title-star">✦</span> STARFRONT <span class="title-star">✦</span>
+            </div>
+
+            <div class="hud-group right">
+                <div id="hud-wave">
+                    <div class="wave-label">WAVE <span id="val-wave-num">1</span></div>
+                    <div class="wave-timer" id="val-wave-timer">90s</div>
+                </div>
+                <div id="hud-controls">
+                    <span class="ctrl-hint">WASD/Arrows: Pan</span>
+                    <span class="ctrl-hint">RClick: Move/Attack</span>
+                    <span class="ctrl-hint">F: Base</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM HUD -->
+        <div id="hud-bottom">
+            <div id="panel-info">
+                <div id="panel-portrait"><span id="portrait-icon">—</span></div>
+                <div id="panel-details">
+                    <div id="panel-name">NOTHING SELECTED</div>
+                    <div id="panel-hp-wrap">
+                        <div id="panel-hp-bar"><div id="panel-hp-fill"></div></div>
+                        <span id="panel-hp-text"></span>
+                    </div>
+                    <div id="panel-stats"></div>
+                </div>
+            </div>
+
+            <div id="panel-divider"></div>
+
+            <div id="panel-actions">
+                <div id="actions-label">ACTIONS</div>
+                <div id="actions-grid"></div>
+            </div>
+
+            <div id="panel-divider"></div>
+
+            <div id="minimap-wrap">
+                <div id="minimap-label">TACTICAL MAP</div>
+                <canvas id="minimap-canvas" width="160" height="160"></canvas>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div id="notifications"></div>
+
+        <!-- GAME OVER OVERLAY -->
+        <div id="overlay" style="display:none">
+            <div id="overlay-content">
+                <div id="overlay-title"></div>
+                <div id="overlay-sub"></div>
+                <button id="overlay-btn" onclick="window.game && window.game.restart()">⟳ PLAY AGAIN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load order matters: dependencies first -->
+    <script src="config.js"></script>
+    <script src="utils.js"></script>
+    <script src="map.js"></script>
+    <script src="entities.js"></script>
+    <script src="input.js"></script>
+    <script src="economy.js"></script>
+    <script src="ai.js"></script>
+    <script src="renderer.js"></script>
+    <script src="game.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
