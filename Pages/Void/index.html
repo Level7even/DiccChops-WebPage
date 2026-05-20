@@ -110,18 +110,21 @@
             background: linear-gradient(to bottom, var(--gold) calc(50% - 5px), transparent calc(50% - 5px), transparent calc(50% + 5px), var(--gold) calc(50% + 5px));
         }
 
+        /* Keep fixed size on all states — gradient 50% relies on stable element width/height */
         body.hov-card .cx-h {
-            width: 40px;
-            background: linear-gradient(to right, var(--white) calc(50% - 6px), transparent calc(50% - 6px), transparent calc(50% + 6px), var(--white) calc(50% + 6px));
+            background: linear-gradient(to right, var(--white) calc(50% - 5px), transparent calc(50% - 5px), transparent calc(50% + 5px), var(--white) calc(50% + 5px));
         }
 
         body.hov-card .cx-v {
-            height: 40px;
-            background: linear-gradient(to bottom, var(--white) calc(50% - 6px), transparent calc(50% - 6px), transparent calc(50% + 6px), var(--white) calc(50% + 6px));
+            background: linear-gradient(to bottom, var(--white) calc(50% - 5px), transparent calc(50% - 5px), transparent calc(50% + 5px), var(--white) calc(50% + 5px));
         }
 
-        body.hov-link .cx-h, body.hov-link .cx-v {
-            background-color: var(--gold2);
+        body.hov-link .cx-h {
+            background: linear-gradient(to right, var(--gold2) calc(50% - 5px), transparent calc(50% - 5px), transparent calc(50% + 5px), var(--gold2) calc(50% + 5px));
+        }
+
+        body.hov-link .cx-v {
+            background: linear-gradient(to bottom, var(--gold2) calc(50% - 5px), transparent calc(50% - 5px), transparent calc(50% + 5px), var(--gold2) calc(50% + 5px));
         }
 
         /* ====== LOADER ====== */
@@ -761,12 +764,12 @@
             object-fit: cover;
             display: block;
             transition: transform .65s cubic-bezier(.25,.46,.45,.94), filter .45s;
-            filter: brightness(.72) saturate(.65) grayscale(.25);
+            filter: brightness(.92) saturate(.88);
         }
 
         .card:hover .card-thumb img {
-            transform: scale(1.08);
-            filter: brightness(.45) saturate(.15) grayscale(.9) contrast(1.15);
+            transform: scale(1.06);
+            filter: brightness(.55) saturate(.2) contrast(1.08);
         }
 
         .card-placeholder {
@@ -1354,7 +1357,7 @@
         <div class="hero-body">
             <div class="hero-strip">
                 <div class="hero-strip-line"></div>
-                <div class="hero-strip-text">Self-Taught &nbsp;/&nbsp; <em>2,000+ Hrs</em> &nbsp;/&nbsp; Arizona, US</div>
+                <div class="hero-strip-text">Self-Taught &nbsp;/&nbsp; <em>1,300+ Hrs</em> &nbsp;/&nbsp; Arizona, US</div>
                 <div class="hero-strip-line"></div>
             </div>
             <h1 class="hero-title">
@@ -1382,7 +1385,7 @@
             <div class="stat-l">Models Created</div>
         </div>
         <div class="stat rev" style="transition-delay:.08s">
-            <div class="stat-n" data-target="1300" data-mode="k">0</div>
+            <div class="stat-n" data-target="2000" data-mode="k">0</div>
             <div class="stat-l">Hours in Blender</div>
         </div>
         <div class="stat rev" style="transition-delay:.16s">
@@ -1399,7 +1402,7 @@
     <div class="sec-divider rev" id="work">
         <div class="sec-divider-index">01 — Gallery</div>
         <div class="sec-divider-title">Selected <span class="g">&nbsp;Work</span></div>
-        <div class="sec-divider-tail">Sketchfab / DiccChops</div>
+        <div class="sec-divider-tail">Sorted by Most Liked</div>
     </div>
 
     <!-- GALLERY CONTROLS -->
@@ -1434,7 +1437,7 @@
             <div class="about-divider"></div>
             <div class="about-quick-stats">
                 <div class="about-qs-row">
-                    <div class="about-qs-n">1.3K+</div>
+                    <div class="about-qs-n">2K+</div>
                     <div class="about-qs-l">Hours in Blender</div>
                 </div>
                 <div class="about-qs-row">
@@ -1442,7 +1445,7 @@
                     <div class="about-qs-l">Models Created</div>
                 </div>
                 <div class="about-qs-row">
-                    <div class="about-qs-n">2024</div>
+                    <div class="about-qs-n">2018</div>
                     <div class="about-qs-l">Started Modeling</div>
                 </div>
             </div>
@@ -1564,7 +1567,11 @@
             function fmt(v) {
                 if (mode === 'k') {
                     const val = v / 1000;
-                    return val >= 1 ? val.toFixed(1) + 'K' : Math.floor(v) + '';
+                    if (val >= 1) {
+                        const s = val.toFixed(1);
+                        return (s.endsWith('.0') ? s.slice(0, -2) : s) + 'K';
+                    }
+                    return Math.floor(v) + '';
                 }
                 return Math.floor(v) + '';
             }
@@ -1609,10 +1616,18 @@
 
         async function loadModels() {
             try {
-                const res = await fetch('https://api.sketchfab.com/v3/search?type=models&user=DiccChops&count=24&sort_by=-publishedAt');
+                // Fetch all models then sort client-side by combined likes+views score
+                const res = await fetch('https://api.sketchfab.com/v3/search?type=models&user=DiccChops&count=48&sort_by=-likeCount');
                 if (!res.ok) throw new Error(res.status);
                 const data = await res.json();
-                const models = data.results || [];
+                // Sort by likes descending, fall back to views
+                const models = (data.results || [])
+                    .sort((a, b) => {
+                        const aScore = (a.likeCount || 0) * 3 + (a.viewCount || 0);
+                        const bScore = (b.likeCount || 0) * 3 + (b.viewCount || 0);
+                        return bScore - aScore;
+                    })
+                    .slice(0, 24);
                 if (!models.length) { grid.innerHTML = '<div class="grid-msg">No models found.</div>'; return; }
                 grid.innerHTML = '';
                 models.forEach((m, i) => buildCard(m, i));
@@ -1626,8 +1641,9 @@
 
         function getBestThumb(t) {
             if (!t?.images?.length) return '';
+            // Pick the largest image that isn't absurdly huge (cap at 1024 for performance)
             const sorted = [...t.images].sort((a, b) => b.width - a.width);
-            return (sorted.find(x => x.width <= 640) || sorted.at(-1)).url;
+            return (sorted.find(x => x.width <= 1024) || sorted[0]).url;
         }
 
         function esc(s) {
