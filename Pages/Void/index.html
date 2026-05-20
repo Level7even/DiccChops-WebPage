@@ -1445,7 +1445,7 @@
                     <div class="about-qs-l">Models Created</div>
                 </div>
                 <div class="about-qs-row">
-                    <div class="about-qs-n">2018</div>
+                    <div class="about-qs-n">2024</div>
                     <div class="about-qs-l">Started Modeling</div>
                 </div>
             </div>
@@ -1515,25 +1515,36 @@
         // ====== CROSSHAIR CURSOR ======
         const cxH = document.getElementById('cxH');
         const cxV = document.getElementById('cxV');
-        const ARM_HALF = 14; // px from center to each arm tip
+        const ARM = 14; // half-arm length in px
+
+        // Set transforms once — no need to reassign every frame
+        cxH.style.transform = 'translateY(-50%)';
+        cxV.style.transform = 'translateX(-50%)';
 
         let cx = window.innerWidth / 2, cy = window.innerHeight / 2;
         let tx = cx, ty = cy;
+        let lastTs = performance.now();
 
-        document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+        // Use { passive: true } — we never call preventDefault on mousemove
+        document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; }, { passive: true });
 
-        (function cursorTick() {
-            cx += (tx - cx) * .13;
-            cy += (ty - cy) * .13;
-            // Position: center on cursor, use transform for centering
-            cxH.style.left = (cx - ARM_HALF) + 'px';
+        // Delta-time exponential decay: feels identical on 60 Hz, 120 Hz, 144 Hz, etc.
+        // smoothing = 0.88 means "retain 88% of the gap per 16.67 ms frame"
+        const SMOOTH = 0.88;
+        const TARGET_DT = 1000 / 60; // 16.667 ms
+
+        (function cursorTick(now) {
+            const dt = Math.min(now - lastTs, 66); // clamp: skip huge jumps on tab-switch
+            lastTs = now;
+            const alpha = 1 - Math.pow(SMOOTH, dt / TARGET_DT);
+            cx += (tx - cx) * alpha;
+            cy += (ty - cy) * alpha;
+            cxH.style.left = (cx - ARM) + 'px';
             cxH.style.top = cy + 'px';
-            cxH.style.transform = 'translateY(-50%)';
             cxV.style.left = cx + 'px';
-            cxV.style.top = (cy - ARM_HALF) + 'px';
-            cxV.style.transform = 'translateX(-50%)';
+            cxV.style.top = (cy - ARM) + 'px';
             requestAnimationFrame(cursorTick);
-        })();
+        })(lastTs);
 
         document.addEventListener('mouseover', e => {
             document.body.classList.remove('hov-card', 'hov-link');
