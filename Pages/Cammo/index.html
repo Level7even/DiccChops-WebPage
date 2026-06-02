@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CAMO LAB PRO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0c0e;
+            --panel: #13151a;
+            --card: #191c23;
+            --accent: #9ecf35;
+            --accent-dim: #6e9124;
+            --accent-glow: rgba(158,207,53,0.12);
+            --text: #e8eaf0;
+            --sub: #6b7485;
+            --border: #22272f;
+            --border-bright: #2e3441;
+            --input-bg: #080a0d;
+            --r: 7px;
+            --danger: #e05c5c;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter',system-ui,sans-serif;
+            display: flex;
+            height: 100dvh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased
+        }
+
+        /* ── SIDEBAR ── */
+        #sidebar {
+            width: 340px;
+            min-width: 340px;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 20;
+            transition: transform .35s cubic-bezier(.4,0,.2,1)
+        }
+
+        .sh {
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 11px
+        }
+
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--accent);
+            border-radius: 5px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0
+        }
+
+            .logo-icon svg {
+                width: 16px;
+                height: 16px
+            }
+
+        .logo-title {
+            font-family: 'Rajdhani',sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            line-height: 1
+        }
+
+        .logo-sub {
+            font-size: .6rem;
+            color: var(--sub);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 2px;
+            font-family: 'JetBrains Mono',monospace
+        }
+
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent
+        }
+
+            .scroll-area::-webkit-scrollbar {
+                width: 4px
+            }
+
+            .scroll-area::-webkit-scrollbar-thumb {
+                background: var(--border-bright);
+                border-radius: 4px
+            }
+
+        /* ── CARDS ── */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            margin-bottom: 8px;
+            overflow: hidden
+        }
+
+        .card-head {
+            padding: 8px 13px;
+            font-family: 'Rajdhani',sans-serif;
+            font-weight: 700;
+            font-size: .68rem;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--accent);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            opacity: .9
+        }
+
+        .card-body {
+            padding: 13px
+        }
+
+        /* ── CONTROLS ── */
+        .cg {
+            margin-bottom: 13px
+        }
+
+            .cg:last-child {
+                margin-bottom: 0
+            }
+
+        .lr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px
+        }
+
+        label {
+            font-size: .76rem;
+            color: var(--sub);
+            font-weight: 500;
+            letter-spacing: .3px
+        }
+
+        .vbadge {
+            font-family: 'JetBrains Mono',monospace;
+            font-size: .68rem;
+            color: var(--accent);
+            background: var(--input-bg);
+            padding: 2px 7px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            min-width: 46px;
+            text-align: center
+        }
+
+        select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 9px 30px 9px 11px;
+            border-radius: 5px;
+            font-size: .81rem;
+            font-family: 'Inter',sans-serif;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%236b7485' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            transition: border-color .15s
+        }
+
+            select:hover, select:focus {
+                border-color: var(--accent-dim)
+            }
+
+            select option {
+                background: #1a1d24
+            }
+
+        input[type=range] {
+            width: 100%;
+            height: 3px;
+            background: var(--border);
+            border-radius: 10px;
+            appearance: none;
+            outline: none;
+            cursor: pointer
+        }
+
+            input[type=range]::-webkit-slider-thumb {
+                appearance: none;
+                width: 15px;
+                height: 15px;
+                background: var(--accent);
+                border-radius: 50%;
+                cursor: pointer;
+                border: 2px solid var(--card);
+                box-shadow: 0 0 6px rgba(158,207,53,.35);
+                transition: transform .12s
+            }
+
+            input[type=range]:active::-webkit-slider-thumb {
+                transform: scale(1.25)
+            }
+
+        /* toggle */
+        .trow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 11px
+        }
+
+            .trow:last-child {
+                margin-bottom: 0
+            }
+
+        .tlabel {
+            font-size: .78rem;
+            color: var(--sub)
+        }
+
+        .tog {
+            position: relative;
+            width: 34px;
+            height: 18px;
+            flex-shrink: 0;
+            cursor: pointer
+        }
+
+            .tog input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+                position: absolute
+            }
+
+        .tog-track {
+            position: absolute;
+            inset: 0;
+            background: var(--border-bright);
+            border-radius: 9px;
+            transition: background .18s
+        }
+
+            .tog-track::after {
+                content: '';
+                position: absolute;
+                width: 12px;
+                height: 12px;
+                background: #fff;
+                border-radius: 50%;
+                top: 3px;
+                left: 3px;
+                transition: transform .18s
+            }
+
+        .tog input:checked + .tog-track {
+            background: var(--accent)
+        }
+
+            .tog input:checked + .tog-track::after {
+                transform: translateX(16px)
+            }
+
+        /* color wells */
+        .cgrid {
+            display: grid;
+            grid-template-columns: repeat(5,1fr);
+            gap: 5px
+        }
+
+        .cwell {
+            position: relative;
+            height: 30px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: border-color .15s;
+            cursor: pointer
+        }
+
+            .cwell:hover {
+                border-color: var(--accent)
+            }
+
+        input[type=color] {
+            position: absolute;
+            top: -40%;
+            left: -40%;
+            width: 180%;
+            height: 180%;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            padding: 0
+        }
+
+        /* buttons */
+        .btn {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 5px;
+            font-size: .78rem;
+            font-weight: 600;
+            font-family: 'Inter',sans-serif;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            outline: none;
+            transition: all .15s;
+            letter-spacing: .3px
+        }
+
+        .btn-sec {
+            background: var(--input-bg);
+            color: var(--sub)
+        }
+
+            .btn-sec:hover {
+                background: var(--border-bright);
+                color: var(--text)
+            }
+
+        .btn-acc {
+            background: var(--accent);
+            color: #060800;
+            border-color: var(--accent);
+            font-weight: 700
+        }
+
+            .btn-acc:hover {
+                background: #b0e040;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 16px rgba(158,207,53,.2)
+            }
+
+            .btn-acc:active {
+                transform: translateY(0)
+            }
+
+        .btn-sm {
+            padding: 7px 10px;
+            font-size: .73rem
+        }
+
+        .g2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px
+        }
+
+        .g3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 5px
+        }
+
+        /* footer */
+        .sf {
+            padding: 12px;
+            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px
+        }
+
+        /* ── VIEWPORT ── */
+        #viewport {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden
+        }
+
+        .vbg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse 70% 60% at 50% 50%,rgba(158,207,53,.04) 0%,transparent 65%)
+        }
+
+            .vbg::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background-image: repeating-conic-gradient(#0f1014 0%,#0f1014 25%,#0b0c0e 25%,#0b0c0e 50%);
+                background-size: 16px 16px;
+                opacity: .6
+            }
+
+        #cwrap {
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 25px 70px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.06);
+            line-height: 0
+        }
+
+        #canvas {
+            display: block;
+            max-width: calc(100vw - 380px);
+            max-height: calc(100vh - 80px)
+        }
+
+        /* overlay */
+        #roverlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,.65);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 11px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s;
+            z-index: 5;
+            border-radius: 1px
+        }
+
+            #roverlay.on {
+                opacity: 1
+            }
+
+        .spinner {
+            width: 28px;
+            height: 28px;
+            border: 2.5px solid rgba(255,255,255,.12);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin .55s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .rlabel {
+            font-size: .62rem;
+            color: var(--sub);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono',monospace
+        }
+
+        /* info bar */
+        #ibar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 9px 20px;
+            font-size: .62rem;
+            font-family: 'JetBrains Mono',monospace;
+            color: var(--sub);
+            letter-spacing: .5px;
+            background: linear-gradient(transparent,rgba(0,0,0,.7));
+            z-index: 2;
+            pointer-events: none
+        }
+
+        .istat strong {
+            color: var(--accent)
+        }
+
+        /* mobile toggle */
+        #utog {
+            display: none;
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            z-index: 100;
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            background: var(--accent);
+            border: none;
+            cursor: pointer;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            box-shadow: 0 6px 24px rgba(158,207,53,.3);
+            transition: transform .15s
+        }
+
+            #utog:active {
+                transform: scale(.94)
+            }
+
+        .hline {
+            width: 18px;
+            height: 2px;
+            background: #060800;
+            border-radius: 2px
+        }
+
+        /* tile preview active btn */
+        .btn-tile-on {
+            background: var(--accent);
+            color: #060800;
+            border-color: var(--accent);
+            font-weight: 700
+        }
+
+        .btn-tile-off {
+            background: var(--input-bg);
+            color: var(--sub)
+        }
+
+            .btn-tile-off:hover {
+                background: var(--border-bright);
+                color: var(--text)
+            }
+
+        @media(max-width:860px) {
+            #sidebar {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                min-width: unset;
+                height: 68vh;
+                max-height: 560px;
+                transform: translateY(100%);
+                border-right: none;
+                border-top: 1px solid var(--border);
+                border-radius: 14px 14px 0 0
+            }
+
+                #sidebar.open {
+                    transform: translateY(0)
+                }
+
+            #utog {
+                display: flex
+            }
+
+            #viewport {
+                height: 100dvh
+            }
+
+            #canvas {
+                max-width: calc(100vw - 24px);
+                max-height: 48vh
+            }
+
+            .scroll-area {
+                padding-bottom: 16px
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button id="utog" onclick="toggleSidebar()" aria-label="Toggle controls">
+        <div class="hline"></div><div class="hline"></div><div class="hline"></div>
+    </button>
+
+    <div id="viewport">
+        <div class="vbg"></div>
+        <div id="cwrap">
+            <canvas id="canvas"></canvas>
+            <div id="roverlay">
+                <div class="spinner"></div>
+                <div class="rlabel">Generating…</div>
+            </div>
+        </div>
+        <div id="ibar">
+            <span class="istat">SEED <strong id="s-seed">—</strong></span>
+            <span class="istat">RES <strong id="s-res">—</strong></span>
+            <span class="istat">TIME <strong id="s-time">—</strong></span>
+            <span class="istat">MODE <strong id="s-mode">—</strong></span>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <div class="sh">
+            <div class="logo-icon">
+                <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="5" height="5" fill="#000" /><rect x="7" y="1" width="3" height="3" fill="#000" /><rect x="10" y="4" width="5" height="5" fill="#000" /><rect x="1" y="10" width="3" height="5" fill="#000" /><rect x="7" y="8" width="2" height="2" fill="#000" /><rect x="4" y="7" width="5" height="3" fill="#000" /></svg>
+            </div>
+            <div>
+                <div class="logo-title">Camo Lab</div>
+                <div class="logo-sub">Pattern Engine v2</div>
+            </div>
+        </div>
+
+        <div class="scroll-area">
+
+            <div class="card">
+                <div class="card-head">▪▪ Template</div>
+                <div class="card-body">
+                    <select id="preset" onchange="applyPreset()">
+                        <option value="m81">Woodland M81</option>
+                        <option value="multicam">MultiCam OCP</option>
+                        <option value="marpat">MARPAT Digital Woodland</option>
+                        <option value="digi_desert">AOR-1 Desert Digital</option>
+                        <option value="flecktarn">Flecktarn</option>
+                        <option value="hex_urban">Hex Urban</option>
+                        <option value="tiger">SOG Tigerstripe</option>
+                        <option value="glacier">Arctic Glacier</option>
+                        <option value="atacs">A-TACS FG</option>
+                        <option value="night">Night Ops</option>
+                        <option value="synthwave">Neon Strike</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">◆ Generator Core</div>
+                <div class="card-body">
+                    <div class="cg">
+                        <div class="lr"><label>Geometry</label></div>
+                        <select id="style" onchange="updateAndGen(false)">
+                            <option value="organic">Organic fBm</option>
+                            <option value="digital">Pixel Digital</option>
+                            <option value="hex">Hex Grid</option>
+                            <option value="flecktarn">Flecktarn Dots</option>
+                            <option value="rain">Strichtarn Stripe</option>
+                            <option value="splinter">Splinter</option>
+                        </select>
+                    </div>
+                    <div class="cg">
+                        <div class="lr"><label>Scale</label><span class="vbadge" id="v-scale">2.5</span></div>
+                        <input type="range" id="scale" min="0.5" max="8.0" step="0.1" value="2.5">
+                    </div>
+                    <div class="cg">
+                        <div class="lr"><label>Complexity</label><span class="vbadge" id="v-oct">4</span></div>
+                        <input type="range" id="octaves" min="1" max="7" value="4">
+                    </div>
+                    <div class="cg">
+                        <div class="lr"><label>Rotation</label><span class="vbadge" id="v-rot">0°</span></div>
+                        <input type="range" id="rotation" min="0" max="359" step="1" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">◈ Visual Processing</div>
+                <div class="card-body">
+                    <div class="cg">
+                        <div class="lr"><label>Contrast</label><span class="vbadge" id="v-sharp">1.5</span></div>
+                        <input type="range" id="sharpness" min="0.5" max="4.0" step="0.1" value="1.5">
+                    </div>
+                    <div class="cg">
+                        <div class="lr"><label>Domain Warp</label><span class="vbadge" id="v-warp">0.00</span></div>
+                        <input type="range" id="warp" min="0" max="1.5" step="0.05" value="0">
+                    </div>
+                    <div class="cg">
+                        <div class="lr"><label>Film Grain</label><span class="vbadge" id="v-grain">5%</span></div>
+                        <input type="range" id="grain" min="0" max="30" value="5">
+                    </div>
+                    <div class="trow"><span class="tlabel">Seamless Tile</span><label class="tog"><input type="checkbox" id="tileable" checked><div class="tog-track"></div></label></div>
+                    <div class="trow"><span class="tlabel">Soft Edges</span><label class="tog"><input type="checkbox" id="softedge"><div class="tog-track"></div></label></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">◉ Color Palette</div>
+                <div class="card-body">
+                    <div class="cgrid">
+                        <div class="cwell"><input type="color" id="c1" value="#1a2418"></div>
+                        <div class="cwell"><input type="color" id="c2" value="#2d3a24"></div>
+                        <div class="cwell"><input type="color" id="c3" value="#4b5338"></div>
+                        <div class="cwell"><input type="color" id="c4" value="#111111"></div>
+                        <div class="cwell"><input type="color" id="c5" value="#6d5a41"></div>
+                    </div>
+                    <div class="g2" style="margin-top:9px">
+                        <button class="btn btn-sec btn-sm" onclick="randomColors()">Randomize</button>
+                        <button class="btn btn-sec btn-sm" onclick="harmonizeColors()">Harmonize</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">▣ Export & Preview</div>
+                <div class="card-body">
+                    <div class="cg">
+                        <div class="lr"><label>Render Resolution</label></div>
+                        <select id="res">
+                            <option value="512">512 × 512 — Fast</option>
+                            <option value="1024" selected>1024 × 1024 — Standard</option>
+                            <option value="2048">2048 × 2048 — Ultra HD</option>
+                        </select>
+                    </div>
+                    <div class="cg">
+                        <div class="lr"><label>Tile Preview</label></div>
+                        <div class="g3">
+                            <button class="btn btn-sm btn-tile-off" id="tp1" onclick="setTile(1)">1×1</button>
+                            <button class="btn btn-sm btn-tile-on" id="tp2" onclick="setTile(2)">2×2</button>
+                            <button class="btn btn-sm btn-tile-off" id="tp3" onclick="setTile(3)">3×3</button>
+                        </div>
+                    </div>
+                    <div style="font-size:.64rem;color:var(--sub);margin-top:4px;font-family:'JetBrains Mono',monospace;text-align:center;letter-spacing:.5px">SPACE = new seed · R = randomize palette</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sf">
+            <button class="btn btn-sec" onclick="randomSeed()">New Seed</button>
+            <button class="btn btn-acc" onclick="doExport()">Export PNG</button>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════
+        //  CAMO LAB PRO — Pattern Engine v2
+        // ═══════════════════════════════════════════════
+
+        let currentSeed = Math.floor(Math.random() * 1e6);
+        let tileCount = 2;
+        let renderTimer = null;
+        let genStartTime = 0;
+        const perm = new Uint8Array(512);
+        const offscreenCanvas = document.createElement('canvas');
+        const offCtx = offscreenCanvas.getContext('2d', { alpha: false });
+
+        // ── Math ──
+        const fade = t => t * t * t * (t * (t * 6 - 15) + 10);
+        const lerp = (t, a, b) => a + t * (b - a);
+        const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+        const smooth = t => t * t * (3 - 2 * t);
+
+        function grad(h, x, y) {
+            h &= 15;
+            const u = h < 8 ? x : y, v = h < 4 ? y : (h === 12 || h === 14 ? x : 0);
+            return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+        }
+
+        // ── Noise Engine ──
+        function initPerm(s) {
+            let rng = s;
+            const next = () => { rng = (rng * 16807) % 2147483647; return (rng - 1) / 2147483646 };
+            for (let i = 0; i < 256; i++) perm[i] = i;
+            for (let i = 255; i > 0; i--) { const j = Math.floor(next() * (i + 1));[perm[i], perm[j]] = [perm[j], perm[i]] }
+            for (let i = 0; i < 256; i++) perm[256 + i] = perm[i];
+        }
+
+        // True tileable Perlin: wraps correctly at period boundaries
+        function perlin(x, y, period) {
+            const xi = ((Math.floor(x) % period) + period) % period;
+            const yi = ((Math.floor(y) % period) + period) % period;
+            const xi1 = (xi + 1) % period;
+            const yi1 = (yi + 1) % period;
+            const xf = x - Math.floor(x), yf = y - Math.floor(y);
+            const u = fade(xf), v = fade(yf);
+            const xi0 = xi & 255, yi0 = yi & 255, xi10 = xi1 & 255, yi10 = yi1 & 255;
+            const aa = perm[perm[xi0] + yi0], ab = perm[perm[xi0] + yi10];
+            const ba = perm[perm[xi10] + yi0], bb = perm[perm[xi10] + yi10];
+            return lerp(v, lerp(u, grad(aa, xf, yf), grad(ba, xf - 1, yf)),
+                lerp(u, grad(ab, xf, yf - 1), grad(bb, xf - 1, yf - 1)));
+        }
+
+        function fbm(x, y, oct, period) {
+            let t = 0, amp = .5, freq = 1, mx = 0;
+            for (let i = 0; i < oct; i++) {
+                t += perlin(x * freq, y * freq, period * freq) * amp;
+                mx += amp; amp *= .5; freq *= 2;
+            }
+            return t / mx * .5 + .5;
+        }
+
+        // ── Presets ──
+        const P = {
+            m81: { style: 'organic', scale: 2.5, oct: 4, sharp: 1.6, warp: .15, soft: false, colors: ["#1a2418", "#2d3a24", "#4b5338", "#111111", "#6d5a41"] },
+            multicam: { style: 'organic', scale: 2.2, oct: 5, sharp: .9, warp: .38, soft: true, colors: ["#7c6d41", "#a09063", "#4e452a", "#d6c9a3", "#3c351c"] },
+            marpat: { style: 'digital', scale: 4.5, oct: 3, sharp: 3.2, warp: 0, soft: false, colors: ["#2d3424", "#4a5238", "#636b50", "#1a1f15", "#8a9070"] },
+            digi_desert: { style: 'digital', scale: 4.0, oct: 3, sharp: 3.0, warp: 0, soft: false, colors: ["#c2b280", "#e1c699", "#8b7355", "#5c4033", "#dfd3b6"] },
+            flecktarn: { style: 'flecktarn', scale: 4.5, oct: 2, sharp: 1.5, warp: .1, soft: false, colors: ["#3e4a36", "#2b3020", "#5c5332", "#1e1e1a", "#7a6a4f"] },
+            hex_urban: { style: 'hex', scale: 3.5, oct: 3, sharp: 1.2, warp: 0, soft: false, colors: ["#1a1a1c", "#2a2a2e", "#3f3f44", "#0a0a0b", "#55555c"] },
+            tiger: { style: 'splinter', scale: 1.8, oct: 4, sharp: 2.8, warp: .06, soft: false, colors: ["#080808", "#1a2418", "#2d3a24", "#3d3d3d", "#111111"] },
+            glacier: { style: 'organic', scale: 3.2, oct: 4, sharp: 1.1, warp: .28, soft: true, colors: ["#eef2f3", "#8e9eab", "#cbdadb", "#546e7a", "#263238"] },
+            atacs: { style: 'organic', scale: 3.8, oct: 6, sharp: .95, warp: .45, soft: true, colors: ["#4e4a3a", "#6b6452", "#8c8271", "#2e2b22", "#a89880"] },
+            night: { style: 'organic', scale: 2.0, oct: 5, sharp: 1.4, warp: .32, soft: false, colors: ["#080c0a", "#0d1510", "#142018", "#050805", "#1a2820"] },
+            synthwave: { style: 'hex', scale: 2.5, oct: 3, sharp: 1.5, warp: 0, soft: false, colors: ["#120458", "#ff00a0", "#00ff72", "#2d0b5a", "#000000"] },
+        };
+
+        // ── Color Utils ──
+        function h2r(hex) { const b = parseInt(hex.slice(1), 16); return [(b >> 16) & 255, (b >> 8) & 255, b & 255] }
+        function r2h(r, g, b) { return '#' + [r, g, b].map(v => clamp(Math.round(v), 0, 255).toString(16).padStart(2, '0')).join('') }
+
+        function blendCols(val, cols) {
+            val = clamp(val, 0, .9999);
+            const n = cols.length, f = val * n, lo = Math.floor(f), hi = Math.min(lo + 1, n - 1), t = smooth(f - lo);
+            return [lerp(t, cols[lo][0], cols[hi][0]), lerp(t, cols[lo][1], cols[hi][1]), lerp(t, cols[lo][2], cols[hi][2])];
+        }
+
+        function hardCol(val, cols) { return cols[Math.floor(clamp(val, 0, .9999) * cols.length)] }
+
+        function hsl2rgb(h, s, l) {
+            if (!s) return [l * 255, l * 255, l * 255];
+            const q = l < .5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+            const hue2rgb = (p, q, t) => { if (t < 0) t += 1; if (t > 1) t -= 1; if (t < 1 / 6) return p + (q - p) * 6 * t; if (t < .5) return q; if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6; return p };
+            return [hue2rgb(p, q, h + 1 / 3) * 255, hue2rgb(p, q, h) * 255, hue2rgb(p, q, h - 1 / 3) * 255];
+        }
+
+        // ── Pattern Generator ──
+        function generate(forceSize) {
+            const t0 = performance.now();
+            const sz = forceSize || parseInt(document.getElementById('res').value);
+            const style = document.getElementById('style').value;
+            const scale = parseFloat(document.getElementById('scale').value);
+            const oct = parseInt(document.getElementById('octaves').value);
+            const sharp = parseFloat(document.getElementById('sharpness').value);
+            const grain = parseInt(document.getElementById('grain').value) / 100;
+            const warp = parseFloat(document.getElementById('warp').value);
+            const rotDeg = parseFloat(document.getElementById('rotation').value);
+            const tileable = document.getElementById('tileable').checked;
+            const softedge = document.getElementById('softedge').checked;
+
+            const gs = Math.max(4, Math.round(scale * 4));
+            const period = tileable ? gs : 256;
+
+            offscreenCanvas.width = offscreenCanvas.height = sz;
+            initPerm(currentSeed);
+
+            const cols = [1, 2, 3, 4, 5].map(i => h2r(document.getElementById('c' + i).value));
+            const img = offCtx.createImageData(sz, sz);
+            const d = img.data;
+
+            const rad = rotDeg * Math.PI / 180;
+            const cosR = Math.cos(rad), sinR = Math.sin(rad);
+            const blockPx = style === 'digital' ? Math.max(1, Math.round(sz / (scale * 14))) : 1;
+
+            for (let py = 0; py < sz; py++) {
+                for (let px = 0; px < sz; px++) {
+                    // UV centered, then rotate
+                    let u = px / sz - .5, v = py / sz - .5;
+                    const ru = (u * cosR - v * sinR + .5) * gs;
+                    const rv = (u * sinR + v * cosR + .5) * gs;
+                    let nx = ru, ny = rv;
+
+                    // Domain warping: two-layer fBm displacement
+                    if (warp > .01) {
+                        const ws = warp * gs * .38;
+                        nx += (fbm(ru + 1.7, rv + 9.2, 2, period) * 2 - 1) * ws;
+                        ny += (fbm(ru + 8.3, rv + 2.8, 2, period) * 2 - 1) * ws;
+                    }
+
+                    let val;
+                    switch (style) {
+                        case 'digital': {
+                            // Snap to blocks in screen space, then sample noise
+                            const bx = Math.floor(px / blockPx), by = Math.floor(py / blockPx);
+                            // Apply same rotation to block center
+                            let bu = bx * blockPx / sz - .5, bv = by * blockPx / sz - .5;
+                            const bru = (bu * cosR - bv * sinR + .5) * gs;
+                            const brv = (bu * sinR + bv * cosR + .5) * gs;
+                            val = fbm(bru, brv, oct, period);
+                            break;
+                        }
+                        case 'hex': {
+                            const q = Math.sqrt(3) / 3 * nx - ny / 3;
+                            const r = 2 * ny / 3;
+                            val = fbm(Math.round(q), Math.round(r), oct, period);
+                            break;
+                        }
+                        case 'rain': {
+                            // Strichtarn: vertical streaks with slight noise variation
+                            const base = fbm(nx * .15, ny, oct, period);
+                            const stripe = Math.abs(Math.sin(nx * 2.8)) > .45 ? .7 : .1;
+                            val = base * .35 + stripe * .65;
+                            break;
+                        }
+                        case 'flecktarn': {
+                            // Multi-scale spotted layers — no sin rings
+                            const n1 = fbm(nx, ny, 2, period);
+                            const n2 = fbm(nx * 2.4 + 5.3, ny * 2.4 + 3.1, 2, period);
+                            const n3 = fbm(nx * 5.1 + 2.7, ny * 5.1 + 7.5, 1, period);
+                            const v1 = n1 > .62 ? .9 : n1 > .46 ? .48 : .08;
+                            const v2 = n2 > .66 ? .75 : 0;
+                            const v3 = n3 > .7 ? .35 : 0;
+                            val = clamp(v1 + v2 * .28 + v3 * .18, 0, 1);
+                            break;
+                        }
+                        case 'splinter': {
+                            // Elongated diagonal blobs — tigerstripe feel
+                            const a1 = fbm(nx * .22 + ny * .85, ny, oct, period);
+                            const a2 = fbm(nx + ny * .22, nx * .85, Math.max(1, oct - 1), period);
+                            val = a1 * .62 + a2 * .38;
+                            break;
+                        }
+                        default:
+                            val = fbm(nx, ny, oct, period);
+                    }
+
+                    // Contrast
+                    val = clamp((val - .5) * sharp + .5, 0, .9999);
+
+                    const col = softedge ? blendCols(val, cols) : hardCol(val, cols);
+                    const idx = (py * sz + px) * 4;
+                    const g = grain > 0 ? (Math.random() - .5) * 255 * grain : 0;
+                    d[idx] = clamp(col[0] + g, 0, 255);
+                    d[idx + 1] = clamp(col[1] + g, 0, 255);
+                    d[idx + 2] = clamp(col[2] + g, 0, 255);
+                    d[idx + 3] = 255;
+                }
+            }
+
+            offCtx.putImageData(img, 0, 0);
+            renderDisplay();
+
+            const ms = Math.round(performance.now() - t0);
+            document.getElementById('s-seed').textContent = '#' + currentSeed;
+            document.getElementById('s-res').textContent = sz + 'px';
+            document.getElementById('s-time').textContent = ms + 'ms';
+            document.getElementById('s-mode').textContent = style;
+
+            // pixel-crisp for block styles
+            const canvas = document.getElementById('canvas');
+            canvas.style.imageRendering = (style === 'digital' || style === 'hex') && tileCount === 1 ? 'pixelated' : 'auto';
+
+            setOverlay(false);
+        }
+
+        function renderDisplay() {
+            const s = offscreenCanvas.width;
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = s * tileCount;
+            canvas.height = s * tileCount;
+            ctx.imageSmoothingEnabled = false;
+            for (let y = 0; y < tileCount; y++)
+                for (let x = 0; x < tileCount; x++)
+                    ctx.drawImage(offscreenCanvas, x * s, y * s);
+        }
+
+        // ── UI Helpers ──
+        function setOverlay(v) { document.getElementById('roverlay').classList.toggle('on', v) }
+
+        function updateLabels() {
+            document.getElementById('v-scale').textContent = parseFloat(document.getElementById('scale').value).toFixed(1);
+            document.getElementById('v-oct').textContent = document.getElementById('octaves').value;
+            document.getElementById('v-sharp').textContent = parseFloat(document.getElementById('sharpness').value).toFixed(1);
+            document.getElementById('v-warp').textContent = parseFloat(document.getElementById('warp').value).toFixed(2);
+            document.getElementById('v-grain').textContent = document.getElementById('grain').value + '%';
+            document.getElementById('v-rot').textContent = document.getElementById('rotation').value + '°';
+        }
+
+        function updateAndGen(fast = true) {
+            updateLabels();
+            clearTimeout(renderTimer);
+            if (fast) {
+                generate(128);
+                renderTimer = setTimeout(() => {
+                    setOverlay(true);
+                    setTimeout(() => generate(), 30);
+                }, 280);
+            } else {
+                setOverlay(true);
+                setTimeout(() => generate(), 30);
+            }
+        }
+
+        function applyPreset() {
+            const key = document.getElementById('preset').value;
+            const pr = P[key]; if (!pr) return;
+            document.getElementById('style').value = pr.style;
+            document.getElementById('scale').value = pr.scale;
+            document.getElementById('octaves').value = pr.oct;
+            document.getElementById('sharpness').value = pr.sharp;
+            document.getElementById('warp').value = pr.warp;
+            document.getElementById('softedge').checked = pr.soft;
+            document.getElementById('rotation').value = 0;
+            pr.colors.forEach((c, i) => document.getElementById('c' + (i + 1)).value = c);
+            updateAndGen(false);
+        }
+
+        function randomSeed() {
+            currentSeed = Math.floor(Math.random() * 999999);
+            updateAndGen(false);
+        }
+
+        function randomColors() {
+            const rh = () => '#' + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0');
+            for (let i = 1; i <= 5; i++) document.getElementById('c' + i).value = rh();
+            updateAndGen(false);
+        }
+
+        function harmonizeColors() {
+            // Analogous palette from a random base hue, earth-tone biased lightness
+            const hue = Math.random() * 360;
+            const sat = .28 + Math.random() * .32;
+            const hues = [hue, hue + 22, hue + 44, hue - 15, hue + 70].map(h => ((h % 360) + 360) % 360);
+            const lts = [.13, .23, .36, .08, .46];
+            hues.forEach((h, i) => {
+                const [r, g, b] = hsl2rgb(h / 360, sat, lts[i]);
+                document.getElementById('c' + (i + 1)).value = r2h(r, g, b);
+            });
+            updateAndGen(false);
+        }
+
+        function setTile(n) {
+            tileCount = n;
+            [1, 2, 3].forEach(i => {
+                const btn = document.getElementById('tp' + i);
+                btn.className = 'btn btn-sm ' + (i === n ? 'btn-tile-on' : 'btn-tile-off');
+            });
+            renderDisplay();
+        }
+
+        function doExport() {
+            // Always export single tile at full res
+            const link = document.createElement('a');
+            const preset = document.getElementById('preset').value;
+            link.download = 'camo_' + preset + '_' + currentSeed + '.png';
+            link.href = offscreenCanvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // ── Event Listeners ──
+        document.querySelectorAll('input[type=range]').forEach(el =>
+            el.addEventListener('input', () => updateAndGen(true))
+        );
+        document.querySelectorAll('input[type=color]').forEach(el => {
+            el.addEventListener('input', () => updateAndGen(true));
+            el.addEventListener('change', () => updateAndGen(false));
+        });
+        document.querySelectorAll('input[type=checkbox]').forEach(el =>
+            el.addEventListener('change', () => updateAndGen(false))
+        );
+        document.querySelectorAll('select').forEach(el => {
+            if (el.id !== 'preset') el.addEventListener('change', () => updateAndGen(false));
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', e => {
+            if (e.target.tagName === 'INPUT') return;
+            if (e.code === 'Space') { e.preventDefault(); randomSeed(); }
+            if (e.key === 'r' || e.key === 'R') randomColors();
+        });
+
+        // ── Init ──
+        updateLabels();
+        applyPreset();
+    </script>
+</body>
+</html>

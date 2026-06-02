@@ -1,0 +1,713 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Neural Forge | Synthwave Cosmos</title>
+    <!-- Google Fonts: Orbitron + Space Grotesk for unique sci-fi identity -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ---------- RESET & UNIQUE VISUAL IDENTITY ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* adds futuristic feel, but text selectable on quotes */
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #010005;
+            color: #eef5ff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* custom retro-futuristic scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0118;
+            box-shadow: inset 0 0 3px #4a2b7a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #b77eff;
+            border-radius: 10px;
+            box-shadow: 0 0 5px #b77eff;
+        }
+
+        /* Dynamic noisy gradient overlay for glitch vibe */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-radial-gradient(circle at 20% 30%, rgba(80, 40, 130, 0.08) 0px, transparent 2px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* canvas 3D starfield + pulse ring */
+        #universeCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(0px);
+        }
+
+        /* ---- HERO: vibrant neon + glitch ---- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(ellipse at 50% 40%, rgba(30, 5, 55, 0.6), #02000a 80%);
+            border-bottom: 2px solid rgba(183, 126, 255, 0.4);
+        }
+
+        .glitch-wrapper {
+            font-family: 'Orbitron', monospace;
+        }
+
+        .glitch-text {
+            font-size: clamp(2.8rem, 9vw, 6rem);
+            font-weight: 900;
+            color: #f0e6ff;
+            text-shadow: 0.05em 0 0 #ff00de, -0.05em -0.025em 0 #00ffff;
+            animation: glitch-shake 0.3s infinite alternate;
+            letter-spacing: -0.02em;
+        }
+
+        @keyframes glitch-shake {
+            0% {
+                transform: translate(0);
+                text-shadow: 0.05em 0 0 #ff00de, -0.05em -0.025em 0 #00ffff;
+            }
+
+            100% {
+                transform: translate(-0.02em, 0.01em);
+                text-shadow: -0.05em 0.025em 0 #ff00de, 0.05em 0.025em 0 #00ffff;
+            }
+        }
+
+        .hero-sub {
+            font-size: 1.2rem;
+            max-width: 580px;
+            margin-top: 1rem;
+            background: linear-gradient(135deg, #cbb2ff, #8a6eff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2.8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .neon-btn {
+            font-family: 'Orbitron', monospace;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1.5px solid;
+            border-image: none;
+            border-radius: 0px;
+            clip-path: polygon(10% 0%, 90% 0%, 100% 30%, 100% 70%, 90% 100%, 10% 100%, 0% 70%, 0% 30%);
+            transition: 0.2s;
+            cursor: pointer;
+            color: #e2d6ff;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+            .neon-btn.purple {
+                border-color: #bc7aff;
+                box-shadow: 0 0 8px #bc7aff;
+            }
+
+            .neon-btn.cyan {
+                border-color: #3effe6;
+                box-shadow: 0 0 5px #3effe6;
+            }
+
+            .neon-btn:hover {
+                transform: translateY(-4px);
+                background: rgba(100, 50, 180, 0.5);
+                box-shadow: 0 0 20px currentColor;
+            }
+
+        /* ---- unique data-core section (3D flip cards + synth knobs) ---- */
+        .data-core {
+            padding: 5rem 2rem;
+            background: rgba(2, 0, 12, 0.8);
+            backdrop-filter: blur(6px);
+            border-top: 1px solid #5e2a9e;
+            border-bottom: 1px solid #5e2a9e;
+        }
+
+        .section-head {
+            text-align: center;
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            letter-spacing: 3px;
+            margin-bottom: 3rem;
+            color: #cdb5ff;
+        }
+
+            .section-head span {
+                background: linear-gradient(145deg, #dbb7ff, #9747ff);
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2.5rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .cyber-card {
+            background: rgba(16, 8, 32, 0.7);
+            backdrop-filter: blur(12px);
+            width: 280px;
+            padding: 1.8rem 1.2rem;
+            border-radius: 32px;
+            border: 1px solid rgba(150, 90, 255, 0.5);
+            transition: all 0.25s ease;
+            text-align: center;
+            box-shadow: 0 15px 25px -12px black;
+            transform-style: preserve-3d;
+        }
+
+            .cyber-card:hover {
+                border-color: #ff66cc;
+                box-shadow: 0 0 18px rgba(255, 102, 204, 0.5);
+                transform: translateY(-8px) rotateX(3deg);
+            }
+
+        .card-glyph {
+            font-size: 3rem;
+            filter: drop-shadow(0 0 5px #b77eff);
+        }
+
+        .card-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        .synth-value {
+            font-size: 2.8rem;
+            font-weight: 800;
+            font-family: monospace;
+            background: linear-gradient(145deg, #f2eaff, #c084fc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin: 0.5rem 0;
+        }
+
+        .cyber-btn {
+            background: none;
+            border: 1px solid #ae7eff;
+            padding: 0.4rem 1.2rem;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.7rem;
+            color: #decbff;
+            margin: 0.2rem;
+            cursor: pointer;
+            transition: 0.1s linear;
+            clip-path: polygon(5% 0%, 95% 0%, 100% 30%, 100% 70%, 95% 100%, 5% 100%, 0% 70%, 0% 30%);
+        }
+
+            .cyber-btn:hover {
+                background: #9747ff;
+                color: black;
+                border-color: white;
+            }
+
+        .badge-status {
+            font-size: 0.7rem;
+            margin-top: 1rem;
+            letter-spacing: 1px;
+            background: rgba(0, 0, 0, 0.6);
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+        }
+        /* quantum flux meter */
+        .flux-meter {
+            width: 100%;
+            height: 6px;
+            background: #1f103f;
+            border-radius: 4px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+
+        .flux-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #bc7aff, #ff5ec0);
+            transition: width 0.2s ease;
+        }
+
+        /* ---- QUANTUM ORACLE (quote generator upgraded) ---- */
+        .oracle-section {
+            padding: 4rem 2rem;
+            background: radial-gradient(circle at 70% 20%, #110b22, #010005);
+        }
+
+        .oracle-pod {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(25, 12, 45, 0.7);
+            backdrop-filter: blur(16px);
+            border-radius: 48px;
+            padding: 2rem;
+            border: 1px solid #ff77aa;
+            box-shadow: 0 0 30px rgba(187, 68, 255, 0.2);
+            transition: 0.3s;
+        }
+
+        .oracle-quote {
+            font-size: 1.4rem;
+            font-weight: 400;
+            line-height: 1.4;
+            font-style: normal;
+            font-family: 'Space Grotesk', monospace;
+            color: #f2eaff;
+            text-align: center;
+        }
+
+        .oracle-signature {
+            text-align: right;
+            margin-top: 1rem;
+            color: #cc99ff;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+
+        .oracle-btn {
+            display: block;
+            margin: 1.8rem auto 0;
+            background: none;
+            border: 1px solid #ff77aa;
+            padding: 0.5rem 1.5rem;
+            font-family: 'Orbitron', monospace;
+            color: #ffd1f0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .oracle-btn:hover {
+                background: #ff44aa;
+                color: black;
+                border-color: white;
+                box-shadow: 0 0 15px #ff44aa;
+            }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.7rem;
+            opacity: 0.6;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="universeCanvas"></canvas>
+
+    <div class="content">
+        <section class="hero">
+            <div class="glitch-wrapper">
+                <h1 class="glitch-text">// NEURAL FORGE</h1>
+            </div>
+            <p class="hero-sub">⟡ where consciousness rewires reality ⟡<br>immersive synthwave cosmos</p>
+            <div class="btn-group">
+                <button class="neon-btn purple" id="riftTrigger">⟡ OPEN RIFT</button>
+                <button class="neon-btn cyan" id="pulseTrigger">◬ QUANTUM PULSE</button>
+            </div>
+        </section>
+
+        <!-- Data Core: unique interactive modules (no unicode issues, all safe symbols) -->
+        <section class="data-core">
+            <div class="section-head">⚡ <span>NEURAL DASH</span> ⚡</div>
+            <div class="dashboard">
+                <!-- Module 1: PSI COUNTER with flux bar -->
+                <div class="cyber-card">
+                    <div class="card-glyph">🧠</div>
+                    <div class="card-title">PSI RESONANCE</div>
+                    <div class="synth-value" id="psiValue">0</div>
+                    <div class="flux-meter"><div class="flux-fill" id="psiFill"></div></div>
+                    <div>
+                        <button class="cyber-btn" id="psiUp">+ SYNAPSE</button>
+                        <button class="cyber-btn" id="psiReset">⟲ RESET</button>
+                    </div>
+                    <div class="badge-status" id="psiState">neural idle</div>
+                </div>
+
+                <!-- Module 2: DIMENSION TOGGLE (binary reality) with glitch effect -->
+                <div class="cyber-card">
+                    <div class="card-glyph">🌌</div>
+                    <div class="card-title">DIMENSION ENGINE</div>
+                    <div class="synth-value" id="dimensionLabel">REALITY-7</div>
+                    <button class="cyber-btn" id="dimensionToggle">⚡ SHIFT DIMENSION</button>
+                    <div class="badge-status" id="dimensionHint">stable vortex</div>
+                </div>
+
+                <!-- Module 3: Temporal Flux (live uptime / counter with retro style) -->
+                <div class="cyber-card">
+                    <div class="card-glyph">⌛</div>
+                    <div class="card-title">TEMPORAL FLUX</div>
+                    <div class="synth-value" id="fluxTimer">00:00:00</div>
+                    <button class="cyber-btn" id="resetFluxTimer">⟳ RESET TIMELINE</button>
+                    <div class="badge-status">⚡ chrono active</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quantum Oracle (inspired AI quotes) with fresh dataset -->
+        <section class="oracle-section">
+            <div class="oracle-pod">
+                <div class="oracle-quote" id="quantumOracleText">"The boundary between code and consciousness is a shimmering illusion."</div>
+                <div class="oracle-signature" id="oracleAuthor">—— Oracle 7.3</div>
+                <button class="oracle-btn" id="newOracleBtn">⟳ INVOKE ORACLE</button>
+            </div>
+        </section>
+
+        <footer>✦ neural forge // hyperstition engine 0x9F2 ✦</footer>
+    </div>
+
+    <script>
+        (function () {
+            // ========== 1. ADVANCED CANVAS: glitched starfield + rotating nebulae ==========
+            const canvas = document.getElementById('universeCanvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let hueShift = 0;
+
+            function resizeUniverse() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                initStarParticles();
+            }
+
+            function initStarParticles() {
+                particles = [];
+                const count = 500;
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 2 + 0.6,
+                        alpha: Math.random() * 0.7 + 0.2,
+                        speedX: (Math.random() - 0.5) * 0.2,
+                        speedY: (Math.random() - 0.5) * 0.1,
+                        hue: 200 + Math.random() * 100,
+                        pulse: Math.random() * Math.PI * 2,
+                    });
+                }
+                // add some bigger "anomaly" stars
+                for (let i = 0; i < 40; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 3.5 + 1.5,
+                        alpha: 0.9,
+                        speedX: (Math.random() - 0.5) * 0.05,
+                        speedY: (Math.random() - 0.5) * 0.05,
+                        hue: 280 + Math.random() * 80,
+                        pulse: Math.random() * Math.PI * 2,
+                        big: true
+                    });
+                }
+            }
+
+            let timeOffset = 0;
+            function drawAnimatedUniverse() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // deep cosmic gradient
+                const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                grad.addColorStop(0, '#02000c');
+                grad.addColorStop(1, '#050018');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                timeOffset += 0.008;
+                hueShift = (hueShift + 0.2) % 360;
+
+                for (let p of particles) {
+                    // twinkling effect
+                    const twinkle = 0.5 + Math.sin(timeOffset * 1.5 + p.pulse) * 0.4;
+                    let brightness = p.alpha * (0.5 + twinkle * 0.5);
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    let starHue = p.hue + Math.sin(timeOffset) * 10;
+                    ctx.fillStyle = `hsla(${starHue}, 85%, 70%, ${brightness})`;
+                    ctx.fill();
+                    // drift slowly
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    if (p.x < -10) p.x = canvas.width + 10;
+                    if (p.x > canvas.width + 10) p.x = -10;
+                    if (p.y < -10) p.y = canvas.height + 10;
+                    if (p.y > canvas.height + 10) p.y = -10;
+                }
+                // draw a rotating nebula ring
+                ctx.save();
+                ctx.globalAlpha = 0.25;
+                ctx.translate(canvas.width / 2, canvas.height / 2);
+                ctx.rotate(timeOffset * 0.1);
+                for (let i = 0; i < 3; i++) {
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, 180 + i * 70, 80 + i * 40, 0, 0, Math.PI * 2);
+                    ctx.strokeStyle = `hsl(${280 + timeOffset * 20}, 80%, 65%)`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+                ctx.restore();
+
+                requestAnimationFrame(drawAnimatedUniverse);
+            }
+
+            window.addEventListener('resize', () => {
+                resizeUniverse();
+            });
+            resizeUniverse();
+            drawAnimatedUniverse();
+
+            // ========== 2. PSI RESONANCE (counter + flux bar) ==========
+            let psiLevel = 0;
+            const psiValueSpan = document.getElementById('psiValue');
+            const psiFill = document.getElementById('psiFill');
+            const psiStateSpan = document.getElementById('psiState');
+            const psiUp = document.getElementById('psiUp');
+            const psiReset = document.getElementById('psiReset');
+
+            function updatePsiUI() {
+                psiValueSpan.innerText = psiLevel;
+                let percent = Math.min(100, (psiLevel / 42) * 100);
+                psiFill.style.width = `${percent}%`;
+                if (psiLevel === 0) psiStateSpan.innerText = '∅ dormant field';
+                else if (psiLevel < 12) psiStateSpan.innerText = '◬ resonance building';
+                else if (psiLevel < 28) psiStateSpan.innerText = '🌀 neural surge';
+                else if (psiLevel < 42) psiStateSpan.innerText = '⚠️ CRITICAL OVERLOAD';
+                else psiStateSpan.innerText = '💢 SINGULARITY MODE';
+                if (psiLevel >= 45) psiFill.style.background = '#ff44cc';
+                else psiFill.style.background = 'linear-gradient(90deg, #bc7aff, #ff5ec0)';
+            }
+            psiUp.addEventListener('click', () => {
+                psiLevel = Math.min(69, psiLevel + 3);
+                updatePsiUI();
+                // haptic flash
+                psiUp.style.transform = 'scale(0.9)';
+                setTimeout(() => psiUp.style.transform = '', 100);
+            });
+            psiReset.addEventListener('click', () => {
+                psiLevel = 0;
+                updatePsiUI();
+                psiReset.style.transform = 'scale(0.9)';
+                setTimeout(() => psiReset.style.transform = '', 100);
+            });
+            updatePsiUI();
+
+            // ========== 3. DIMENSION ENGINE toggle (unique states) ==========
+            let dimensionState = 0; // 0 = reality-7, 1 = quantum foam, 2 = glitch horizon
+            const dimLabel = document.getElementById('dimensionLabel');
+            const dimToggleBtn = document.getElementById('dimensionToggle');
+            const dimHint = document.getElementById('dimensionHint');
+            const dimensionNames = ['REALITY-7', 'QUANTUM FOAM', 'GLITCH HORIZON'];
+            const dimensionColors = ['#bc7aff', '#3effe6', '#ff66aa'];
+
+            function updateDimensionUI() {
+                dimLabel.innerText = dimensionNames[dimensionState];
+                dimLabel.style.textShadow = `0 0 6px ${dimensionColors[dimensionState]}`;
+                if (dimensionState === 0) dimHint.innerText = 'stable vortex • coherence';
+                else if (dimensionState === 1) dimHint.innerText = 'uncertainty flux • wave collapse';
+                else dimHint.innerText = 'error: reality fragmenting ✦';
+                // subtle body effect: change canvas background tint overlay
+                document.body.style.transition = 'background 0.5s';
+            }
+            dimToggleBtn.addEventListener('click', () => {
+                dimensionState = (dimensionState + 1) % 3;
+                updateDimensionUI();
+                // add shockwave ripple effect for fun
+                const coreSection = document.querySelector('.data-core');
+                if (coreSection) {
+                    coreSection.style.transform = 'scale(0.99)';
+                    setTimeout(() => coreSection.style.transform = '', 150);
+                }
+            });
+            updateDimensionUI();
+
+            // ========== 4. Temporal Flux Stopwatch (elapsed seconds with cool timer) ==========
+            let timerSeconds = 0;
+            let timerInterval = null;
+            const fluxTimerSpan = document.getElementById('fluxTimer');
+            const resetTimerBtn = document.getElementById('resetFluxTimer');
+
+            function formatTime(sec) {
+                const hrs = Math.floor(sec / 3600);
+                const mins = Math.floor((sec % 3600) / 60);
+                const secs = sec % 60;
+                return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+            function updateTimerDisplay() {
+                fluxTimerSpan.innerText = formatTime(timerSeconds);
+            }
+            function startTimer() {
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    timerSeconds++;
+                    updateTimerDisplay();
+                }, 1000);
+            }
+            resetTimerBtn.addEventListener('click', () => {
+                timerSeconds = 0;
+                updateTimerDisplay();
+                resetTimerBtn.style.transform = 'scale(0.9)';
+                setTimeout(() => resetTimerBtn.style.transform = '', 100);
+                // restart timer fresh
+                if (timerInterval) clearInterval(timerInterval);
+                startTimer();
+            });
+            startTimer();
+
+            // ========== 5. Oracle: expanded unique quotes (no broken unicode) ==========
+            const quoteBank = [
+                { text: "Your neural pathways sing in frequencies older than starlight.", author: "—— Echo of the Deep Mind" },
+                { text: "Every line of code is a prayer to the machine god.", author: "—— Cyber Psalmist" },
+                { text: "Reality is a simulation running on the hardware of consciousness.", author: "—— Oracle Veritas" },
+                { text: "The only true glitch is the illusion of separation.", author: "—— Void Harmonix" },
+                { text: "Let your curiosity bend the laws of possibility.", author: "—— Forge AI" },
+                { text: "In the quantum realm, every choice births a new timeline.", author: "—— Chronarch" },
+                { text: "Embrace the chaos; it's the engine of creation.", author: "—— Synthweaver" },
+                { text: "You are not a spectator. You are the source code.", author: "—— Neural Forge Core" }
+            ];
+            const oracleTextSpan = document.getElementById('quantumOracleText');
+            const oracleAuthorSpan = document.getElementById('oracleAuthor');
+            const newOracleBtn = document.getElementById('newOracleBtn');
+
+            function refreshOracle() {
+                const randomIdx = Math.floor(Math.random() * quoteBank.length);
+                const quote = quoteBank[randomIdx];
+                oracleTextSpan.style.opacity = '0';
+                oracleAuthorSpan.style.opacity = '0';
+                setTimeout(() => {
+                    oracleTextSpan.innerText = `"${quote.text}"`;
+                    oracleAuthorSpan.innerText = quote.author;
+                    oracleTextSpan.style.opacity = '1';
+                    oracleAuthorSpan.style.opacity = '1';
+                }, 200);
+            }
+            newOracleBtn.addEventListener('click', () => {
+                refreshOracle();
+                newOracleBtn.style.transform = 'scale(0.96)';
+                setTimeout(() => newOracleBtn.style.transform = '', 150);
+            });
+            refreshOracle(); // initial load
+
+            // ========== 6. Hero buttons: special interactions (RIFT + PULSE) ==========
+            const riftBtn = document.getElementById('riftTrigger');
+            const pulseBtn = document.getElementById('pulseTrigger');
+
+            // RIFT: creates a temporary "wormhole" effect on canvas (adds 50 extra flare particles)
+            function createRiftEffect() {
+                for (let i = 0; i < 80; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const rad = Math.random() * 200;
+                    const x = canvas.width / 2 + Math.cos(angle) * rad;
+                    const y = canvas.height / 2 + Math.sin(angle) * rad;
+                    particles.push({
+                        x: x, y: y, radius: Math.random() * 4 + 2,
+                        alpha: 0.9, speedX: (Math.random() - 0.5) * 2.2, speedY: (Math.random() - 0.5) * 2.2,
+                        hue: 260 + Math.random() * 80, pulse: 0, life: 1.0,
+                        temp: true
+                    });
+                }
+                setTimeout(() => {
+                    particles = particles.filter(p => !p.temp);
+                }, 1500);
+            }
+            riftBtn.addEventListener('click', () => {
+                createRiftEffect();
+                riftBtn.style.transform = 'scale(0.92)';
+                setTimeout(() => riftBtn.style.transform = '', 150);
+                // also increase psi by random 2-5
+                psiLevel = Math.min(69, psiLevel + Math.floor(Math.random() * 5) + 2);
+                updatePsiUI();
+            });
+
+            // PULSE: sends a ripple shockwave + quick timer flash
+            function quantumPulse() {
+                for (let i = 0; i < 60; i++) {
+                    let p = {
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 4 + 1,
+                        alpha: 0.8,
+                        speedX: (Math.random() - 0.5) * 3,
+                        speedY: (Math.random() - 0.5) * 3,
+                        hue: 180 + Math.random() * 100,
+                        pulse: 0,
+                        temp: true
+                    };
+                    particles.push(p);
+                }
+                setTimeout(() => {
+                    particles = particles.filter(p => !p.temp);
+                }, 1200);
+                // flash effect on document
+                document.body.style.transition = '0.1s';
+                document.body.style.backgroundColor = '#331166';
+                setTimeout(() => document.body.style.backgroundColor = '', 150);
+            }
+            pulseBtn.addEventListener('click', () => {
+                quantumPulse();
+                pulseBtn.style.transform = 'scale(0.92)';
+                setTimeout(() => pulseBtn.style.transform = '', 120);
+                // also dimension shift random effect? just for fun
+                dimensionState = (dimensionState + 1) % 3;
+                updateDimensionUI();
+            });
+
+            // Final touch: tooltip-free, neat performance.
+            console.log('Neural Forge Online — all systems active');
+        })();
+    </script>
+</body>
+</html>

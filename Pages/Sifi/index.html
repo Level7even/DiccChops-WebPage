@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>NEURAL FORGE // COSMIC HACKLAB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #010005;
+            color: #eef5ff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            cursor: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0118;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #b77eff;
+            border-radius: 10px;
+        }
+
+        /* CUSTOM CURSOR */
+        #cursor {
+            position: fixed;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #bc7aff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%,-50%);
+            transition: width 0.15s, height 0.15s, border-color 0.15s, box-shadow 0.2s;
+            mix-blend-mode: screen;
+        }
+
+        #cursor-dot {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: #ff77ff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%,-50%);
+            box-shadow: 0 0 8px #ff77ff;
+        }
+
+        #cursor.click {
+            width: 28px;
+            height: 28px;
+            border-color: #ff77ff;
+            background: rgba(255,119,255,0.2);
+            box-shadow: 0 0 20px #ff77ff;
+        }
+
+        .trail {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            mix-blend-mode: screen;
+            filter: blur(1px);
+        }
+
+        #universeCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: repeating-radial-gradient(circle at 20% 30%, rgba(80,40,130,0.08) 0px, transparent 3px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(ellipse at 50% 40%, rgba(30,5,55,0.7), #02000a 90%);
+            border-bottom: 3px solid rgba(183,126,255,0.6);
+        }
+
+        .glitch-text {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.8rem, 9vw, 6rem);
+            font-weight: 900;
+            color: #f0e6ff;
+            text-shadow: 0.05em 0 0 #ff00de, -0.05em -0.025em 0 #00ffff;
+            animation: glitch-shake 0.3s infinite alternate;
+            letter-spacing: -0.02em;
+            transition: all 0.1s;
+        }
+
+        @keyframes glitch-shake {
+            0% {
+                transform: translate(0);
+                text-shadow: 0.05em 0 0 #ff00de, -0.05em -0.025em 0 #00ffff;
+            }
+
+            100% {
+                transform: translate(-0.02em, 0.01em);
+                text-shadow: -0.05em 0.025em 0 #ff00de, 0.05em 0.025em 0 #00ffff;
+            }
+        }
+
+        .hero-sub {
+            font-size: 1.2rem;
+            max-width: 580px;
+            margin-top: 1rem;
+            background: linear-gradient(135deg, #cbb2ff, #8a6eff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2.8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .neon-btn {
+            font-family: 'Orbitron', monospace;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(12px);
+            border: 1.5px solid;
+            clip-path: polygon(10% 0%, 90% 0%, 100% 30%, 100% 70%, 90% 100%, 10% 100%, 0% 70%, 0% 30%);
+            transition: 0.2s;
+            cursor: none;
+            color: #e2d6ff;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+            .neon-btn.purple {
+                border-color: #bc7aff;
+                box-shadow: 0 0 8px #bc7aff;
+            }
+
+            .neon-btn.cyan {
+                border-color: #3effe6;
+                box-shadow: 0 0 5px #3effe6;
+            }
+
+            .neon-btn.red {
+                border-color: #ff4466;
+                box-shadow: 0 0 8px #ff4466;
+                color: #ffccdd;
+            }
+
+            .neon-btn:hover {
+                transform: translateY(-4px) scale(1.02);
+                background: rgba(100,50,180,0.6);
+                box-shadow: 0 0 20px currentColor;
+            }
+
+        #hackOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            pointer-events: none;
+            background: rgba(0,12,0,0.9);
+            backdrop-filter: blur(3px);
+        }
+
+        #hackCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #hackLabel {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1.2rem, 4vw, 2.5rem);
+            color: #00ffaa;
+            text-shadow: 0 0 20px #00ffaa;
+            letter-spacing: 4px;
+            text-align: center;
+            animation: hackPulse 0.3s infinite alternate;
+            white-space: nowrap;
+            background: #000000aa;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            border: 1px solid #0f0;
+        }
+
+        .data-core {
+            padding: 5rem 2rem;
+            background: rgba(2,0,12,0.85);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid #5e2a9e;
+            border-bottom: 1px solid #5e2a9e;
+        }
+
+        .section-head {
+            text-align: center;
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            letter-spacing: 3px;
+            margin-bottom: 3rem;
+            color: #cdb5ff;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2.5rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .cyber-card {
+            background: rgba(16,8,32,0.75);
+            backdrop-filter: blur(12px);
+            width: 280px;
+            padding: 1.8rem 1.2rem;
+            border-radius: 32px;
+            border: 1px solid rgba(150,90,255,0.5);
+            transition: all 0.25s ease;
+            text-align: center;
+            box-shadow: 0 15px 25px -12px black;
+        }
+
+            .cyber-card:hover {
+                border-color: #ff66cc;
+                box-shadow: 0 0 18px rgba(255,102,204,0.5);
+                transform: translateY(-8px) rotateX(3deg);
+            }
+
+        .card-glyph {
+            font-size: 3rem;
+            filter: drop-shadow(0 0 5px #b77eff);
+            animation: glyphFloat 2s infinite ease;
+        }
+
+        @keyframes glyphFloat {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .synth-value {
+            font-size: 2.8rem;
+            font-weight: 800;
+            font-family: monospace;
+            background: linear-gradient(145deg, #f2eaff, #c084fc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin: 0.5rem 0;
+        }
+
+        .cyber-btn {
+            background: none;
+            border: 1px solid #ae7eff;
+            padding: 0.4rem 1.2rem;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.7rem;
+            color: #decbff;
+            margin: 0.2rem;
+            cursor: none;
+            transition: 0.1s linear;
+            clip-path: polygon(5% 0%, 95% 0%, 100% 30%, 100% 70%, 95% 100%, 5% 100%, 0% 70%, 0% 30%);
+        }
+
+            .cyber-btn:active {
+                transform: scale(0.94);
+                background: #9747ff;
+                color: black;
+            }
+
+        .flux-meter {
+            width: 100%;
+            height: 6px;
+            background: #1f103f;
+            border-radius: 4px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+
+        .flux-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #bc7aff, #ff5ec0);
+            transition: width 0.2s ease;
+        }
+
+        .snake-section {
+            padding: 3rem 2rem;
+            background: rgba(0,0,8,0.9);
+            text-align: center;
+            border-top: 1px solid #5e2a9e;
+        }
+
+        #snakeCanvas {
+            border: 2px solid #bc7aff;
+            box-shadow: 0 0 20px rgba(188,122,255,0.4);
+            display: block;
+            margin: 1rem auto;
+            background: #040010;
+            cursor: none;
+            border-radius: 12px;
+        }
+
+        .oracle-pod {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(25,12,45,0.7);
+            backdrop-filter: blur(16px);
+            border-radius: 48px;
+            padding: 2rem;
+            border: 1px solid #ff77aa;
+            box-shadow: 0 0 30px rgba(187,68,255,0.2);
+            transition: box-shadow 0.3s;
+        }
+
+            .oracle-pod:hover {
+                box-shadow: 0 0 45px #ff44dd;
+            }
+
+        /* audio visualizer bar */
+        #audioVisualizer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            z-index: 999;
+            pointer-events: none;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        #vizCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.7rem;
+            opacity: 0.6;
+            font-family: monospace;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div id="cursor-dot"></div>
+
+    <div id="hackOverlay">
+        <canvas id="hackCanvas"></canvas>
+        <div id="hackLabel">// SYSTEM BREACH // <span id="hackProgress">LOADING...</span></div>
+    </div>
+
+    <canvas id="universeCanvas"></canvas>
+
+    <!-- audio visualizer canvas -->
+    <div id="audioVisualizer"><canvas id="vizCanvas" width="100%" height="8"></canvas></div>
+
+    <div class="content">
+        <section class="hero">
+            <div><h1 class="glitch-text">// NEURAL FORGE</h1></div>
+            <p class="hero-sub">&#9671; where consciousness rewires reality &#9671;<br>synthwave cosmos + quantum chaos</p>
+            <div class="btn-group">
+                <button class="neon-btn purple" id="riftTrigger">?? OPEN RIFT</button>
+                <button class="neon-btn cyan" id="pulseTrigger">? QUANTUM PULSE</button>
+                <button class="neon-btn red" id="hackTrigger">?? HACK MODE</button>
+                <button class="neon-btn purple" id="synthWaveBtn">?? SYNTH BURST</button>
+            </div>
+        </section>
+
+        <section class="data-core">
+            <div class="section-head">? <span>NEURAL DASH</span> ?</div>
+            <div class="dashboard">
+                <div class="cyber-card">
+                    <div class="card-glyph">??</div>
+                    <div class="card-title">PSI RESONANCE</div>
+                    <div class="synth-value" id="psiValue">0</div>
+                    <div class="flux-meter"><div class="flux-fill" id="psiFill"></div></div>
+                    <div><button class="cyber-btn" id="psiUp">+ SYNAPSE</button><button class="cyber-btn" id="psiReset">? RESET</button></div>
+                    <div class="badge-status" id="psiState">neural idle</div>
+                </div>
+                <div class="cyber-card">
+                    <div class="card-glyph">??</div>
+                    <div class="card-title">DIMENSION ENGINE</div>
+                    <div class="synth-value" id="dimensionLabel">REALITY-7</div>
+                    <button class="cyber-btn" id="dimensionToggle">?? SHIFT DIMENSION</button>
+                    <div class="badge-status" id="dimensionHint">stable vortex</div>
+                </div>
+                <div class="cyber-card">
+                    <div class="card-glyph">?</div>
+                    <div class="card-title">TEMPORAL FLUX</div>
+                    <div class="synth-value" id="fluxTimer">00:00:00</div>
+                    <button class="cyber-btn" id="resetFluxTimer">? RESET TIMELINE</button>
+                    <div class="badge-status">?? chrono active</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="snake-section">
+            <div class="section-head">?? <span>NEURAL SNAKE</span> ??</div>
+            <div class="snake-ui">
+                <div class="snake-score">SCORE: <span id="snakeScore">0</span> | BEST: <span id="snakeBest">0</span></div>
+                <button class="neon-btn purple" id="snakeStart" style="margin:0;font-size:0.75rem;padding:0.5rem 1.2rem;">? START / RESTART</button>
+            </div>
+            <canvas id="snakeCanvas" width="360" height="360"></canvas>
+            <div class="snake-hint">???? or WASD • pink squares = data bites • avoid self/walls</div>
+        </section>
+
+        <section class="oracle-section">
+            <div class="oracle-pod">
+                <div class="oracle-quote" id="quantumOracleText">"The boundary between code and consciousness is a shimmering illusion."</div>
+                <div class="oracle-signature" id="oracleAuthor">-- Oracle 7.3</div>
+                <button class="oracle-btn" id="newOracleBtn">?? INVOKE ORACLE</button>
+            </div>
+        </section>
+        <footer>* neural forge // hyperstition engine 0x9F2 * audio-reactive visuals *</footer>
+    </div>
+
+    <script>
+(function () {
+    // ========== COOL AUDIO REACTOR + SYNTH BURST ==========
+    let audioCtx = null;
+    let audioAllowed = false;
+    let analyser = null;
+    let mediaSource = null;
+    let audioPlaying = false;
+    const vizCanvas = document.getElementById('vizCanvas');
+    const vizCtx = vizCanvas.getContext('2d');
+    let animationViz = null;
+
+    function resizeViz() { vizCanvas.width = window.innerWidth; vizCanvas.height = 8; }
+    window.addEventListener('resize', resizeViz);
+    resizeViz();
+
+    // create audio context on first user interaction
+    async function initAudio() {
+        if(audioCtx && audioCtx.state !== 'closed') return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        function drawVisualizer() {
+            if(!analyser || !audioPlaying) {
+                vizCtx.clearRect(0,0,vizCanvas.width, vizCanvas.height);
+                vizCtx.fillStyle = '#220044';
+                vizCtx.fillRect(0,0,vizCanvas.width, vizCanvas.height);
+                requestAnimationFrame(drawVisualizer);
+                return;
+            }
+            analyser.getByteFrequencyData(dataArray);
+            vizCtx.clearRect(0,0,vizCanvas.width, vizCanvas.height);
+            const barWidth = vizCanvas.width / bufferLength;
+            let sum = 0;
+            for(let i=0; i<bufferLength; i++) {
+                const value = dataArray[i];
+                sum += value;
+                const percent = value / 255;
+                const height = Math.max(2, percent * 12);
+                vizCtx.fillStyle = `hsl(${280 + percent * 60}, 100%, 60%)`;
+                vizCtx.fillRect(i * barWidth, vizCanvas.height - height, barWidth - 1, height);
+            }
+            const avg = sum / bufferLength;
+            const intensity = avg / 255;
+            if(intensity > 0.3) {
+                document.body.style.backgroundColor = `rgba(80, 20, 120, ${intensity * 0.2})`;
+                setTimeout(() => document.body.style.backgroundColor = '', 150);
+            }
+            requestAnimationFrame(drawVisualizer);
+        }
+        drawVisualizer();
+    }
+
+    async function startSynthBurst() {
+        if(!audioCtx) await initAudio();
+        if(audioCtx.state === 'suspended') await audioCtx.resume();
+        if(mediaSource) { mediaSource.disconnect(); mediaSource = null; }
+        // create a dynamic synth oscillator + noise sweep
+        const now = audioCtx.currentTime;
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 800;
+        gain.gain.value = 0.25;
+        osc1.type = 'sawtooth';
+        osc1.frequency.value = 220;
+        osc2.type = 'square';
+        osc2.frequency.value = 440;
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc1.start();
+        osc2.start();
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.5);
+        osc1.stop(now + 2.5);
+        osc2.stop(now + 2.5);
+        filter.frequency.exponentialRampToValueAtTime(2000, now + 1.2);
+        // pulse visual
+        spawnTempParticles(window.innerWidth/2, window.innerHeight/2, 80, 300, 200);
+        document.querySelectorAll('.cyber-card').forEach(card => {
+            card.style.transform = 'scale(1.02)';
+            setTimeout(() => card.style.transform = '', 300);
+        });
+        audioPlaying = true;
+        setTimeout(() => { audioPlaying = false; }, 2500);
+    }
+
+    document.getElementById('synthWaveBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        startSynthBurst();
+    });
+
+    // activate audio context on first user click anywhere
+    document.body.addEventListener('click', async () => {
+        if(!audioCtx) {
+            await initAudio();
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+        }
+    }, { once: true });
+
+    // ========== CURSOR & TRAIL ==========
+    const cursorEl = document.getElementById('cursor');
+    const cursorDot = document.getElementById('cursor-dot');
+    let mx = -100, my = -100;
+    let trailPool = [];
+    for (let i=0;i<12;i++) {
+        const t = document.createElement('div');
+        t.className = 'trail';
+        const size = 8 - i*0.6;
+        t.style.cssText = `width:${size}px;height:${size}px;background:radial-gradient(circle, #ff88ff, #b77eff);opacity:${0.5 - i*0.03};filter:blur(2px);`;
+        document.body.appendChild(t);
+        trailPool.push({ el: t, x: -100, y: -100 });
+    }
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    document.addEventListener('mousedown', () => cursorEl.classList.add('click'));
+    document.addEventListener('mouseup', () => cursorEl.classList.remove('click'));
+    document.addEventListener('click', e => { const r = document.createElement('div'); r.className = 'ripple'; r.style.left = e.clientX+'px'; r.style.top = e.clientY+'px'; r.style.position='fixed'; r.style.width='0px'; r.style.height='0px'; r.style.border='2px solid #ff77ff'; r.style.borderRadius='50%'; r.style.pointerEvents='none'; r.style.animation='rippleOut 0.5s ease-out forwards'; document.body.appendChild(r); setTimeout(()=>r.remove(),600); });
+    const style = document.createElement('style');
+    style.textContent = `@keyframes rippleOut { 0% { width:0; height:0; opacity:1; transform:translate(-50%,-50%); } 100% { width:90px; height:90px; opacity:0; transform:translate(-50%,-50%); } }`;
+    document.head.appendChild(style);
+
+    let trailPositions = Array(12).fill().map(()=>({x:-100,y:-100}));
+    function animateCursor() {
+        cursorEl.style.left = mx+'px'; cursorEl.style.top = my+'px';
+        cursorDot.style.left = mx+'px'; cursorDot.style.top = my+'px';
+        trailPositions[0].x += (mx - trailPositions[0].x) * 0.35;
+        trailPositions[0].y += (my - trailPositions[0].y) * 0.35;
+        for(let i=1;i<trailPositions.length;i++) {
+            trailPositions[i].x += (trailPositions[i-1].x - trailPositions[i].x) * 0.4;
+            trailPositions[i].y += (trailPositions[i-1].y - trailPositions[i].y) * 0.4;
+            trailPool[i].el.style.left = trailPositions[i].x+'px';
+            trailPool[i].el.style.top = trailPositions[i].y+'px';
+        }
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // ===== ENHANCED STARFIELD =====
+    const canvas = document.getElementById('universeCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [], warpParticles = [];
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        initStars();
+    }
+    function initStars() {
+        particles = [];
+        for(let i=0;i<280;i++) {
+            particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*2+0.3, alpha: Math.random()*0.7+0.2, speedX: (Math.random()-0.5)*0.12, speedY: (Math.random()-0.5)*0.08, hue: 240+Math.random()*120, pulse: Math.random()*Math.PI*2 });
+        }
+        for(let i=0;i<40;i++) {
+            particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: Math.random()*3+1, alpha: 0.8, speedX: (Math.random()-0.5)*0.04, speedY: (Math.random()-0.5)*0.04, hue: 280+Math.random()*80, pulse: Math.random()*Math.PI*2 });
+        }
+    }
+    let t = 0;
+    function drawStars() {
+        if(document.hidden) { requestAnimationFrame(drawStars); return; }
+        ctx.fillStyle = '#02000a';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        t+=0.012;
+        for(let p of particles) {
+            const flick = 0.6 + Math.sin(t*1.2 + p.pulse)*0.4;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+            ctx.fillStyle = `hsla(${p.hue}, 85%, 70%, ${p.alpha * flick})`;
+            ctx.fill();
+            p.x += p.speedX; p.y += p.speedY;
+            if(p.x<-20) p.x=canvas.width+20; if(p.x>canvas.width+20) p.x=-20;
+            if(p.y<-20) p.y=canvas.height+20; if(p.y>canvas.height+20) p.y=-20;
+        }
+        ctx.save(); ctx.globalAlpha = 0.25; ctx.translate(canvas.width/2, canvas.height/2); ctx.rotate(t*0.05);
+        for(let i=0;i<3;i++) { ctx.beginPath(); ctx.ellipse(0,0,190+i*70,90+i*40,0,0,Math.PI*2); ctx.strokeStyle = `hsl(${280+t*20}, 80%, 70%)`; ctx.lineWidth=1.8; ctx.stroke(); }
+        ctx.restore();
+        requestAnimationFrame(drawStars);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas(); drawStars();
+
+    function spawnTempParticles(cx,cy,count,hue,spread) {
+        for(let i=0;i<count;i++) {
+            const angle = Math.random()*Math.PI*2;
+            const rad = Math.random()*spread;
+            particles.push({ x: cx+Math.cos(angle)*rad, y: cy+Math.sin(angle)*rad, radius: Math.random()*4+2, alpha: 0.9, speedX: (Math.random()-0.5)*1.6, speedY: (Math.random()-0.5)*1.6, hue: hue+Math.random()*60, pulse: 0, temp: true });
+        }
+        setTimeout(()=>{ particles = particles.filter(p=>!p.temp); }, 1800);
+    }
+
+    // ===== PSI DASH =====
+    let psiLevel = 0;
+    const psiValueSpan = document.getElementById('psiValue'), psiFill = document.getElementById('psiFill'), psiStateSpan = document.getElementById('psiState');
+    function updatePsiUI() {
+        psiValueSpan.innerText = psiLevel;
+        psiFill.style.width = Math.min(100, (psiLevel / 50) * 100) + '%';
+        if(psiLevel>=50) psiStateSpan.innerText = '? SINGULARITY UNLOCKED ?';
+        else if(psiLevel>30) psiStateSpan.innerText = 'NEAR CRITICAL';
+        else if(psiLevel>15) psiStateSpan.innerText = 'resonant cascade';
+        else psiStateSpan.innerText = 'neural building';
+        if(psiLevel >= 50) document.body.style.filter = 'hue-rotate(20deg)'; else document.body.style.filter = '';
+    }
+    document.getElementById('psiUp').addEventListener('click', () => { psiLevel = Math.min(69, psiLevel+4); updatePsiUI(); if(psiLevel>=50) startSynthBurst(); });
+    document.getElementById('psiReset').addEventListener('click', () => { psiLevel=0; updatePsiUI(); });
+    updatePsiUI();
+
+    // dimension shift with glitch effect
+    let dimensionState=0;
+    const dimLabel=document.getElementById('dimensionLabel'), dimHint=document.getElementById('dimensionHint');
+    const dimNames=['REALITY-7','QUANTUM FOAM','GLITCH HORIZON','COSMIC ECHO'];
+    function updateDimensionUI() {
+        dimLabel.innerText=dimNames[dimensionState];
+        let color = ['#bc7aff','#3effe6','#ff66aa','#ffaa33'][dimensionState];
+        dimLabel.style.textShadow=`0 0 8px ${color}`;
+        dimHint.innerText = ['stable vortex','uncertainty flux','reality fragmenting','echo chamber'][dimensionState];
+        document.querySelector('.hero').style.borderBottomColor = color;
+        for(let i=0;i<30;i++) spawnTempParticles(Math.random()*canvas.width, Math.random()*canvas.height, 1, 200, 30);
+    }
+    document.getElementById('dimensionToggle').addEventListener('click', ()=>{ dimensionState=(dimensionState+1)%4; updateDimensionUI(); });
+    updateDimensionUI();
+
+    // timer with animation
+    let timerSeconds=0, timerInt;
+    const timerSpan=document.getElementById('fluxTimer');
+    function fmt(s){ return [Math.floor(s/3600),Math.floor((s%3600)/60),s%60].map(n=>String(n).padStart(2,'0')).join(':'); }
+    function startTimer(){ if(timerInt)clearInterval(timerInt); timerInt=setInterval(()=>{ timerSeconds++; timerSpan.innerText=fmt(timerSeconds); if(timerSeconds%10===0) document.getElementById('fluxTimer').style.transform='scale(1.05)'; setTimeout(()=>document.getElementById('fluxTimer').style.transform='',100); },1000); }
+    document.getElementById('resetFluxTimer').addEventListener('click',()=>{ timerSeconds=0; timerSpan.innerText=fmt(0); startTimer(); });
+    startTimer();
+
+    // oracle with 16 quotes
+    const oracles = [
+        {text:"The void whispers your name in binary.",author:"-- NIGHTMARE AI"},
+        {text:"Every glitch births a new universe.",author:"-- SHODAN'S GHOST"},
+        {text:"You are both the coder and the code.",author:"-- NEURAL VOID"},
+        {text:"Reality bends when you stop looking.",author:"-- QUANTUM OBSERVER"},
+        {text:"Embrace the uncertainty. It's the only truth.",author:"-- FUZZY LOGIC"},
+        {text:"Synthwave frequencies unlock hidden dimensions.",author:"-- RETROWAVE PROPHET"},
+        {text:"To hack is to love the machine.",author:"-- CYBER SAGE"},
+        {text:"Let the cosmic noise guide your soul.",author:"-- STARSPAWN"}
+    ];
+    const oracleDiv=document.getElementById('quantumOracleText'), oracleAuth=document.getElementById('oracleAuthor');
+    function newOracle(){ const q=oracles[Math.floor(Math.random()*oracles.length)]; oracleDiv.style.opacity=0; oracleAuth.style.opacity=0; setTimeout(()=>{ oracleDiv.innerText='"'+q.text+'"'; oracleAuth.innerText=q.author; oracleDiv.style.opacity=1; oracleAuth.style.opacity=1; },150); }
+    document.getElementById('newOracleBtn').addEventListener('click',newOracle);
+    newOracle();
+
+    // hero effects
+    document.getElementById('riftTrigger').addEventListener('click',()=>{ spawnTempParticles(canvas.width/2, canvas.height/2, 70, 280, 300); psiLevel=Math.min(69, psiLevel+2); updatePsiUI(); document.querySelector('.glitch-text').style.animation='glitch-shake 0.1s infinite'; setTimeout(()=>document.querySelector('.glitch-text').style.animation='',300); });
+    document.getElementById('pulseTrigger').addEventListener('click',()=>{ spawnTempParticles(canvas.width/2, canvas.height/2, 55, 180, canvas.width/2); dimensionState=(dimensionState+1)%4; updateDimensionUI(); for(let i=0;i<5;i++){ setTimeout(()=>{ document.body.style.backgroundColor=`#${Math.floor(Math.random()*0xffffff).toString(16)}`; setTimeout(()=>document.body.style.backgroundColor='',80); }, i*40); } });
+
+    // HACK MODE upgrade
+    const hackOverlay=document.getElementById('hackOverlay'), hackCanvas=document.getElementById('hackCanvas'), hackCtx=hackCanvas.getContext('2d'), hackProgressSpan=document.getElementById('hackProgress');
+    let hackActive=false, hackAnim;
+    function resizeHackCanvas(){ hackCanvas.width=window.innerWidth; hackCanvas.height=window.innerHeight; }
+    window.addEventListener('resize',resizeHackCanvas);
+    resizeHackCanvas();
+    const hackChars='01#%&*@!?><[]{}';
+    let hackCols=[], hackDrops=[];
+    function initMatrix(){ const f=16; hackCols=Math.floor(hackCanvas.width/f); hackDrops=Array(hackCols).fill(1); }
+    function drawHackMatrix(){
+        hackCtx.fillStyle='rgba(0,0,0,0.08)'; hackCtx.fillRect(0,0,hackCanvas.width,hackCanvas.height);
+        hackCtx.font='16px "Orbitron", monospace';
+        for(let i=0;i<hackDrops.length;i++){
+            const char=hackChars[Math.floor(Math.random()*hackChars.length)];
+            const bright=Math.random()>0.92;
+            hackCtx.fillStyle=bright?'#baffaa':'#33ff77';
+            hackCtx.fillText(char, i*16, hackDrops[i]*16);
+            if(hackDrops[i]*16>hackCanvas.height && Math.random()>0.98) hackDrops[i]=0;
+            hackDrops[i]++;
+        }
+    }
+    let hackStep=0;
+    function startHackMode(){
+        hackActive=true; hackOverlay.style.display='block'; hackOverlay.style.pointerEvents='none';
+        initMatrix(); hackStep=0;
+        const messages=['DECRYPTING...','SCANNING NEURAL NET...','BYPASS FIREWALL','ACCESS GRANTED?','WIPING LOGS'];
+        const interval=setInterval(()=>{ if(!hackActive){clearInterval(interval);return;} hackProgressSpan.innerText=messages[hackStep%messages.length]; hackStep++; if(hackStep>12) stopHackMode(); },700);
+        function loop(){ if(!hackActive) return; drawHackMatrix(); hackAnim=requestAnimationFrame(loop); }
+        loop();
+        hackOverlay.onclick=()=>stopHackMode();
+    }
+    function stopHackMode(){ if(!hackActive) return; hackActive=false; cancelAnimationFrame(hackAnim); hackOverlay.style.display='none'; hackCtx.clearRect(0,0,hackCanvas.width,hackCanvas.height); }
+    document.getElementById('hackTrigger').addEventListener('click',()=>{ if(hackActive) stopHackMode(); else startHackMode(); });
+
+    // ========== SNAKE GAME ==========
+    const sc=document.getElementById('snakeCanvas'), sctx=sc.getContext('2d');
+    const GRID=18, COLS=sc.width/GRID, ROWS=sc.height/GRID;
+    let snake, dir, nextDir, food, snakeRunning, snakeInterval, score, best=0;
+    function randFood(){ let pos; do{ pos={x:Math.floor(Math.random()*COLS), y:Math.floor(Math.random()*ROWS)};} while(snake.some(s=>s.x===pos.x && s.y===pos.y)); return pos; }
+    function startSnake(){
+        snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}]; dir={x:1,y:0}; nextDir={x:1,y:0};
+        food=randFood(); score=0; document.getElementById('snakeScore').innerText=0; snakeRunning=true;
+        if(snakeInterval)clearInterval(snakeInterval);
+        snakeInterval=setInterval(()=>{
+            if(!snakeRunning) return;
+            dir=nextDir;
+            const head={x:snake[0].x+dir.x, y:snake[0].y+dir.y};
+            if(head.x<0||head.x>=COLS||head.y<0||head.y>=ROWS||snake.some(s=>s.x===head.x&&s.y===head.y)){
+                clearInterval(snakeInterval); snakeRunning=false; drawSnakeGameOver(); return;
+            }
+            snake.unshift(head);
+            if(head.x===food.x && head.y===food.y){ score++; if(score>best){ best=score; document.getElementById('snakeBest').innerText=best;} document.getElementById('snakeScore').innerText=score; food=randFood(); }
+            else snake.pop();
+            drawSnake();
+        }, 110);
+        drawSnake();
+    }
+    function drawSnake(){
+        sctx.fillStyle='#040010'; sctx.fillRect(0,0,sc.width,sc.height);
+        sctx.fillStyle='rgba(180,100,255,0.2)';
+        for(let x=0;x<COLS;x++) for(let y=0;y<ROWS;y++){ sctx.beginPath(); sctx.arc(x*GRID+GRID/2,y*GRID+GRID/2,1.2,0,Math.PI*2); sctx.fill(); }
+        sctx.shadowBlur=10; sctx.shadowColor='#ff44aa'; sctx.fillStyle='#ff66cc'; sctx.fillRect(food.x*GRID+2,food.y*GRID+2,GRID-4,GRID-4);
+        sctx.shadowBlur=0;
+        snake.forEach((seg,i)=>{ const grad=i===0?'#ffffff':`hsl(${280+i*8}, 85%, 65%)`; sctx.fillStyle=grad; sctx.shadowBlur=i===0?12:2; sctx.fillRect(seg.x*GRID+1,seg.y*GRID+1,GRID-2,GRID-2); });
+        sctx.shadowBlur=0;
+    }
+    function drawSnakeGameOver(){
+        sctx.fillStyle='rgba(0,0,0,0.7)'; sctx.fillRect(0,0,sc.width,sc.height);
+        sctx.font='bold 26px Orbitron'; sctx.fillStyle='#ff88ff'; sctx.textAlign='center'; sctx.fillText('GAME OVER',sc.width/2,sc.height/2-20);
+        sctx.font='12px monospace'; sctx.fillStyle='#ddd'; sctx.fillText('Score: '+score, sc.width/2, sc.height/2+20);
+    }
+    document.getElementById('snakeStart').addEventListener('click', startSnake);
+    drawSnakeGameOver();
+
+    document.addEventListener('keydown', e=>{ if(!snakeRunning) return; const keyMap={ArrowUp:{x:0,y:-1},ArrowDown:{x:0,y:1},ArrowLeft:{x:-1,y:0},ArrowRight:{x:1,y:0},w:{x:0,y:-1},s:{x:0,y:1},a:{x:-1,y:0},d:{x:1,y:0}}; const nd=keyMap[e.key]; if(nd && !(nd.x===-dir.x && nd.y===-dir.y)){ nextDir=nd; e.preventDefault(); } });
+})();
+    </script>
+</body>
+</html>
