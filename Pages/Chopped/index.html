@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-    <title>Chopped AI – Mobile friendly</title>
+    <title>Chopped AI – Model Health Check</title>
     <style>
         * {
             margin: 0;
@@ -307,7 +307,21 @@
             color: #b9c3e6;
             margin-top: 0.2rem;
         }
-        /* Mobile styles */
+        /* model health status styles */
+        .model-option-working {
+            color: #79e6b3;
+        }
+
+        .model-option-failed {
+            color: #f98b8b;
+        }
+
+        .test-status {
+            font-size: 0.7rem;
+            margin-top: 0.4rem;
+            color: #b9c3e6;
+        }
+
         @media (max-width: 768px) {
             .menu-toggle {
                 display: flex;
@@ -330,7 +344,7 @@
             .sidebar-overlay.active {
                 display: block;
             }
-            /* Add top padding to chat so menu button doesn't cover messages */
+
             .chat-messages {
                 padding-top: 60px;
             }
@@ -362,7 +376,7 @@
                 padding: 0.5rem 0.6rem;
                 font-size: 0.7rem;
             }
-            /* Ensure input area fits */
+
             .input-area {
                 padding: 0.8rem 0.8rem;
             }
@@ -401,7 +415,8 @@
         <section>
             <h3>[model] Free Models Only</h3>
             <select id="modelSelect"></select>
-            <button id="refreshModelsBtn">[refresh] Refresh free models</button>
+            <button id="testModelsBtn">[test] Test Models (ping)</button>
+            <div id="testStatus" class="test-status"></div>
             <div id="modelInfo" class="model-context"></div>
         </section>
         <section>
@@ -448,7 +463,8 @@
         let currentModelId = '';
         let currentSessionId = null;
         let sessions = JSON.parse(localStorage.getItem('sessions') || '{}');
-        let allFreeModels = [];
+        let allFreeModels = [];          // full model objects
+        let modelStatus = {};            // { modelId: 'working'|'failed' }
         let sessionTokenUsage = JSON.parse(localStorage.getItem('sessionTokenUsage') || '{}');
 
         const apiKeyInput = document.getElementById('apiKey');
@@ -457,6 +473,8 @@
         const saveKeyBtn = document.getElementById('saveKeyBtn');
         const statusDiv = document.getElementById('status');
         const modelSelect = document.getElementById('modelSelect');
+        const testModelsBtn = document.getElementById('testModelsBtn');
+        const testStatusDiv = document.getElementById('testStatus');
         const refreshModelsBtn = document.getElementById('refreshModelsBtn');
         const modelInfoDiv = document.getElementById('modelInfo');
         const tokenStatsDiv = document.getElementById('tokenStats');
@@ -469,7 +487,7 @@
         apiKeyInput.value = apiKey;
         if (apiKey) { loadFreeModels(); updateLocalTokenDisplay(); }
 
-        // toggle key visibility
+        // ----- toggle key visibility -----
         let keyVisible = false;
         toggleKeyBtn.addEventListener('click', () => {
             keyVisible = !keyVisible;
@@ -477,7 +495,7 @@
             toggleKeyBtn.innerText = keyVisible ? '[hide]' : '[show]';
         });
 
-        // copy key
+        // ----- copy key -----
         copyKeyBtn.addEventListener('click', async () => {
             const key = apiKeyInput.value.trim();
             if (!key) {
@@ -502,6 +520,7 @@
             if (apiKey) { loadFreeModels(); updateLocalTokenDisplay(); }
         }
 
+        // ----- load free models from OpenRouter -----
         async function loadFreeModels() {
             if (!apiKey) { statusDiv.innerText = '[x] Enter API key first.'; return; }
             statusDiv.innerText = '[~] Loading free models...';
@@ -518,26 +537,111 @@
                     return (promptCost === 0 && completionCost === 0) || m.id.includes(':free');
                 });
                 allFreeModels.sort((a, b) => a.id.localeCompare(b.id));
-                modelSelect.innerHTML = '';
-                if (allFreeModels.length === 0) {
-                    modelSelect.innerHTML = '<option>-- no free models found --</option>';
-                    statusDiv.innerText = '[!] No free models available.';
-                    return;
-                }
-                for (const m of allFreeModels) {
-                    const opt = document.createElement('option');
-                    opt.value = m.id;
-                    let label = m.id;
-                    const ctx = m.context_length ? ` (ctx: ${m.context_length} tokens)` : '';
-                    opt.textContent = label + ctx;
-                    modelSelect.appendChild(opt);
-                }
-                currentModelId = allFreeModels[0].id;
-                modelSelect.value = currentModelId;
-                updateModelInfo(currentModelId);
-                statusDiv.innerText = `[ok] ${allFreeModels.length} free models loaded.`;
+                // reset status
+                modelStatus = {};
+                await testAllModels();  // automatically test after loading
             } catch (err) {
                 statusDiv.innerText = `[x] Failed: ${err.message}`;
+            }
+        }
+
+        // ----- test a single model with a minimal ping -----
+        async function testModel(modelId) {
+            try {
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: modelId,
+                        messages: [{ role: 'user', content: 'ping' }],
+                        max_tokens: 1,
+                        temperature: 0
+                    })
+                });
+                if (!response.ok) return false;
+                const data = await response.json();
+                return !!(data.choices && data.choices.length);
+            } catch (err) {
+                return false;
+            }
+        }
+
+        // ----- test all free models (with concurrency limit) -----
+        async function testAllModels() {
+            if (!apiKey || allFreeModels.length === 0) return;
+            testStatusDiv.innerText = '[~] Testing models (ping)... this may take a moment.';
+            const modelsToTest = allFreeModels.map(m => m.id);
+            // reset status
+            for (const id of modelsToTest) modelStatus[id] = 'testing';
+            updateModelDropdown(); // show testing indicator
+
+            const concurrency = 3;
+            const results = [];
+            for (let i = 0; i < modelsToTest.length; i += concurrency) {
+                const batch = modelsToTest.slice(i, i + concurrency);
+                const batchPromises = batch.map(async (modelId) => {
+                    const working = await testModel(modelId);
+                    return { modelId, working };
+                });
+                const batchResults = await Promise.all(batchPromises);
+                results.push(...batchResults);
+            }
+            // update status
+            for (const { modelId, working } of results) {
+                modelStatus[modelId] = working ? 'working' : 'failed';
+            }
+            updateModelDropdown();
+            const workingCount = Object.values(modelStatus).filter(s => s === 'working').length;
+            const failedCount = Object.values(modelStatus).filter(s => s === 'failed').length;
+            testStatusDiv.innerHTML = `[ok] ${workingCount} working, ${failedCount} failed. ${failedCount > 0 ? 'Red models may be offline or require credits.' : ''}`;
+            if (currentModelId && modelStatus[currentModelId] === 'failed') {
+                // optionally auto-select first working model
+                const firstWorking = allFreeModels.find(m => modelStatus[m.id] === 'working');
+                if (firstWorking) {
+                    currentModelId = firstWorking.id;
+                    modelSelect.value = currentModelId;
+                    updateModelInfo(currentModelId);
+                    testStatusDiv.innerHTML += ` Auto-switched to working model.`;
+                }
+            }
+        }
+
+        // ----- update dropdown with colored status indicators -----
+        function updateModelDropdown() {
+            modelSelect.innerHTML = '';
+            if (allFreeModels.length === 0) {
+                modelSelect.innerHTML = '<option>-- no free models found --</option>';
+                return;
+            }
+            for (const m of allFreeModels) {
+                const opt = document.createElement('option');
+                opt.value = m.id;
+                const status = modelStatus[m.id];
+                let statusText = '';
+                if (status === 'working') statusText = ' [WORKING]';
+                else if (status === 'failed') statusText = ' [FAILED]';
+                else if (status === 'testing') statusText = ' [testing...]';
+                else statusText = ' [unknown]';
+                let label = m.id + statusText;
+                const ctx = m.context_length ? ` (ctx: ${m.context_length} tokens)` : '';
+                opt.textContent = label + ctx;
+                if (status === 'working') opt.style.color = '#79e6b3';
+                else if (status === 'failed') opt.style.color = '#f98b8b';
+                else opt.style.color = '#b9c3e6';
+                modelSelect.appendChild(opt);
+            }
+            // restore selection
+            if (currentModelId && allFreeModels.some(m => m.id === currentModelId)) {
+                modelSelect.value = currentModelId;
+            } else if (allFreeModels.length > 0) {
+                // try to select first working, or first
+                const firstWorking = allFreeModels.find(m => modelStatus[m.id] === 'working');
+                currentModelId = firstWorking ? firstWorking.id : allFreeModels[0].id;
+                modelSelect.value = currentModelId;
+                updateModelInfo(currentModelId);
             }
         }
 
@@ -684,6 +788,11 @@
             if (!currentSessionId) newSession();
             if (!apiKey) { statusDiv.innerText = '[x] No API key.'; return; }
             if (!currentModelId) { statusDiv.innerText = '[x] No model selected.'; return; }
+            // check model health before sending
+            if (modelStatus[currentModelId] === 'failed') {
+                statusDiv.innerText = '[x] This model is marked as failed. Test models again or choose another.';
+                return;
+            }
 
             addMessageToUI('user', text);
             userInput.value = '';
@@ -737,11 +846,17 @@
             } catch (err) {
                 assistantContentDiv.innerText = `[error] ${err.message}`;
                 if (err.message.includes('402')) assistantContentDiv.innerText += '\n\n[!] Try another free model.';
+                // optionally mark model as failed
+                if (err.message.includes('402') || err.message.includes('429') || err.message.includes('500')) {
+                    modelStatus[currentModelId] = 'failed';
+                    updateModelDropdown();
+                }
             }
         }
 
         saveKeyBtn.addEventListener('click', () => { saveApiKey(); if (apiKey) { loadFreeModels(); updateLocalTokenDisplay(); } });
         refreshModelsBtn.addEventListener('click', () => { loadFreeModels(); updateLocalTokenDisplay(); });
+        testModelsBtn.addEventListener('click', () => { testAllModels(); });
         modelSelect.addEventListener('change', () => { currentModelId = modelSelect.value; updateModelInfo(currentModelId); });
         newSessionBtn.addEventListener('click', newSession);
         sendBtn.addEventListener('click', sendMessage);
