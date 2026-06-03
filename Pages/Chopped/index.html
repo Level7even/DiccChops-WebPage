@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>Chopped AI – Mobile friendly</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0c12;
+            font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+            color: #eef2ff;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .menu-toggle {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 1001;
+            background: #5b4dee;
+            border: none;
+            border-radius: 30px;
+            width: 48px;
+            height: 48px;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            color: white;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+
+            .menu-toggle:active {
+                transform: scale(0.96);
+            }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 280px;
+            background: rgba(18,22,32,0.98);
+            backdrop-filter: blur(16px);
+            border-right: 1px solid #2d354a;
+            padding: 1rem;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            transform: translateX(0);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .main {
+            margin-left: 280px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #0f111a;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg,#c084fc,#60a5fa);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        section {
+            border-top: 1px solid #2d354a;
+            padding-top: 0.8rem;
+        }
+
+        h3 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.6rem;
+            color: #9ca3cf;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .help-link {
+            font-size: 0.7rem;
+            text-transform: none;
+            background: #252c3f;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #b9c3e6;
+        }
+
+        label {
+            font-size: 0.7rem;
+            color: #b9c3e6;
+            display: block;
+            margin-top: 0.6rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 0.2rem;
+        }
+
+            .input-group input {
+                flex: 1;
+                margin-top: 0;
+            }
+
+            .input-group button {
+                width: auto;
+                margin-top: 0;
+                padding: 0.5rem 0.8rem;
+                background: #252c3f;
+                font-size: 0.75rem;
+            }
+
+                .input-group button.copy-btn {
+                    background: #3a405b;
+                }
+
+                .input-group button.toggle-btn {
+                    background: #3a405b;
+                }
+
+        input, select, textarea {
+            width: 100%;
+            background: #11141f;
+            border: 1px solid #2d354a;
+            border-radius: 12px;
+            padding: 0.5rem 0.7rem;
+            color: #f0f3ff;
+            font-size: 0.8rem;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 0.6rem;
+            background: #5b4dee;
+            border: none;
+            border-radius: 30px;
+            padding: 0.5rem;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .status {
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            color: #79e6b3;
+        }
+
+        .token-info {
+            background: #0c0f18;
+            border-radius: 12px;
+            padding: 0.6rem;
+            margin-top: 0.5rem;
+            font-size: 0.7rem;
+        }
+
+        .session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #10131e;
+            padding: 0.5rem 0.6rem;
+            border-radius: 12px;
+            margin-bottom: 0.4rem;
+        }
+
+        .session-name {
+            cursor: pointer;
+            flex: 1;
+            font-size: 0.8rem;
+            padding: 0.2rem 0;
+        }
+
+        .delete-session {
+            background: none;
+            border: none;
+            color: #f98b8b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+            padding: 0 0.5rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 0.7rem;
+            align-items: flex-start;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: #2c3e66;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .user .avatar {
+            background: #4b3f8c;
+        }
+
+        .message-content-wrapper {
+            flex: 1;
+            max-width: 80%;
+        }
+
+        .model-badge {
+            font-size: 0.6rem;
+            color: #9ca3cf;
+            margin-bottom: 0.2rem;
+            display: inline-block;
+            background: #1d2335;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+        }
+
+        .content {
+            background: #141824;
+            padding: 0.6rem 1rem;
+            border-radius: 18px;
+            line-height: 1.4;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 0.7rem;
+            padding: 0.8rem 1rem;
+            border-top: 1px solid #232838;
+            background: #0c0f18;
+        }
+
+        textarea {
+            flex: 1;
+            border-radius: 28px;
+            resize: none;
+            font-size: 0.9rem;
+            padding: 0.7rem;
+        }
+
+        .send-btn {
+            width: auto;
+            padding: 0 1.2rem;
+            margin-top: 0;
+            font-size: 1rem;
+        }
+
+        .model-context {
+            font-size: 0.7rem;
+            color: #b9c3e6;
+            margin-top: 0.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                width: 85%;
+                max-width: 280px;
+            }
+
+                .sidebar.open {
+                    transform: translateX(0);
+                }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            .message-content-wrapper {
+                max-width: 85%;
+            }
+
+            .avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
+
+            .content {
+                font-size: 0.85rem;
+                padding: 0.5rem 0.8rem;
+            }
+
+            button, .delete-session {
+                touch-action: manipulation;
+            }
+
+            .session-name {
+                font-size: 0.85rem;
+            }
+
+            .input-group button {
+                padding: 0.5rem 0.6rem;
+                font-size: 0.7rem;
+            }
+        }
+
+        .small-text {
+            font-size: 0.65rem;
+            color: #7982a6;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">MENU</button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <h2>[C] Chopped</h2>
+        <section>
+            <h3>[key] OpenRouter Key <a href="https://openrouter.ai/keys" target="_blank" class="help-link">[get key]</a></h3>
+            <div class="input-group">
+                <input type="password" id="apiKey" placeholder="sk-or-...">
+                <button id="toggleKeyBtn" class="toggle-btn" title="Show/Hide">[show]</button>
+                <button id="copyKeyBtn" class="copy-btn" title="Copy to clipboard">[copy]</button>
+            </div>
+            <button id="saveKeyBtn">[save] Save Key</button>
+            <div id="status" class="status">[!] Not connected</div>
+        </section>
+        <section>
+            <h3>[model] Free Models Only</h3>
+            <select id="modelSelect"></select>
+            <button id="refreshModelsBtn">[refresh] Refresh free models</button>
+            <div id="modelInfo" class="model-context"></div>
+        </section>
+        <section>
+            <h3>[token] Token Usage (local)</h3>
+            <div id="tokenStats" class="token-info">Loading...</div>
+        </section>
+        <section>
+            <h3>[chat] Sessions</h3>
+            <div id="sessionsList"></div>
+            <button id="newSessionBtn">[+] New session</button>
+        </section>
+    </div>
+    <div class="main">
+        <div class="chat-messages" id="chatMessages">
+            <div class="message assistant">
+                <div class="avatar">[A]</div>
+                <div class="message-content-wrapper">
+                    <div class="model-badge">system</div>
+                    <div class="content">Ready. Add your OpenRouter key to see free models.</div>
+                </div>
+            </div>
+        </div>
+        <div class="input-area">
+            <textarea id="userInput" rows="1" placeholder="Message..."></textarea>
+            <button id="sendBtn" class="send-btn">[>] Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Mobile sidebar toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('active'); }
+        function toggleSidebar() { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); }
+        menuToggle.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', closeSidebar);
+        document.querySelectorAll('.sidebar a, .sidebar button, .session-name, .delete-session').forEach(el => {
+            el.addEventListener('click', (e) => { if (window.innerWidth <= 768) setTimeout(closeSidebar, 150); });
+        });
+
+        // ---------- state ----------
+        let apiKey = localStorage.getItem('openrouter_key') || '';
+        let currentModelId = '';
+        let currentSessionId = null;
+        let sessions = JSON.parse(localStorage.getItem('sessions') || '{}');
+        let allFreeModels = [];
+        let sessionTokenUsage = JSON.parse(localStorage.getItem('sessionTokenUsage') || '{}');
+
+        const apiKeyInput = document.getElementById('apiKey');
+        const toggleKeyBtn = document.getElementById('toggleKeyBtn');
+        const copyKeyBtn = document.getElementById('copyKeyBtn');
+        const saveKeyBtn = document.getElementById('saveKeyBtn');
+        const statusDiv = document.getElementById('status');
+        const modelSelect = document.getElementById('modelSelect');
+        const refreshModelsBtn = document.getElementById('refreshModelsBtn');
+        const modelInfoDiv = document.getElementById('modelInfo');
+        const tokenStatsDiv = document.getElementById('tokenStats');
+        const sessionsDiv = document.getElementById('sessionsList');
+        const newSessionBtn = document.getElementById('newSessionBtn');
+        const chatDiv = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        apiKeyInput.value = apiKey;
+        if (apiKey) { loadFreeModels(); updateLocalTokenDisplay(); }
+
+        // ----- toggle key visibility -----
+        let keyVisible = false;
+        toggleKeyBtn.addEventListener('click', () => {
+            keyVisible = !keyVisible;
+            apiKeyInput.type = keyVisible ? 'text' : 'password';
+            toggleKeyBtn.innerText = keyVisible ? '[hide]' : '[show]';
+        });
+
+        // ----- copy key to clipboard -----
+        copyKeyBtn.addEventListener('click', async () => {
+            const key = apiKeyInput.value.trim();
+            if (!key) {
+                statusDiv.innerText = '[!] Nothing to copy.';
+                setTimeout(() => { if (statusDiv.innerText === '[!] Nothing to copy.') statusDiv.innerText = '[ok] Key saved. Refresh models.'; }, 1500);
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(key);
+                statusDiv.innerText = '[ok] Key copied to clipboard!';
+                setTimeout(() => { if (statusDiv.innerText === '[ok] Key copied to clipboard!') statusDiv.innerText = '[ok] Key saved. Refresh models.'; }, 2000);
+            } catch (err) {
+                statusDiv.innerText = '[x] Copy failed.';
+            }
+        });
+
+        function saveApiKey() {
+            apiKey = apiKeyInput.value.trim();
+            localStorage.setItem('openrouter_key', apiKey);
+            statusDiv.innerText = '[ok] Key saved. Refresh models.';
+            statusDiv.style.color = '#79e6b3';
+            if (apiKey) { loadFreeModels(); updateLocalTokenDisplay(); }
+        }
+
+        async function loadFreeModels() {
+            if (!apiKey) { statusDiv.innerText = '[x] Enter API key first.'; return; }
+            statusDiv.innerText = '[~] Loading free models...';
+            try {
+                const res = await fetch('https://openrouter.ai/api/v1/models', {
+                    headers: { 'Authorization': `Bearer ${apiKey}` }
+                });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                let models = data.data || [];
+                allFreeModels = models.filter(m => {
+                    const promptCost = m.pricing?.prompt || 0;
+                    const completionCost = m.pricing?.completion || 0;
+                    return (promptCost === 0 && completionCost === 0) || m.id.includes(':free');
+                });
+                allFreeModels.sort((a, b) => a.id.localeCompare(b.id));
+                modelSelect.innerHTML = '';
+                if (allFreeModels.length === 0) {
+                    modelSelect.innerHTML = '<option>-- no free models found --</option>';
+                    statusDiv.innerText = '[!] No free models available.';
+                    return;
+                }
+                for (const m of allFreeModels) {
+                    const opt = document.createElement('option');
+                    opt.value = m.id;
+                    let label = m.id;
+                    const ctx = m.context_length ? ` (ctx: ${m.context_length} tokens)` : '';
+                    opt.textContent = label + ctx;
+                    modelSelect.appendChild(opt);
+                }
+                currentModelId = allFreeModels[0].id;
+                modelSelect.value = currentModelId;
+                updateModelInfo(currentModelId);
+                statusDiv.innerText = `[ok] ${allFreeModels.length} free models loaded.`;
+            } catch (err) {
+                statusDiv.innerText = `[x] Failed: ${err.message}`;
+            }
+        }
+
+        function updateModelInfo(modelId) {
+            const model = allFreeModels.find(m => m.id === modelId);
+            if (model && model.context_length) {
+                modelInfoDiv.innerText = `Context length: ${model.context_length.toLocaleString()} tokens`;
+            } else {
+                modelInfoDiv.innerText = 'Context length: unknown';
+            }
+        }
+
+        function computeTotalTokens() {
+            let total = 0;
+            for (const sid in sessionTokenUsage) total += sessionTokenUsage[sid]?.total || 0;
+            return total;
+        }
+
+        function updateLocalTokenDisplay() {
+            const totalTokens = computeTotalTokens();
+            const sessionCount = Object.keys(sessions).length;
+            tokenStatsDiv.innerHTML = `
+                <div><strong>Total tokens used:</strong> ${totalTokens.toLocaleString()}</div>
+                <div><strong>Active sessions:</strong> ${sessionCount}</div>
+                <div class="small-text">Per-session estimates shown in sidebar</div>
+            `;
+        }
+
+        function estimateTokens(text) { return Math.ceil(text.length / 4); }
+
+        function saveSessions() {
+            localStorage.setItem('sessions', JSON.stringify(sessions));
+            localStorage.setItem('sessionTokenUsage', JSON.stringify(sessionTokenUsage));
+        }
+
+        function deleteSession(sessionId) {
+            if (confirm('Delete this chat session?')) {
+                delete sessions[sessionId];
+                delete sessionTokenUsage[sessionId];
+                if (currentSessionId === sessionId) {
+                    const remaining = Object.keys(sessions);
+                    currentSessionId = remaining.length ? remaining[0] : null;
+                    if (!currentSessionId) newSession();
+                    else renderChat();
+                }
+                saveSessions();
+                renderSessions();
+                if (currentSessionId) renderChat();
+                updateLocalTokenDisplay();
+            }
+        }
+
+        function renderSessions() {
+            sessionsDiv.innerHTML = '';
+            const ids = Object.keys(sessions);
+            if (ids.length === 0) {
+                sessionsDiv.innerHTML = '<div class="status">[i] No sessions. Create one.</div>';
+                return;
+            }
+            for (const sid of ids) {
+                const tokenUsed = sessionTokenUsage[sid]?.total || 0;
+                const container = document.createElement('div');
+                container.className = 'session-item';
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'session-name';
+                nameSpan.textContent = `Chat ${sid.slice(-6)} (${tokenUsed} tk)`;
+                nameSpan.style.background = currentSessionId === sid ? '#1d2335' : 'transparent';
+                nameSpan.onclick = () => { switchSession(sid); if (window.innerWidth <= 768) closeSidebar(); };
+                const delBtn = document.createElement('button');
+                delBtn.textContent = '[X]';
+                delBtn.className = 'delete-session';
+                delBtn.onclick = (e) => { e.stopPropagation(); deleteSession(sid); };
+                container.appendChild(nameSpan);
+                container.appendChild(delBtn);
+                sessionsDiv.appendChild(container);
+            }
+        }
+
+        function newSession() {
+            const id = Date.now().toString();
+            sessions[id] = [];
+            sessionTokenUsage[id] = { prompt: 0, completion: 0, total: 0 };
+            currentSessionId = id;
+            saveSessions();
+            renderSessions();
+            renderChat();
+            updateLocalTokenDisplay();
+            if (window.innerWidth <= 768) closeSidebar();
+        }
+
+        function switchSession(id) {
+            currentSessionId = id;
+            renderSessions();
+            renderChat();
+        }
+
+        function renderChat() {
+            chatDiv.innerHTML = '';
+            if (!currentSessionId || !sessions[currentSessionId]) {
+                chatDiv.innerHTML = '<div class="message assistant"><div class="avatar">[A]</div><div class="message-content-wrapper"><div class="model-badge">system</div><div class="content">No session. Start a new one.</div></div></div>';
+                return;
+            }
+            const msgs = sessions[currentSessionId];
+            if (msgs.length === 0) {
+                chatDiv.innerHTML = '<div class="message assistant"><div class="avatar">[A]</div><div class="message-content-wrapper"><div class="model-badge">system</div><div class="content">Session ready. Send a message.</div></div></div>';
+            }
+            for (const msg of msgs) addMessageToUI(msg.role, msg.content, false, msg.model);
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        }
+
+        function addMessageToUI(role, text, save = true, modelUsed = null) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${role}`;
+            const avatar = role === 'user' ? '[U]' : '[A]';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message-content-wrapper';
+            if (role === 'assistant' && modelUsed) {
+                const badge = document.createElement('div');
+                badge.className = 'model-badge';
+                badge.innerText = modelUsed;
+                wrapper.appendChild(badge);
+            }
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content';
+            contentDiv.innerText = text;
+            wrapper.appendChild(contentDiv);
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'avatar';
+            avatarDiv.innerText = avatar;
+            msgDiv.appendChild(avatarDiv);
+            msgDiv.appendChild(wrapper);
+            chatDiv.appendChild(msgDiv);
+            if (save && currentSessionId) {
+                sessions[currentSessionId].push({ role, content: text, model: modelUsed });
+                saveSessions();
+            }
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+            return contentDiv;
+        }
+
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+            if (!currentSessionId) newSession();
+            if (!apiKey) { statusDiv.innerText = '[x] No API key.'; return; }
+            if (!currentModelId) { statusDiv.innerText = '[x] No model selected.'; return; }
+
+            addMessageToUI('user', text);
+            userInput.value = '';
+            const assistantContentDiv = addMessageToUI('assistant', '...', true, currentModelId);
+
+            const history = sessions[currentSessionId] || [];
+            const apiMessages = history.filter(m => m.content !== '...').map(m => ({ role: m.role, content: m.content }));
+
+            try {
+                const maxTokens = 1500;
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model: currentModelId, messages: apiMessages, max_tokens: maxTokens, temperature: 0.7 })
+                });
+                if (!response.ok) {
+                    let errorDetail = `HTTP ${response.status}`;
+                    try { const errJson = await response.json(); errorDetail = errJson.error?.message || JSON.stringify(errJson); } catch (e) { }
+                    throw new Error(`${response.status}: ${errorDetail}`);
+                }
+                const data = await response.json();
+                let reply = data.choices?.[0]?.message?.content || '[no response]';
+                const usage = data.usage;
+                let promptTokens = 0, completionTokens = 0;
+                if (usage) { promptTokens = usage.prompt_tokens || 0; completionTokens = usage.completion_tokens || 0; }
+                else { promptTokens = estimateTokens(JSON.stringify(apiMessages)); completionTokens = estimateTokens(reply); }
+                const totalUsed = promptTokens + completionTokens;
+
+                if (!sessionTokenUsage[currentSessionId]) sessionTokenUsage[currentSessionId] = { prompt: 0, completion: 0, total: 0 };
+                sessionTokenUsage[currentSessionId].prompt += promptTokens;
+                sessionTokenUsage[currentSessionId].completion += completionTokens;
+                sessionTokenUsage[currentSessionId].total += totalUsed;
+                saveSessions();
+                renderSessions();
+                updateLocalTokenDisplay();
+
+                assistantContentDiv.innerText = '';
+                let i = 0;
+                function typeChar() {
+                    if (i < reply.length) {
+                        assistantContentDiv.innerText += reply[i];
+                        i++;
+                        setTimeout(typeChar, 12);
+                    } else {
+                        const lastMsg = sessions[currentSessionId].pop();
+                        sessions[currentSessionId].push({ role: 'assistant', content: reply, model: currentModelId });
+                        saveSessions();
+                    }
+                }
+                typeChar();
+            } catch (err) {
+                assistantContentDiv.innerText = `[error] ${err.message}`;
+                if (err.message.includes('402')) assistantContentDiv.innerText += '\n\n[!] Try another free model.';
+            }
+        }
+
+        saveKeyBtn.addEventListener('click', () => { saveApiKey(); if (apiKey) { loadFreeModels(); updateLocalTokenDisplay(); } });
+        refreshModelsBtn.addEventListener('click', () => { loadFreeModels(); updateLocalTokenDisplay(); });
+        modelSelect.addEventListener('change', () => { currentModelId = modelSelect.value; updateModelInfo(currentModelId); });
+        newSessionBtn.addEventListener('click', newSession);
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+
+        if (Object.keys(sessions).length === 0) newSession();
+        else { const firstId = Object.keys(sessions)[0]; currentSessionId = firstId; renderSessions(); renderChat(); updateLocalTokenDisplay(); }
+    </script>
+</body>
+</html>
