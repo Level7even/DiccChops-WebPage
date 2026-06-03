@@ -133,10 +133,12 @@
             gap: 8px;
             align-items: center;
             margin-top: 0.2rem;
+            flex-wrap: wrap;
         }
 
             .input-group input {
                 flex: 1;
+                min-width: 120px;
                 margin-top: 0;
             }
 
@@ -305,7 +307,7 @@
             color: #b9c3e6;
             margin-top: 0.2rem;
         }
-
+        /* Mobile styles */
         @media (max-width: 768px) {
             .menu-toggle {
                 display: flex;
@@ -327,6 +329,10 @@
 
             .sidebar-overlay.active {
                 display: block;
+            }
+            /* Add top padding to chat so menu button doesn't cover messages */
+            .chat-messages {
+                padding-top: 60px;
             }
 
             .message-content-wrapper {
@@ -355,6 +361,19 @@
             .input-group button {
                 padding: 0.5rem 0.6rem;
                 font-size: 0.7rem;
+            }
+            /* Ensure input area fits */
+            .input-area {
+                padding: 0.8rem 0.8rem;
+            }
+
+            textarea {
+                font-size: 0.85rem;
+                padding: 0.6rem;
+            }
+
+            .send-btn {
+                padding: 0 1rem;
             }
         }
 
@@ -450,7 +469,7 @@
         apiKeyInput.value = apiKey;
         if (apiKey) { loadFreeModels(); updateLocalTokenDisplay(); }
 
-        // ----- toggle key visibility -----
+        // toggle key visibility
         let keyVisible = false;
         toggleKeyBtn.addEventListener('click', () => {
             keyVisible = !keyVisible;
@@ -458,7 +477,7 @@
             toggleKeyBtn.innerText = keyVisible ? '[hide]' : '[show]';
         });
 
-        // ----- copy key to clipboard -----
+        // copy key
         copyKeyBtn.addEventListener('click', async () => {
             const key = apiKeyInput.value.trim();
             if (!key) {
