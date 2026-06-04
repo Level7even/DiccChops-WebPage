@@ -2,868 +2,1054 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-    <title>Chopped AI � Model Health Check</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Chopped AI</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
+        *, *::before, *::after {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0
         }
 
         body {
-            background: #0a0c12;
-            font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-            color: #eef2ff;
+            font-family: 'Segoe UI',system-ui,sans-serif;
+            background: #080a10;
+            color: #dde3ff;
             height: 100vh;
             overflow: hidden;
-            position: relative;
         }
 
-        .menu-toggle {
-            position: fixed;
-            top: 12px;
-            left: 12px;
-            z-index: 1001;
-            background: #5b4dee;
-            border: none;
-            border-radius: 30px;
-            width: 48px;
-            height: 48px;
-            font-size: 13px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-            color: white;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-            transition: 0.2s;
-            text-transform: uppercase;
+        /* ── Layout ── */
+        .app {
+            display: flex;
+            height: 100vh
         }
 
-            .menu-toggle:active {
-                transform: scale(0.96);
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background: #0c0e18;
+            border-right: 1px solid #1f2540;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: .9rem;
+            overflow-y: auto;
+            transition: transform .25s ease;
+        }
+
+            .sidebar::-webkit-scrollbar {
+                width: 4px
             }
 
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 280px;
-            background: rgba(18,22,32,0.98);
-            backdrop-filter: blur(16px);
-            border-right: 1px solid #2d354a;
-            padding: 1rem;
-            overflow-y: auto;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-            transform: translateX(0);
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
+            .sidebar::-webkit-scrollbar-thumb {
+                background: #1f2540;
+                border-radius: 4px
+            }
 
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-            display: none;
-        }
-
-        .main {
-            margin-left: 280px;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: #0f111a;
-            transition: margin-left 0.3s ease;
-        }
-
-        .sidebar h2 {
-            font-size: 1.5rem;
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
             background: linear-gradient(135deg,#c084fc,#60a5fa);
             -webkit-background-clip: text;
+            background-clip: text;
             color: transparent;
-            margin-bottom: 0.5rem;
+            letter-spacing: -.02em;
         }
 
-        section {
-            border-top: 1px solid #2d354a;
-            padding-top: 0.8rem;
+        .section {
+            border-top: 1px solid #1f2540;
+            padding-top: .7rem;
+            display: flex;
+            flex-direction: column;
+            gap: .35rem
         }
 
-        h3 {
-            font-size: 0.8rem;
+        .sec-label {
+            font-size: .68rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.6rem;
-            color: #9ca3cf;
+            letter-spacing: .07em;
+            color: #6b7394;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
         }
-
-        .help-link {
-            font-size: 0.7rem;
-            text-transform: none;
-            background: #252c3f;
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            text-decoration: none;
-            color: #b9c3e6;
-        }
-
-        label {
-            font-size: 0.7rem;
-            color: #b9c3e6;
-            display: block;
-            margin-top: 0.6rem;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            margin-top: 0.2rem;
-            flex-wrap: wrap;
-        }
-
-            .input-group input {
-                flex: 1;
-                min-width: 120px;
-                margin-top: 0;
-            }
-
-            .input-group button {
-                width: auto;
-                margin-top: 0;
-                padding: 0.5rem 0.8rem;
-                background: #252c3f;
-                font-size: 0.75rem;
-            }
-
-                .input-group button.copy-btn {
-                    background: #3a405b;
-                }
-
-                .input-group button.toggle-btn {
-                    background: #3a405b;
-                }
 
         input, select, textarea {
             width: 100%;
-            background: #11141f;
-            border: 1px solid #2d354a;
-            border-radius: 12px;
-            padding: 0.5rem 0.7rem;
-            color: #f0f3ff;
-            font-size: 0.8rem;
+            background: #0e1120;
+            border: 1px solid #1f2540;
+            border-radius: 9px;
+            padding: .42rem .7rem;
+            color: #dde3ff;
+            font-size: .78rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color .15s;
+        }
+
+            input:focus, select:focus, textarea:focus {
+                border-color: #5b4dee
+            }
+
+            select option {
+                background: #0e1120
+            }
+
+        textarea {
+            resize: none
         }
 
         button {
-            width: 100%;
-            margin-top: 0.6rem;
             background: #5b4dee;
             border: none;
             border-radius: 30px;
-            padding: 0.5rem;
-            color: white;
-            font-weight: 500;
+            padding: .42rem .9rem;
+            color: #fff;
+            font-size: .77rem;
+            font-weight: 600;
+            font-family: inherit;
             cursor: pointer;
-            transition: 0.2s;
+            transition: background .15s,transform .1s;
         }
 
-        .status {
-            font-size: 0.7rem;
-            margin-top: 0.5rem;
-            color: #79e6b3;
+            button:hover {
+                background: #6e5ef0
+            }
+
+            button:active {
+                transform: scale(.97)
+            }
+
+            button:disabled {
+                opacity: .45;
+                cursor: not-allowed
+            }
+
+        .btn-ghost {
+            background: #13172a;
+            color: #8892b0
         }
 
-        .token-info {
-            background: #0c0f18;
-            border-radius: 12px;
-            padding: 0.6rem;
-            margin-top: 0.5rem;
-            font-size: 0.7rem;
+            .btn-ghost:hover {
+                background: #1a1f35
+            }
+
+        .btn-danger {
+            background: none;
+            color: #f87171;
+            padding: 0;
+            border-radius: 0
         }
 
-        .session-item {
+            .btn-danger:hover {
+                background: none;
+                color: #ff5555
+            }
+
+        .btn-sm {
+            padding: .18rem .5rem;
+            font-size: .68rem
+        }
+
+        /* ── Provider cards ── */
+        .prov-card {
+            background: #0e1120;
+            border: 1px solid #1f2540;
+            border-radius: 10px;
+            padding: .6rem;
+            display: flex;
+            flex-direction: column;
+            gap: .3rem;
+        }
+
+        .prov-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .prov-name {
+            font-size: .82rem;
+            font-weight: 700;
+            color: #b8c0e0
+        }
+
+        .key-row {
+            display: flex;
+            gap: .3rem;
+            align-items: center
+        }
+
+            .key-row input {
+                flex: 1;
+                margin: 0
+            }
+
+        .prov-meta {
+            font-size: .62rem;
+            color: #4a5280
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .15rem;
+            min-height: .6rem
+        }
+
+        .tag {
+            font-size: .62rem;
+            background: #151a2e;
+            border: 1px solid #1f2540;
+            border-radius: 8px;
+            padding: .05rem .38rem;
+            color: #6b7394
+        }
+
+        .cors-ok {
+            font-size: .63rem;
+            color: #4ade80
+        }
+
+        .cors-warn {
+            font-size: .63rem;
+            color: #fbbf24
+        }
+
+        /* ── Sessions ── */
+        .sess-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #10131e;
-            padding: 0.5rem 0.6rem;
-            border-radius: 12px;
-            margin-bottom: 0.4rem;
-        }
-
-        .session-name {
+            background: #0e1120;
+            border: 1px solid #1f2540;
+            border-radius: 9px;
+            padding: .35rem .6rem;
             cursor: pointer;
-            flex: 1;
-            font-size: 0.8rem;
-            padding: 0.2rem 0;
+            transition: background .15s;
         }
 
-        .delete-session {
-            background: none;
-            border: none;
-            color: #f98b8b;
-            font-size: 1.2rem;
-            cursor: pointer;
-            width: auto;
-            margin: 0;
-            padding: 0 0.5rem;
+            .sess-item:hover {
+                background: #13172a
+            }
+
+            .sess-item.active {
+                background: #13172a;
+                border-color: #5b4dee55
+            }
+
+        .sess-preview {
+            font-size: .74rem;
+            color: #8892b0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 210px
         }
 
-        .chat-messages {
+        /* ── Status ── */
+        .status {
+            font-size: .68rem;
+            min-height: 1rem
+        }
+
+        .ok {
+            color: #4ade80
+        }
+
+        .err {
+            color: #f87171
+        }
+
+        /* ── Main / Chat ── */
+        .main {
             flex: 1;
-            padding: 1rem;
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            overflow: hidden;
+            background: #080a10
         }
 
-        .message {
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 1.2rem;
             display: flex;
-            gap: 0.7rem;
-            align-items: flex-start;
+            flex-direction: column;
+            gap: .9rem;
         }
+
+            .messages::-webkit-scrollbar {
+                width: 5px
+            }
+
+            .messages::-webkit-scrollbar-thumb {
+                background: #1f2540;
+                border-radius: 4px
+            }
+
+        /* ── Message bubbles ── */
+        .msg {
+            display: flex;
+            gap: .65rem;
+            align-items: flex-start
+        }
+
+            .msg.user {
+                flex-direction: row-reverse
+            }
 
         .avatar {
-            width: 36px;
-            height: 36px;
-            background: #2c3e66;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
+            background: #1e2640;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
+            font-weight: 800;
+            font-size: .67rem;
             flex-shrink: 0;
+            color: #8892b0;
         }
 
-        .user .avatar {
-            background: #4b3f8c;
+        .msg.user .avatar {
+            background: #2d1f6e;
+            color: #b39dff
         }
 
-        .message-content-wrapper {
-            flex: 1;
-            max-width: 80%;
-        }
-
-        .model-badge {
-            font-size: 0.6rem;
-            color: #9ca3cf;
-            margin-bottom: 0.2rem;
-            display: inline-block;
-            background: #1d2335;
-            padding: 0.1rem 0.5rem;
-            border-radius: 12px;
-        }
-
-        .content {
-            background: #141824;
-            padding: 0.6rem 1rem;
-            border-radius: 18px;
-            line-height: 1.4;
-            font-size: 0.85rem;
-            white-space: pre-wrap;
+        .bubble {
+            background: #111527;
+            padding: .6rem .9rem;
+            border-radius: 16px;
+            max-width: 76%;
+            font-size: .875rem;
+            line-height: 1.55;
             word-break: break-word;
         }
 
-        .input-area {
-            display: flex;
-            gap: 0.7rem;
-            padding: 0.8rem 1rem;
-            border-top: 1px solid #232838;
-            background: #0c0f18;
+        .msg.user .bubble {
+            background: #1a1050
         }
 
-        textarea {
-            flex: 1;
-            border-radius: 28px;
-            resize: none;
-            font-size: 0.9rem;
-            padding: 0.7rem;
+        .bubble.error {
+            background: #1a0e0e;
+            color: #f87171
         }
 
-        .send-btn {
-            width: auto;
-            padding: 0 1.2rem;
-            margin-top: 0;
-            font-size: 1rem;
+        .bubble pre {
+            background: #060810;
+            border: 1px solid #1f2540;
+            border-radius: 8px;
+            padding: .65rem;
+            overflow-x: auto;
+            margin: .4rem 0;
+            position: relative;
+            white-space: pre;
         }
 
-        .model-context {
-            font-size: 0.7rem;
-            color: #b9c3e6;
-            margin-top: 0.2rem;
-        }
-        /* model health status styles */
-        .model-option-working {
-            color: #79e6b3;
-        }
-
-        .model-option-failed {
-            color: #f98b8b;
-        }
-
-        .test-status {
-            font-size: 0.7rem;
-            margin-top: 0.4rem;
-            color: #b9c3e6;
-        }
-
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: flex;
+            .bubble pre code {
+                font-family: 'Fira Code','JetBrains Mono',monospace;
+                font-size: .77rem
             }
 
+        .bubble p + p {
+            margin-top: .4rem
+        }
+
+        .bubble code:not(pre code) {
+            background: #1a1f30;
+            padding: .1rem .35rem;
+            border-radius: 4px;
+            font-size: .8rem;
+            font-family: 'Fira Code',monospace;
+        }
+
+        .bubble strong {
+            color: #c5ccf0
+        }
+
+        .copy-code {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #1a1f30;
+            border-radius: 5px;
+            padding: 2px 7px;
+            font-size: .63rem;
+            color: #6b7394;
+            margin: 0;
+        }
+
+            .copy-code:hover {
+                background: #5b4dee;
+                color: #fff
+            }
+
+        /* Thinking animation */
+        @keyframes blink {
+            0%,80%,100% {
+                opacity: .15
+            }
+
+            40% {
+                opacity: 1
+            }
+        }
+
+        .dots span {
+            display: inline-block;
+            animation: blink 1.3s infinite
+        }
+
+            .dots span:nth-child(2) {
+                animation-delay: .2s
+            }
+
+            .dots span:nth-child(3) {
+                animation-delay: .4s
+            }
+
+        /* ── Input bar ── */
+        .input-bar {
+            display: flex;
+            gap: .5rem;
+            padding: .75rem 1rem;
+            border-top: 1px solid #111527;
+            background: #060810;
+            align-items: flex-end;
+        }
+
+            .input-bar textarea {
+                flex: 1;
+                border-radius: 20px;
+                padding: .55rem 1rem;
+                min-height: 40px;
+                max-height: 120px;
+                font-size: .875rem;
+                margin: 0;
+            }
+
+            .input-bar button {
+                height: 40px;
+                margin: 0;
+                flex-shrink: 0
+            }
+
+        .btn-mic {
+            background: #13172a;
+            width: 40px;
+            padding: 0;
+            font-size: 1rem
+        }
+
+        .btn-send {
+            padding: 0 1.1rem
+        }
+
+        /* ── Image output ── */
+        #imgOutput img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: .4rem;
+            display: block
+        }
+
+        /* ── FAB ── */
+        .fab {
+            position: fixed;
+            bottom: 66px;
+            right: 14px;
+            background: #13172a;
+            border-radius: 40px;
+            padding: .4rem .85rem;
+            font-size: .73rem;
+            z-index: 50;
+            margin: 0;
+        }
+
+            .fab:hover {
+                background: #1a1f35
+            }
+
+        /* ── Overlay / Mobile ── */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.65);
+            z-index: 100
+        }
+
+            .overlay.show {
+                display: block
+            }
+
+        .mobile-btn {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 200;
+            width: auto;
+            padding: .32rem .7rem;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        @media(max-width:768px) {
             .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                z-index: 150;
                 transform: translateX(-100%);
-                width: 85%;
-                max-width: 280px;
+                width: 300px;
             }
 
                 .sidebar.open {
-                    transform: translateX(0);
+                    transform: translateX(0)
                 }
 
-            .main {
-                margin-left: 0;
+            .mobile-btn {
+                display: block
             }
 
-            .sidebar-overlay.active {
-                display: block;
+            .bubble {
+                max-width: 88%
             }
-
-            .chat-messages {
-                padding-top: 60px;
-            }
-
-            .message-content-wrapper {
-                max-width: 85%;
-            }
-
-            .avatar {
-                width: 32px;
-                height: 32px;
-                font-size: 0.8rem;
-            }
-
-            .content {
-                font-size: 0.85rem;
-                padding: 0.5rem 0.8rem;
-            }
-
-            button, .delete-session {
-                touch-action: manipulation;
-            }
-
-            .session-name {
-                font-size: 0.85rem;
-            }
-
-            .input-group button {
-                padding: 0.5rem 0.6rem;
-                font-size: 0.7rem;
-            }
-
-            .input-area {
-                padding: 0.8rem 0.8rem;
-            }
-
-            textarea {
-                font-size: 0.85rem;
-                padding: 0.6rem;
-            }
-
-            .send-btn {
-                padding: 0 1rem;
-            }
-        }
-
-        .small-text {
-            font-size: 0.65rem;
-            color: #7982a6;
         }
     </style>
 </head>
 <body>
-    <button class="menu-toggle" id="menuToggle">MENU</button>
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="sidebar" id="sidebar">
-        <h2>[C] Chopped</h2>
-        <section>
-            <h3>[key] OpenRouter Key <a href="https://openrouter.ai/keys" target="_blank" class="help-link">[get key]</a></h3>
-            <div class="input-group">
-                <input type="password" id="apiKey" placeholder="sk-or-...">
-                <button id="toggleKeyBtn" class="toggle-btn" title="Show/Hide">[show]</button>
-                <button id="copyKeyBtn" class="copy-btn" title="Copy to clipboard">[copy]</button>
-            </div>
-            <button id="saveKeyBtn">[save] Save Key</button>
-            <div id="status" class="status">[!] Not connected</div>
-        </section>
-        <section>
-            <h3>[model] Free Models Only</h3>
-            <select id="modelSelect"></select>
-            <button id="testModelsBtn">[test] Test Models (ping)</button>
-            <div id="testStatus" class="test-status"></div>
-            <div id="modelInfo" class="model-context"></div>
-        </section>
-        <section>
-            <h3>[token] Token Usage (local)</h3>
-            <div id="tokenStats" class="token-info">Loading...</div>
-        </section>
-        <section>
-            <h3>[chat] Sessions</h3>
-            <div id="sessionsList"></div>
-            <button id="newSessionBtn">[+] New session</button>
-        </section>
-    </div>
-    <div class="main">
-        <div class="chat-messages" id="chatMessages">
-            <div class="message assistant">
-                <div class="avatar">[A]</div>
-                <div class="message-content-wrapper">
-                    <div class="model-badge">system</div>
-                    <div class="content">Ready. Add your OpenRouter key to see free models.</div>
+
+    <div class="overlay" id="overlay"></div>
+    <button class="mobile-btn" id="mobileBtn">☰</button>
+
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">Chopped AI</div>
+
+            <div class="section">
+                <div class="sec-label">
+                    Providers
+                    <button class="btn-sm btn-ghost" id="btnAddProv">+ Add</button>
                 </div>
+                <div id="provList"></div>
+                <button id="btnSaveKeys">Save All Keys</button>
+                <div class="status" id="statusBar"></div>
             </div>
-        </div>
-        <div class="input-area">
-            <textarea id="userInput" rows="1" placeholder="Message..."></textarea>
-            <button id="sendBtn" class="send-btn">[>] Send</button>
-        </div>
+
+            <div class="section">
+                <div class="sec-label">Active Model</div>
+                <select id="modelSel"></select>
+            </div>
+
+            <div class="section">
+                <div class="sec-label">System Prompt</div>
+                <textarea id="sysPrompt" rows="2" placeholder="e.g. You are a helpful assistant."></textarea>
+            </div>
+
+            <div class="section">
+                <div class="sec-label">Image Generation</div>
+                <select id="imgProvSel">
+                    <option value="openai">OpenAI DALL·E 3</option>
+                    <option value="hf">HuggingFace FLUX.1</option>
+                </select>
+                <input id="imgPromptIn" placeholder="Describe an image…">
+                <button id="btnGenImg">Generate Image</button>
+                <div id="imgOutput"></div>
+            </div>
+
+            <div class="section">
+                <div class="sec-label">Sessions</div>
+                <div id="sessionsDiv"></div>
+                <button id="btnNewSess">+ New Session</button>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main">
+            <div class="messages" id="messages"></div>
+            <div class="input-bar">
+                <button class="btn-mic" id="btnMic" title="Voice input">🎤</button>
+                <textarea id="msgInput" placeholder="Message… (Enter to send, Shift+Enter for new line)"></textarea>
+                <button class="btn-send" id="btnSend">Send</button>
+            </div>
+        </main>
     </div>
+
+    <button class="fab" id="btnSpeak">🔊 Speak Last</button>
 
     <script>
-        // Mobile sidebar toggle
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('active'); }
-        function toggleSidebar() { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); }
-        menuToggle.addEventListener('click', toggleSidebar);
-        overlay.addEventListener('click', closeSidebar);
-        document.querySelectorAll('.sidebar a, .sidebar button, .session-name, .delete-session').forEach(el => {
-            el.addEventListener('click', (e) => { if (window.innerWidth <= 768) setTimeout(closeSidebar, 150); });
-        });
+        (async () => {
 
-        // ---------- state ----------
-        let apiKey = localStorage.getItem('openrouter_key') || '';
-        let currentModelId = '';
-        let currentSessionId = null;
-        let sessions = JSON.parse(localStorage.getItem('sessions') || '{}');
-        let allFreeModels = [];          // full model objects
-        let modelStatus = {};            // { modelId: 'working'|'failed' }
-        let sessionTokenUsage = JSON.parse(localStorage.getItem('sessionTokenUsage') || '{}');
+            // ── DOM refs ──────────────────────────────────────────────────────────────
+            const $ = id => document.getElementById(id);
+            const sidebar = $('sidebar'), overlay = $('overlay'), mobileBtn = $('mobileBtn');
+            const provList = $('provList'), btnAddProv = $('btnAddProv'), btnSaveKeys = $('btnSaveKeys'), statusBar = $('statusBar');
+            const modelSel = $('modelSel'), sysPrompt = $('sysPrompt');
+            const imgProvSel = $('imgProvSel'), imgPromptIn = $('imgPromptIn'), btnGenImg = $('btnGenImg'), imgOutput = $('imgOutput');
+            const sessionsDiv = $('sessionsDiv'), btnNewSess = $('btnNewSess');
+            const messages = $('messages'), msgInput = $('msgInput'), btnSend = $('btnSend'), btnMic = $('btnMic'), btnSpeak = $('btnSpeak');
 
-        const apiKeyInput = document.getElementById('apiKey');
-        const toggleKeyBtn = document.getElementById('toggleKeyBtn');
-        const copyKeyBtn = document.getElementById('copyKeyBtn');
-        const saveKeyBtn = document.getElementById('saveKeyBtn');
-        const statusDiv = document.getElementById('status');
-        const modelSelect = document.getElementById('modelSelect');
-        const testModelsBtn = document.getElementById('testModelsBtn');
-        const testStatusDiv = document.getElementById('testStatus');
-        const refreshModelsBtn = document.getElementById('refreshModelsBtn');
-        const modelInfoDiv = document.getElementById('modelInfo');
-        const tokenStatsDiv = document.getElementById('tokenStats');
-        const sessionsDiv = document.getElementById('sessionsList');
-        const newSessionBtn = document.getElementById('newSessionBtn');
-        const chatDiv = document.getElementById('chatMessages');
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
+            // ── Defaults ──────────────────────────────────────────────────────────────
+            const DEFAULT_PROVIDERS = [
+                { name: 'OpenRouter', baseUrl: 'https://openrouter.ai/api/v1', apiKey: '', models: [], keyUrl: 'https://openrouter.ai/keys' },
+                { name: 'Groq', baseUrl: 'https://api.groq.com/openai/v1', apiKey: '', models: [], keyUrl: 'https://console.groq.com/keys' },
+                { name: 'Together AI', baseUrl: 'https://api.together.xyz/v1', apiKey: '', models: [], keyUrl: 'https://api.together.ai/settings/api-keys' },
+                { name: 'OpenAI', baseUrl: 'https://api.openai.com/v1', apiKey: '', models: [], keyUrl: 'https://platform.openai.com/api-keys' },
+                { name: 'Anthropic', baseUrl: 'https://api.anthropic.com/v1', apiKey: '', models: [], keyUrl: 'https://console.anthropic.com/settings/keys' },
+                { name: 'Mistral', baseUrl: 'https://api.mistral.ai/v1', apiKey: '', models: [], keyUrl: 'https://console.mistral.ai/api-keys/' },
+                { name: 'DeepSeek', baseUrl: 'https://api.deepseek.com/v1', apiKey: '', models: [], keyUrl: 'https://platform.deepseek.com/api_keys' },
+                { name: 'Cohere', baseUrl: 'https://api.cohere.ai/v1', apiKey: '', models: [], keyUrl: 'https://dashboard.cohere.com/api-keys' },
+                { name: 'Perplexity', baseUrl: 'https://api.perplexity.ai', apiKey: '', models: [], keyUrl: 'https://www.perplexity.ai/settings/api' }
+            ];
 
-        apiKeyInput.value = apiKey;
-        if (apiKey) { loadFreeModels(); updateLocalTokenDisplay(); }
+            // Providers confirmed CORS-friendly in browsers
+            const CORS_OK = new Set(['OpenRouter', 'Groq', 'Together AI', 'Anthropic', 'Mistral']);
 
-        // ----- toggle key visibility -----
-        let keyVisible = false;
-        toggleKeyBtn.addEventListener('click', () => {
-            keyVisible = !keyVisible;
-            apiKeyInput.type = keyVisible ? 'text' : 'password';
-            toggleKeyBtn.innerText = keyVisible ? '[hide]' : '[show]';
-        });
+            // ── State ─────────────────────────────────────────────────────────────────
+            let providers = [...DEFAULT_PROVIDERS];
+            let sessions = {};          // { id: [{role,content,error?,thinking?}] }
+            let currentSess = null;
+            let currentModelKey = '';   // format: "idx::modelId"  (:: avoids conflicts with : in model IDs)
 
-        // ----- copy key -----
-        copyKeyBtn.addEventListener('click', async () => {
-            const key = apiKeyInput.value.trim();
-            if (!key) {
-                statusDiv.innerText = '[!] Nothing to copy.';
-                setTimeout(() => { if (statusDiv.innerText === '[!] Nothing to copy.') statusDiv.innerText = '[ok] Key saved. Refresh models.'; }, 1500);
-                return;
+            // ── Storage ───────────────────────────────────────────────────────────────
+            const hasStorage = typeof window?.storage?.get === 'function';
+
+            async function stGet(k) {
+                if (!hasStorage) return null;
+                try { const r = await window.storage.get(k); return r ? r.value : null } catch { return null }
             }
-            try {
-                await navigator.clipboard.writeText(key);
-                statusDiv.innerText = '[ok] Key copied to clipboard!';
-                setTimeout(() => { if (statusDiv.innerText === '[ok] Key copied to clipboard!') statusDiv.innerText = '[ok] Key saved. Refresh models.'; }, 2000);
-            } catch (err) {
-                statusDiv.innerText = '[x] Copy failed.';
+            async function stSet(k, v) {
+                if (!hasStorage) return;
+                try { await window.storage.set(k, v) } catch (e) { console.warn('storage:', e) }
             }
-        });
 
-        function saveApiKey() {
-            apiKey = apiKeyInput.value.trim();
-            localStorage.setItem('openrouter_key', apiKey);
-            statusDiv.innerText = '[ok] Key saved. Refresh models.';
-            statusDiv.style.color = '#79e6b3';
-            if (apiKey) { loadFreeModels(); updateLocalTokenDisplay(); }
-        }
+            async function persist() {
+                await stSet('chp_providers', JSON.stringify(providers));
+                await stSet('chp_sessions', JSON.stringify(sessions));
+                await stSet('chp_sys', sysPrompt.value);
+                await stSet('chp_model', currentModelKey);
+            }
 
-        // ----- load free models from OpenRouter -----
-        async function loadFreeModels() {
-            if (!apiKey) { statusDiv.innerText = '[x] Enter API key first.'; return; }
-            statusDiv.innerText = '[~] Loading free models...';
-            try {
-                const res = await fetch('https://openrouter.ai/api/v1/models', {
-                    headers: { 'Authorization': `Bearer ${apiKey}` }
+            async function hydrate() {
+                const p = await stGet('chp_providers'); if (p) try { providers = JSON.parse(p) } catch { }
+                const s = await stGet('chp_sessions'); if (s) try { sessions = JSON.parse(s) } catch { }
+                const sp = await stGet('chp_sys'); if (sp) sysPrompt.value = sp;
+                const mk = await stGet('chp_model'); if (mk) currentModelKey = mk;
+            }
+
+            // ── Utils ─────────────────────────────────────────────────────────────────
+            function esc(s) {
+                return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            }
+
+            function setStatus(msg, isErr) {
+                statusBar.textContent = msg;
+                statusBar.className = 'status ' + (isErr ? 'err' : 'ok');
+                if (msg) setTimeout(() => { if (statusBar.textContent === msg) statusBar.textContent = '' }, 3500);
+            }
+
+            // Lightweight markdown renderer
+            function md(text) {
+                const blocks = [];
+                // 1. Extract fenced code blocks first
+                let s = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+                    const i = blocks.length;
+                    blocks.push(`<pre><code>${esc(code.trimEnd())}</code><button class="copy-code">Copy</button></pre>`);
+                    return `\x01B${i}\x01`;
                 });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                let models = data.data || [];
-                allFreeModels = models.filter(m => {
-                    const promptCost = m.pricing?.prompt || 0;
-                    const completionCost = m.pricing?.completion || 0;
-                    return (promptCost === 0 && completionCost === 0) || m.id.includes(':free');
-                });
-                allFreeModels.sort((a, b) => a.id.localeCompare(b.id));
-                // reset status
-                modelStatus = {};
-                await testAllModels();  // automatically test after loading
-            } catch (err) {
-                statusDiv.innerText = `[x] Failed: ${err.message}`;
+                // 2. Escape HTML in the rest
+                s = esc(s);
+                // 3. Inline formatting (operate on escaped text – backticks/asterisks survive esc)
+                s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+                s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+                s = s.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+                s = s.replace(/\n/g, '<br>');
+                // 4. Restore code blocks
+                s = s.replace(/\x01B(\d+)\x01/g, (_, i) => blocks[+i]);
+                return s;
             }
-        }
 
-        // ----- test a single model with a minimal ping -----
-        async function testModel(modelId) {
-            try {
-                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: modelId,
-                        messages: [{ role: 'user', content: 'ping' }],
-                        max_tokens: 1,
-                        temperature: 0
-                    })
+            function wireCopyButtons(el) {
+                el.querySelectorAll('.copy-code').forEach(btn => {
+                    btn.onclick = () => {
+                        const code = btn.previousElementSibling?.textContent ?? '';
+                        navigator.clipboard.writeText(code);
+                        btn.textContent = 'Copied!';
+                        setTimeout(() => btn.textContent = 'Copy', 1500);
+                    };
                 });
-                if (!response.ok) return false;
-                const data = await response.json();
-                return !!(data.choices && data.choices.length);
-            } catch (err) {
-                return false;
             }
-        }
 
-        // ----- test all free models (with concurrency limit) -----
-        async function testAllModels() {
-            if (!apiKey || allFreeModels.length === 0) return;
-            testStatusDiv.innerText = '[~] Testing models (ping)... this may take a moment.';
-            const modelsToTest = allFreeModels.map(m => m.id);
-            // reset status
-            for (const id of modelsToTest) modelStatus[id] = 'testing';
-            updateModelDropdown(); // show testing indicator
-
-            const concurrency = 3;
-            const results = [];
-            for (let i = 0; i < modelsToTest.length; i += concurrency) {
-                const batch = modelsToTest.slice(i, i + concurrency);
-                const batchPromises = batch.map(async (modelId) => {
-                    const working = await testModel(modelId);
-                    return { modelId, working };
-                });
-                const batchResults = await Promise.all(batchPromises);
-                results.push(...batchResults);
-            }
-            // update status
-            for (const { modelId, working } of results) {
-                modelStatus[modelId] = working ? 'working' : 'failed';
-            }
-            updateModelDropdown();
-            const workingCount = Object.values(modelStatus).filter(s => s === 'working').length;
-            const failedCount = Object.values(modelStatus).filter(s => s === 'failed').length;
-            testStatusDiv.innerHTML = `[ok] ${workingCount} working, ${failedCount} failed. ${failedCount > 0 ? 'Red models may be offline or require credits.' : ''}`;
-            if (currentModelId && modelStatus[currentModelId] === 'failed') {
-                // optionally auto-select first working model
-                const firstWorking = allFreeModels.find(m => modelStatus[m.id] === 'working');
-                if (firstWorking) {
-                    currentModelId = firstWorking.id;
-                    modelSelect.value = currentModelId;
-                    updateModelInfo(currentModelId);
-                    testStatusDiv.innerHTML += ` Auto-switched to working model.`;
+            // ── Providers UI ──────────────────────────────────────────────────────────
+            function renderProviders() {
+                provList.innerHTML = '';
+                if (!providers.length) {
+                    provList.innerHTML = '<p style="font-size:.75rem;color:#4a5280">No providers. Click + Add.</p>';
+                    return;
                 }
-            }
-        }
-
-        // ----- update dropdown with colored status indicators -----
-        function updateModelDropdown() {
-            modelSelect.innerHTML = '';
-            if (allFreeModels.length === 0) {
-                modelSelect.innerHTML = '<option>-- no free models found --</option>';
-                return;
-            }
-            for (const m of allFreeModels) {
-                const opt = document.createElement('option');
-                opt.value = m.id;
-                const status = modelStatus[m.id];
-                let statusText = '';
-                if (status === 'working') statusText = ' [WORKING]';
-                else if (status === 'failed') statusText = ' [FAILED]';
-                else if (status === 'testing') statusText = ' [testing...]';
-                else statusText = ' [unknown]';
-                let label = m.id + statusText;
-                const ctx = m.context_length ? ` (ctx: ${m.context_length} tokens)` : '';
-                opt.textContent = label + ctx;
-                if (status === 'working') opt.style.color = '#79e6b3';
-                else if (status === 'failed') opt.style.color = '#f98b8b';
-                else opt.style.color = '#b9c3e6';
-                modelSelect.appendChild(opt);
-            }
-            // restore selection
-            if (currentModelId && allFreeModels.some(m => m.id === currentModelId)) {
-                modelSelect.value = currentModelId;
-            } else if (allFreeModels.length > 0) {
-                // try to select first working, or first
-                const firstWorking = allFreeModels.find(m => modelStatus[m.id] === 'working');
-                currentModelId = firstWorking ? firstWorking.id : allFreeModels[0].id;
-                modelSelect.value = currentModelId;
-                updateModelInfo(currentModelId);
-            }
-        }
-
-        function updateModelInfo(modelId) {
-            const model = allFreeModels.find(m => m.id === modelId);
-            if (model && model.context_length) {
-                modelInfoDiv.innerText = `Context length: ${model.context_length.toLocaleString()} tokens`;
-            } else {
-                modelInfoDiv.innerText = 'Context length: unknown';
-            }
-        }
-
-        function computeTotalTokens() {
-            let total = 0;
-            for (const sid in sessionTokenUsage) total += sessionTokenUsage[sid]?.total || 0;
-            return total;
-        }
-
-        function updateLocalTokenDisplay() {
-            const totalTokens = computeTotalTokens();
-            const sessionCount = Object.keys(sessions).length;
-            tokenStatsDiv.innerHTML = `
-                <div><strong>Total tokens used:</strong> ${totalTokens.toLocaleString()}</div>
-                <div><strong>Active sessions:</strong> ${sessionCount}</div>
-                <div class="small-text">Per-session estimates shown in sidebar</div>
-            `;
-        }
-
-        function estimateTokens(text) { return Math.ceil(text.length / 4); }
-
-        function saveSessions() {
-            localStorage.setItem('sessions', JSON.stringify(sessions));
-            localStorage.setItem('sessionTokenUsage', JSON.stringify(sessionTokenUsage));
-        }
-
-        function deleteSession(sessionId) {
-            if (confirm('Delete this chat session?')) {
-                delete sessions[sessionId];
-                delete sessionTokenUsage[sessionId];
-                if (currentSessionId === sessionId) {
-                    const remaining = Object.keys(sessions);
-                    currentSessionId = remaining.length ? remaining[0] : null;
-                    if (!currentSessionId) newSession();
-                    else renderChat();
-                }
-                saveSessions();
-                renderSessions();
-                if (currentSessionId) renderChat();
-                updateLocalTokenDisplay();
-            }
-        }
-
-        function renderSessions() {
-            sessionsDiv.innerHTML = '';
-            const ids = Object.keys(sessions);
-            if (ids.length === 0) {
-                sessionsDiv.innerHTML = '<div class="status">[i] No sessions. Create one.</div>';
-                return;
-            }
-            for (const sid of ids) {
-                const tokenUsed = sessionTokenUsage[sid]?.total || 0;
-                const container = document.createElement('div');
-                container.className = 'session-item';
-                const nameSpan = document.createElement('span');
-                nameSpan.className = 'session-name';
-                nameSpan.textContent = `Chat ${sid.slice(-6)} (${tokenUsed} tk)`;
-                nameSpan.style.background = currentSessionId === sid ? '#1d2335' : 'transparent';
-                nameSpan.onclick = () => { switchSession(sid); if (window.innerWidth <= 768) closeSidebar(); };
-                const delBtn = document.createElement('button');
-                delBtn.textContent = '[X]';
-                delBtn.className = 'delete-session';
-                delBtn.onclick = (e) => { e.stopPropagation(); deleteSession(sid); };
-                container.appendChild(nameSpan);
-                container.appendChild(delBtn);
-                sessionsDiv.appendChild(container);
-            }
-        }
-
-        function newSession() {
-            const id = Date.now().toString();
-            sessions[id] = [];
-            sessionTokenUsage[id] = { prompt: 0, completion: 0, total: 0 };
-            currentSessionId = id;
-            saveSessions();
-            renderSessions();
-            renderChat();
-            updateLocalTokenDisplay();
-            if (window.innerWidth <= 768) closeSidebar();
-        }
-
-        function switchSession(id) {
-            currentSessionId = id;
-            renderSessions();
-            renderChat();
-        }
-
-        function renderChat() {
-            chatDiv.innerHTML = '';
-            if (!currentSessionId || !sessions[currentSessionId]) {
-                chatDiv.innerHTML = '<div class="message assistant"><div class="avatar">[A]</div><div class="message-content-wrapper"><div class="model-badge">system</div><div class="content">No session. Start a new one.</div></div></div>';
-                return;
-            }
-            const msgs = sessions[currentSessionId];
-            if (msgs.length === 0) {
-                chatDiv.innerHTML = '<div class="message assistant"><div class="avatar">[A]</div><div class="message-content-wrapper"><div class="model-badge">system</div><div class="content">Session ready. Send a message.</div></div></div>';
-            }
-            for (const msg of msgs) addMessageToUI(msg.role, msg.content, false, msg.model);
-            chatDiv.scrollTop = chatDiv.scrollHeight;
-        }
-
-        function addMessageToUI(role, text, save = true, modelUsed = null) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${role}`;
-            const avatar = role === 'user' ? '[U]' : '[A]';
-            const wrapper = document.createElement('div');
-            wrapper.className = 'message-content-wrapper';
-            if (role === 'assistant' && modelUsed) {
-                const badge = document.createElement('div');
-                badge.className = 'model-badge';
-                badge.innerText = modelUsed;
-                wrapper.appendChild(badge);
-            }
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'content';
-            contentDiv.innerText = text;
-            wrapper.appendChild(contentDiv);
-            const avatarDiv = document.createElement('div');
-            avatarDiv.className = 'avatar';
-            avatarDiv.innerText = avatar;
-            msgDiv.appendChild(avatarDiv);
-            msgDiv.appendChild(wrapper);
-            chatDiv.appendChild(msgDiv);
-            if (save && currentSessionId) {
-                sessions[currentSessionId].push({ role, content: text, model: modelUsed });
-                saveSessions();
-            }
-            chatDiv.scrollTop = chatDiv.scrollHeight;
-            return contentDiv;
-        }
-
-        async function sendMessage() {
-            const text = userInput.value.trim();
-            if (!text) return;
-            if (!currentSessionId) newSession();
-            if (!apiKey) { statusDiv.innerText = '[x] No API key.'; return; }
-            if (!currentModelId) { statusDiv.innerText = '[x] No model selected.'; return; }
-            // check model health before sending
-            if (modelStatus[currentModelId] === 'failed') {
-                statusDiv.innerText = '[x] This model is marked as failed. Test models again or choose another.';
-                return;
-            }
-
-            addMessageToUI('user', text);
-            userInput.value = '';
-            const assistantContentDiv = addMessageToUI('assistant', '...', true, currentModelId);
-
-            const history = sessions[currentSessionId] || [];
-            const apiMessages = history.filter(m => m.content !== '...').map(m => ({ role: m.role, content: m.content }));
-
-            try {
-                const maxTokens = 1500;
-                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model: currentModelId, messages: apiMessages, max_tokens: maxTokens, temperature: 0.7 })
+                providers.forEach((p, i) => {
+                    const card = document.createElement('div');
+                    card.className = 'prov-card';
+                    const corsTag = CORS_OK.has(p.name)
+                        ? '<span class="cors-ok">✓ browser-friendly</span>'
+                        : '<span class="cors-warn">⚠ may have CORS issues</span>';
+                    card.innerHTML = `
+          <div class="prov-head">
+            <span class="prov-name">${esc(p.name)}</span>
+            <button class="btn-danger" data-act="rm">✕</button>
+          </div>
+          <div class="key-row">
+            <input type="password" class="pkey" value="${esc(p.apiKey)}" placeholder="API Key">
+            <a href="${esc(p.keyUrl || '#')}" target="_blank"
+               style="background:#13172a;color:#8892b0;text-decoration:none;border-radius:30px;padding:.18rem .5rem;font-size:.68rem;font-weight:600;white-space:nowrap;flex-shrink:0">Get Key</a>
+            <button class="btn-ghost btn-sm" data-act="cp">Copy</button>
+          </div>
+          <div class="prov-meta">${esc(p.baseUrl)} ${corsTag}</div>
+          <div class="tags">${(p.models || []).map(m => `<span class="tag">${esc(m)}</span>`).join('')}</div>
+          <button class="btn-ghost btn-sm" data-act="fetch" style="margin-top:.15rem">Fetch Models</button>
+        `;
+                    const keyIn = card.querySelector('.pkey');
+                    keyIn.addEventListener('change', () => { providers[i].apiKey = keyIn.value; persist() });
+                    card.querySelector('[data-act="rm"]').onclick = () => {
+                        providers.splice(i, 1); persist(); renderProviders(); rebuildModelSelect();
+                    };
+                    card.querySelector('[data-act="cp"]').onclick = async () => {
+                        try { await navigator.clipboard.writeText(keyIn.value); setStatus('Key copied!') }
+                        catch { setStatus('Copy failed', true) }
+                    };
+                    card.querySelector('[data-act="fetch"]').onclick = () => fetchModels(i);
+                    provList.appendChild(card);
                 });
-                if (!response.ok) {
-                    let errorDetail = `HTTP ${response.status}`;
-                    try { const errJson = await response.json(); errorDetail = errJson.error?.message || JSON.stringify(errJson); } catch (e) { }
-                    throw new Error(`${response.status}: ${errorDetail}`);
-                }
-                const data = await response.json();
-                let reply = data.choices?.[0]?.message?.content || '[no response]';
-                const usage = data.usage;
-                let promptTokens = 0, completionTokens = 0;
-                if (usage) { promptTokens = usage.prompt_tokens || 0; completionTokens = usage.completion_tokens || 0; }
-                else { promptTokens = estimateTokens(JSON.stringify(apiMessages)); completionTokens = estimateTokens(reply); }
-                const totalUsed = promptTokens + completionTokens;
+            }
 
-                if (!sessionTokenUsage[currentSessionId]) sessionTokenUsage[currentSessionId] = { prompt: 0, completion: 0, total: 0 };
-                sessionTokenUsage[currentSessionId].prompt += promptTokens;
-                sessionTokenUsage[currentSessionId].completion += completionTokens;
-                sessionTokenUsage[currentSessionId].total += totalUsed;
-                saveSessions();
-                renderSessions();
-                updateLocalTokenDisplay();
-
-                assistantContentDiv.innerText = '';
-                let i = 0;
-                function typeChar() {
-                    if (i < reply.length) {
-                        assistantContentDiv.innerText += reply[i];
-                        i++;
-                        setTimeout(typeChar, 12);
+            async function fetchModels(i) {
+                const p = providers[i];
+                if (!p.apiKey) { setStatus('Enter an API key first', true); return }
+                setStatus(`Fetching ${p.name} models…`);
+                try {
+                    const base = p.baseUrl.replace(/\/$/, '');
+                    let headers;
+                    if (base.includes('api.anthropic.com')) {
+                        // FIX: Anthropic requires this header for direct browser access
+                        headers = { 'x-api-key': p.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' };
                     } else {
-                        const lastMsg = sessions[currentSessionId].pop();
-                        sessions[currentSessionId].push({ role: 'assistant', content: reply, model: currentModelId });
-                        saveSessions();
+                        headers = { 'Authorization': `Bearer ${p.apiKey}` };
                     }
-                }
-                typeChar();
-            } catch (err) {
-                assistantContentDiv.innerText = `[error] ${err.message}`;
-                if (err.message.includes('402')) assistantContentDiv.innerText += '\n\n[!] Try another free model.';
-                // optionally mark model as failed
-                if (err.message.includes('402') || err.message.includes('429') || err.message.includes('500')) {
-                    modelStatus[currentModelId] = 'failed';
-                    updateModelDropdown();
+                    const res = await fetch(`${base}/models`, { headers });
+                    if (!res.ok) throw new Error(`HTTP ${res.status} – ${res.statusText}`);
+                    const data = await res.json();
+                    let models = [];
+                    if (Array.isArray(data?.data)) models = data.data.map(m => m.id ?? m);
+                    else if (Array.isArray(data)) models = data.map(m => m.id ?? m);
+                    else if (Array.isArray(data?.models)) models = data.models.map(m => m.id ?? m.name ?? m);
+                    providers[i].models = models.filter(Boolean).sort();
+                    await persist(); renderProviders(); rebuildModelSelect();
+                    setStatus(`Got ${models.length} models from ${p.name} ✓`);
+                } catch (e) {
+                    setStatus(`Error: ${e.message}`, true);
                 }
             }
-        }
 
-        saveKeyBtn.addEventListener('click', () => { saveApiKey(); if (apiKey) { loadFreeModels(); updateLocalTokenDisplay(); } });
-        refreshModelsBtn.addEventListener('click', () => { loadFreeModels(); updateLocalTokenDisplay(); });
-        testModelsBtn.addEventListener('click', () => { testAllModels(); });
-        modelSelect.addEventListener('change', () => { currentModelId = modelSelect.value; updateModelInfo(currentModelId); });
-        newSessionBtn.addEventListener('click', newSession);
-        sendBtn.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+            function rebuildModelSelect() {
+                modelSelect_ = modelSel; // alias
+                modelSel.innerHTML = '';
+                let any = false;
+                providers.forEach((p, i) => {
+                    if (!p.models?.length) return;
+                    const grp = document.createElement('optgroup');
+                    grp.label = p.name;
+                    p.models.forEach(m => {
+                        const opt = document.createElement('option');
+                        opt.value = `${i}::${m}`;  // FIX: use :: so model IDs containing : don't break parsing
+                        opt.textContent = `${p.name} / ${m}`;
+                        grp.appendChild(opt);
+                    });
+                    modelSel.appendChild(grp);
+                    any = true;
+                });
+                if (!any) {
+                    modelSel.innerHTML = '<option value="">── Add an API key, then Fetch Models ──</option>';
+                    return;
+                }
+                if (currentModelKey) {
+                    const match = [...modelSel.options].find(o => o.value === currentModelKey);
+                    if (match) { modelSel.value = currentModelKey; return }
+                }
+                modelSel.selectedIndex = 0;
+                currentModelKey = modelSel.value;
+            }
 
-        if (Object.keys(sessions).length === 0) newSession();
-        else { const firstId = Object.keys(sessions)[0]; currentSessionId = firstId; renderSessions(); renderChat(); updateLocalTokenDisplay(); }
+            let modelSelect_;
+            btnAddProv.onclick = () => {
+                const name = prompt('Provider name:'); if (!name) return;
+                const baseUrl = prompt('Base URL (e.g. https://api.openai.com/v1):'); if (!baseUrl) return;
+                const keyUrl = prompt('URL to get API key (optional):') || '';
+                providers.push({ name, baseUrl, apiKey: '', models: [], keyUrl });
+                persist(); renderProviders(); rebuildModelSelect();
+            };
+            btnSaveKeys.onclick = () => {
+                provList.querySelectorAll('.pkey').forEach((inp, i) => { if (i < providers.length) providers[i].apiKey = inp.value });
+                persist(); setStatus('All keys saved ✓');
+            };
+            modelSel.onchange = () => { currentModelKey = modelSel.value; persist() };
+            sysPrompt.oninput = () => persist();
+
+            // ── Sessions ──────────────────────────────────────────────────────────────
+            function renderSessions() {
+                sessionsDiv.innerHTML = '';
+                const ids = Object.keys(sessions);
+                if (!ids.length) { sessionsDiv.innerHTML = '<p style="font-size:.74rem;color:#4a5280">No sessions yet.</p>'; return }
+                ids.forEach(id => {
+                    const msgs = sessions[id] || [];
+                    const last = msgs.filter(m => m.content).slice(-1)[0];
+                    const preview = last ? last.content.slice(0, 40) : '(empty)';
+                    const div = document.createElement('div');
+                    div.className = 'sess-item' + (id === currentSess ? ' active' : '');
+                    div.innerHTML = `<span class="sess-preview">${esc(preview)}</span><button class="btn-danger" style="font-size:.8rem">✕</button>`;
+                    div.querySelector('button').onclick = e => {
+                        e.stopPropagation();
+                        delete sessions[id];
+                        if (currentSess === id) {
+                            const rem = Object.keys(sessions);
+                            currentSess = rem.length ? rem[0] : null;
+                            if (!currentSess) newSession(); else { renderSessions(); renderMessages() }
+                        } else { persist(); renderSessions() }
+                    };
+                    div.onclick = () => { currentSess = id; renderSessions(); renderMessages() };
+                    sessionsDiv.appendChild(div);
+                });
+            }
+
+            function newSession() {
+                const id = Date.now().toString();
+                sessions[id] = []; currentSess = id;
+                persist(); renderSessions(); renderMessages();
+            }
+            btnNewSess.onclick = newSession;
+
+            // ── Render chat ───────────────────────────────────────────────────────────
+            function renderMessages() {
+                messages.innerHTML = '';
+                if (!currentSess || !sessions[currentSess]) {
+                    messages.innerHTML = '<div class="msg"><div class="avatar">AI</div><div class="bubble" style="color:#4a5280">Select or create a session to start chatting.</div></div>';
+                    return;
+                }
+                sessions[currentSess].forEach(m => appendBubble(m, false));
+                messages.scrollTop = messages.scrollHeight;
+            }
+
+            function appendBubble(msg, scroll = true) {
+                const div = document.createElement('div');
+                div.className = `msg ${msg.role}`;
+                div.innerHTML = `<div class="avatar">${msg.role === 'user' ? 'U' : 'AI'}</div><div class="bubble${msg.error ? ' error' : ''}"></div>`;
+                const bubble = div.querySelector('.bubble');
+                if (msg.role === 'assistant') {
+                    bubble.innerHTML = msg.thinking
+                        ? '<span class="dots"><span>●</span><span>●</span><span>●</span></span>'
+                        : md(msg.content || '');
+                } else {
+                    bubble.textContent = msg.content;
+                }
+                messages.appendChild(div);
+                wireCopyButtons(bubble);
+                if (scroll) messages.scrollTop = messages.scrollHeight;
+                return div;
+            }
+
+            // ── Chat API call ─────────────────────────────────────────────────────────
+            async function callAPI(msgs) {
+                if (!currentModelKey || currentModelKey === '')
+                    throw new Error('No model selected. Add an API key and click Fetch Models.');
+
+                // FIX: split on :: to handle model IDs that contain : (e.g. openrouter's "provider/model:variant")
+                const sepIdx = currentModelKey.indexOf('::');
+                if (sepIdx === -1) throw new Error('Malformed model key — please re-select the model.');
+                const provIdx = parseInt(currentModelKey.slice(0, sepIdx));
+                const modelId = currentModelKey.slice(sepIdx + 2);
+                const prov = providers[provIdx];
+                if (!prov) throw new Error('Provider not found.');
+                if (!prov.apiKey) throw new Error(`No API key for ${prov.name}.`);
+
+                const base = prov.baseUrl.replace(/\/$/, '');
+
+                // ── Anthropic format ──
+                if (base.includes('api.anthropic.com')) {
+                    const sysMsg = msgs.find(m => m.role === 'system');
+                    const chatMsgs = msgs.filter(m => m.role !== 'system');
+                    const body = { model: modelId, max_tokens: 2048, messages: chatMsgs };
+                    if (sysMsg) body.system = sysMsg.content;
+                    const res = await fetch('https://api.anthropic.com/v1/messages', {
+                        method: 'POST',
+                        headers: {
+                            'x-api-key': prov.apiKey,
+                            'anthropic-version': '2023-06-01',
+                            // FIX: required for direct browser → Anthropic API calls
+                            'anthropic-dangerous-direct-browser-access': 'true',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    });
+                    if (!res.ok) {
+                        const e = await res.json().catch(() => ({}));
+                        throw new Error(e.error?.message || `HTTP ${res.status}`);
+                    }
+                    const data = await res.json();
+                    return data.content?.[0]?.text ?? '';
+                }
+
+                // ── OpenAI-compatible format ──
+                const res = await fetch(`${base}/chat/completions`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${prov.apiKey}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model: modelId, messages: msgs, max_tokens: 2048, temperature: 0.7 })
+                });
+                if (!res.ok) {
+                    let errMsg = `HTTP ${res.status}`;
+                    try { const e = await res.json(); errMsg = e.error?.message || errMsg } catch { }
+                    throw new Error(errMsg);
+                }
+                const data = await res.json();
+                return data.choices?.[0]?.message?.content ?? '';
+            }
+
+            async function sendMessage() {
+                if (!currentSess) return;
+                const text = msgInput.value.trim(); if (!text) return;
+                msgInput.value = ''; msgInput.style.height = 'auto';
+                btnSend.disabled = true;
+
+                const userMsg = { role: 'user', content: text };
+                sessions[currentSess].push(userMsg);
+                appendBubble(userMsg);
+
+                const placeholderIdx = sessions[currentSess].length;
+                const placeholder = { role: 'assistant', content: '', thinking: true };
+                sessions[currentSess].push(placeholder);
+                const placeholderEl = appendBubble(placeholder);
+
+                // Build API payload
+                const apiMsgs = [];
+                const sys = sysPrompt.value.trim();
+                if (sys) apiMsgs.push({ role: 'system', content: sys });
+                sessions[currentSess].slice(0, placeholderIdx).forEach(m => apiMsgs.push({ role: m.role, content: m.content }));
+
+                try {
+                    const reply = await callAPI(apiMsgs);
+                    sessions[currentSess][placeholderIdx] = { role: 'assistant', content: reply };
+                    const bubble = placeholderEl.querySelector('.bubble');
+                    bubble.innerHTML = md(reply);
+                    wireCopyButtons(bubble);
+                } catch (e) {
+                    sessions[currentSess][placeholderIdx] = { role: 'assistant', content: e.message, error: true };
+                    placeholderEl.querySelector('.bubble').innerHTML = `<span>⚠ ${esc(e.message)}</span>`;
+                    placeholderEl.querySelector('.bubble').classList.add('error');
+                } finally {
+                    btnSend.disabled = false;
+                    await persist();
+                    renderSessions();
+                    messages.scrollTop = messages.scrollHeight;
+                }
+            }
+
+            btnSend.onclick = sendMessage;
+            msgInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
+            });
+            msgInput.addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = Math.min(120, this.scrollHeight) + 'px';
+            });
+
+            // ── Image generation ──────────────────────────────────────────────────────
+            btnGenImg.onclick = async () => {
+                const desc = imgPromptIn.value.trim(); if (!desc) return;
+                imgOutput.innerHTML = '<span style="font-size:.75rem;color:#6b7394">Generating…</span>';
+                btnGenImg.disabled = true;
+                try {
+                    const pt = imgProvSel.value;
+                    if (pt === 'openai') {
+                        // FIX: use the correct /images/generations endpoint, not /chat/completions
+                        const oai = providers.find(p => p.baseUrl.includes('api.openai.com'));
+                        if (!oai?.apiKey) throw new Error('Add an OpenAI API key to use DALL·E 3');
+                        const res = await fetch('https://api.openai.com/v1/images/generations', {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${oai.apiKey}`, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ model: 'dall-e-3', prompt: desc, n: 1, size: '1024x1024' })
+                        });
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        const data = await res.json();
+                        const url = data.data?.[0]?.url;
+                        if (!url) throw new Error('No image URL in response');
+                        imgOutput.innerHTML = `<img src="${esc(url)}" alt="Generated">`;
+                    } else {
+                        let tok = await stGet('chp_hf_token');
+                        if (!tok) {
+                            tok = window.prompt('Enter your HuggingFace API token:');
+                            if (!tok) throw new Error('HuggingFace token required');
+                            await stSet('chp_hf_token', tok);
+                        }
+                        const res = await fetch('https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev', {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${tok}`, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ inputs: desc })
+                        });
+                        if (!res.ok) throw new Error(`HuggingFace HTTP ${res.status}`);
+                        const blob = await res.blob();
+                        imgOutput.innerHTML = `<img src="${URL.createObjectURL(blob)}" alt="Generated">`;
+                    }
+                } catch (e) {
+                    imgOutput.innerHTML = `<span style="font-size:.75rem;color:#f87171">Error: ${esc(e.message)}</span>`;
+                } finally {
+                    btnGenImg.disabled = false;
+                }
+            };
+
+            // ── Voice input / TTS ─────────────────────────────────────────────────────
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SR) {
+                const rec = new SR(); rec.continuous = false; rec.lang = 'en-US';
+                rec.onresult = e => { msgInput.value = e.results[0][0].transcript; msgInput.dispatchEvent(new Event('input')) };
+                rec.onerror = e => setStatus(`Voice error: ${e.error}`, true);
+                btnMic.onclick = () => rec.start();
+            } else { btnMic.disabled = true; btnMic.title = 'Voice input not supported in this browser' }
+
+            btnSpeak.onclick = () => {
+                if (!currentSess) return;
+                const last = [...(sessions[currentSess] || [])].reverse().find(m => m.role === 'assistant' && !m.error && !m.thinking);
+                if (!last) return;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(new SpeechSynthesisUtterance(last.content));
+            };
+
+            // ── Mobile sidebar ────────────────────────────────────────────────────────
+            mobileBtn.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('show') };
+            overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('show') };
+
+            // ── Init ──────────────────────────────────────────────────────────────────
+            await hydrate();
+            renderProviders();
+            rebuildModelSelect();
+
+            if (!Object.keys(sessions).length) {
+                newSession();
+            } else {
+                if (!sessions[currentSess]) currentSess = Object.keys(sessions)[0];
+                renderSessions(); renderMessages();
+            }
+
+            if (!hasStorage) setStatus('⚠ No persistent storage – data resets on reload', true);
+            else setStatus('✓ Storage ready', false);
+
+        })();
     </script>
 </body>
 </html>
