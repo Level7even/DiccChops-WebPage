@@ -7,16 +7,11 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="styles.css">
-
-    <meta name="theme-color" content="#0b0b10">
-    <meta property="og:title" content="DiccChops Portfolio">
-    <meta property="og:description" content="3D Models, Projects & Tools">
-    <meta property="og:type" content="website">
-
 </head>
+
 <body>
 
     <div class="scroll-progress"></div>
@@ -26,15 +21,15 @@
     <header>
         <div class="nav-container">
             <a href="#" class="logo">DiccChops</a>
+
             <nav class="nav-links">
                 <a href="#">Home</a>
                 <a href="#portfolio">Portfolio</a>
                 <a href="#">Contact</a>
+
                 <div class="dropdown">
-                    <button class="dropbtn">
-                        Projects
-                        <span class="dropdown-arrow">▼</span>
-                    </button>
+                    <button class="dropbtn">Projects ▼</button>
+
                     <div class="dropdown-content">
                         <a href="./pages/ArcStats/ArcStats.html">ArcStats</a>
                         <a href="./pages/Cammo/index.html">Camo Lab</a>
@@ -42,7 +37,7 @@
                         <a href="./pages/Layered/Layered.html">Layered</a>
                         <a href="./pages/RTSfactory/index.html">RTS Factory</a>
                         <a href="./pages/TileSetMaker/Tileset.html">Tile Set Maker</a>
-                        <a href="./pages/Twitchapistuff/twitch-api.html">twitch api</a>
+                        <a href="./pages/Twitchapistuff/twitch-api.html">Twitch API</a>
                         <a href="./pages/Sifi/index.html">Sifi</a>
                         <a href="./pages/Void/index.html">Void</a>
                         <a href="./pages/Wow/index.html">Wow</a>
@@ -54,266 +49,232 @@
 
     <main>
         <section class="hero-section">
-            <div class="hero-glow"></div>
             <div class="hero-content">
                 <h1>Build. <span class="gradient-text">Create.</span> Share.</h1>
-                <p>Explore 3D artwork, interactive tools, game assets, experiments, and development projects.</p>
-                <div class="hero-badge">🚀 Live Portfolio</div>
+                <p>Explore 3D artwork, tools, and experiments.</p>
             </div>
         </section>
 
         <section id="portfolio">
             <div class="section-header">
-                <h2 class="section-title">Featured Projects</h2>
-                <span class="model-stats" id="modelStats">Loading Projects...</span>
+                <h2>Featured Projects</h2>
+                <span id="modelStats">Loading...</span>
             </div>
 
             <div class="filter-bar">
-                <button class="filter-btn" data-sort="likes">❤️ Most Liked</button>
-                <button class="filter-btn" data-sort="views">👁️ Most Viewed</button>
-                <button class="filter-btn" data-sort="downloads">⬇️ Most Downloaded</button>
-                <button class="filter-btn" data-sort="date">🕒 Newest First</button>
+                <button class="filter-btn" data-sort="likes">❤️ Likes</button>
+                <button class="filter-btn" data-sort="views">👁 Views</button>
+                <button class="filter-btn" data-sort="downloads">⬇ Downloads</button>
+                <button class="filter-btn" data-sort="date">🕒 New</button>
                 <button class="filter-btn" data-sort="reset">⟳ Reset</button>
             </div>
 
-            <div class="grid" id="projectGrid">
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
-            </div>
-
-            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            <div class="grid" id="projectGrid"></div>
         </section>
     </main>
 
     <footer>
-        <p>© 2026 DiccChops. All Rights Reserved.</p>
-        <div class="footer-icons">
-            <a href="#">🎮</a><a href="#">📦</a><a href="#">💬</a>
-        </div>
+        <p>© 2026 DiccChops</p>
     </footer>
 
     <script>
         (function () {
-            const SKETCHFAB_USER = "DiccChops";
-            const API_URL = `https://api.sketchfab.com/v3/models?user=${SKETCHFAB_USER}&sort_by=-publishedAt&limit=24`;
+            const USER = "DiccChops";
+            const API = `https://api.sketchfab.com/v3/models?user=${USER}&sort_by=-publishedAt&limit=24`;
 
-            const CACHE_KEY = "sketchfab_models_cache_v2";
-            const CACHE_DURATION = 10 * 60 * 1000;
+            const CACHE_KEY = "sf_models_v4";
+            const CACHE_TIME = 1000 * 60 * 60 * 6; // 6 hours
 
-            const gridContainer = document.getElementById("projectGrid");
-            const statsSpan = document.getElementById("modelStats");
+            const grid = document.getElementById("projectGrid");
+            const stats = document.getElementById("modelStats");
 
-            let allModels = [];
-            let currentSort = { field: "date", order: "desc" };
+            let models = [];
+            let sortMode = "date";
 
-            /* ---------------- CACHE ---------------- */
-            function getCache() {
+            /* ---------------- OFFLINE CACHE ---------------- */
+            function loadCache() {
                 try {
                     const raw = localStorage.getItem(CACHE_KEY);
                     if (!raw) return null;
 
                     const data = JSON.parse(raw);
-                    if (Date.now() - data.time > CACHE_DURATION) {
-                        localStorage.removeItem(CACHE_KEY);
-                        return null;
-                    }
+                    if (Date.now() - data.time > CACHE_TIME) return null;
+
                     return data.models;
                 } catch {
                     return null;
                 }
             }
 
-            function setCache(models) {
+            function saveCache(data) {
                 try {
                     localStorage.setItem(
                         CACHE_KEY,
-                        JSON.stringify({ time: Date.now(), models })
+                        JSON.stringify({ time: Date.now(), models: data })
                     );
                 } catch { }
             }
 
-            /* ---------------- FETCH ---------------- */
-            async function fetchModels() {
-                const cached = getCache();
-                if (cached) return cached;
+            /* ---------------- SMART FETCH (MOBILE SAFE) ---------------- */
+            async function fetchModels(retry = 2) {
+                const cached = loadCache();
+                if (cached?.length) return cached;
 
-                const res = await fetch(API_URL);
-                if (!res.ok) throw new Error("API error");
+                for (let i = 0; i <= retry; i++) {
+                    try {
+                        const res = await fetch(API, {
+                            cache: "no-store",
+                            mode: "cors"
+                        });
 
-                const data = await res.json();
-                setCache(data.results);
-                return data.results;
+                        if (!res.ok) throw new Error("API fail");
+
+                        const json = await res.json();
+
+                        if (!json.results) throw new Error("Bad data");
+
+                        saveCache(json.results);
+                        return json.results;
+
+                    } catch (err) {
+                        console.warn(`Fetch attempt ${i + 1} failed`);
+
+                        await new Promise(r => setTimeout(r, 800 * (i + 1)));
+                    }
+                }
+
+                throw new Error("All fetch attempts failed");
             }
 
             /* ---------------- SORT ---------------- */
-            function sortModels(models) {
-                const sorted = [...models];
+            function sortData(list) {
+                const arr = [...list];
 
-                if (currentSort.field === "date") {
-                    sorted.sort((a, b) =>
-                        currentSort.order === "desc"
-                            ? new Date(b.publishedAt) - new Date(a.publishedAt)
-                            : new Date(a.publishedAt) - new Date(b.publishedAt)
-                    );
-                } else {
-                    const keyMap = {
-                        likes: "likeCount",
-                        views: "viewCount",
-                        downloads: "downloadCount",
-                    };
-
-                    const key = keyMap[currentSort.field];
-
-                    sorted.sort((a, b) =>
-                        currentSort.order === "desc"
-                            ? (b[key] || 0) - (a[key] || 0)
-                            : (a[key] || 0) - (b[key] || 0)
+                if (sortMode === "date") {
+                    return arr.sort((a, b) =>
+                        new Date(b.publishedAt) - new Date(a.publishedAt)
                     );
                 }
 
-                return sorted;
+                const map = {
+                    likes: "likeCount",
+                    views: "viewCount",
+                    downloads: "downloadCount"
+                };
+
+                const key = map[sortMode];
+
+                return arr.sort((a, b) =>
+                    (b[key] || 0) - (a[key] || 0)
+                );
             }
 
-            /* ---------------- CARD CREATION ---------------- */
-            function createCard(model) {
-                const card = document.createElement("div");
-                card.className = "sketchfab-card";
+            /* ---------------- CARD ---------------- */
+            function card(m) {
+                const el = document.createElement("div");
+                el.className = "sketchfab-card";
 
                 const thumb =
-                    model.thumbnails?.images?.[0]?.url ||
-                    `https://media.sketchfab.com/models/${model.uid}/thumbnails/default.jpg`;
+                    m.thumbnails?.images?.[0]?.url ||
+                    `https://media.sketchfab.com/models/${m.uid}/thumbnails/default.jpg`;
 
-                card.innerHTML = `
+                el.innerHTML = `
                 <div class="model-preview">
-                    <img class="model-thumb" src="${thumb}" loading="lazy" />
+                    <img class="model-thumb" src="${thumb}">
                     <div class="play-overlay">▶</div>
                 </div>
 
                 <div class="card-content">
-                    <h3 class="model-title">${model.name}</h3>
-                    <p class="model-description">
-                        ${model.description?.slice(0, 120) || "Click to view interactive 3D model"}
-                    </p>
+                    <h3>${m.name}</h3>
+                    <p>${(m.description || "").slice(0, 100)}</p>
 
                     <div class="card-stats">
-                        ❤️ ${model.likeCount || 0}
-                        👁️ ${model.viewCount || 0}
-                        ⬇️ ${model.downloadCount || 0}
+                        ❤️ ${m.likeCount || 0}
+                        👁️ ${m.viewCount || 0}
+                        ⬇️ ${m.downloadCount || 0}
                     </div>
 
-                    <a class="btn-view" href="${model.viewerUrl}" target="_blank">
-                        Open →
-                    </a>
+                    <a class="btn-view" href="${m.viewerUrl}" target="_blank">Open</a>
                 </div>
             `;
 
-                /* Lazy iframe only on click */
-                card.addEventListener("click", () => openModel(model.uid, card));
-
-                return card;
+                el.querySelector(".model-preview").onclick = () => openModal(m.uid);
+                return el;
             }
 
-            /* ---------------- LAZY IFRAME ON DEMAND ---------------- */
-            function openModel(uid, card) {
-                if (card.dataset.loaded === "true") return;
+            /* ---------------- FULLSCREEN MODAL (NEW) ---------------- */
+            function openModal(uid) {
+                const modal = document.createElement("div");
+                modal.style = `
+                position:fixed;inset:0;z-index:9999;
+                background:rgba(0,0,0,0.9);
+                display:flex;align-items:center;justify-content:center;
+            `;
 
-                const preview = card.querySelector(".model-preview");
+                modal.innerHTML = `
+                <div style="width:95vw;height:90vh;position:relative;">
+                    <iframe
+                        src="https://sketchfab.com/models/${uid}/embed?autostart=1&ui_infos=0&ui_watermark=0"
+                        style="width:100%;height:100%;border:0;border-radius:16px;">
+                    </iframe>
 
-                const iframe = document.createElement("iframe");
-                iframe.src = `https://sketchfab.com/models/${uid}/embed?autostart=1&ui_infos=0&ui_watermark=0`;
-                iframe.className = "sketchfab-iframe";
+                    <button id="closeModal"
+                        style="position:absolute;top:-40px;right:0;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;">
+                        Close ✕
+                    </button>
+                </div>
+            `;
 
-                preview.innerHTML = "";
-                preview.appendChild(iframe);
+                document.body.appendChild(modal);
 
-                card.dataset.loaded = "true";
+                modal.querySelector("#closeModal").onclick = () => modal.remove();
+                modal.onclick = (e) => {
+                    if (e.target === modal) modal.remove();
+                };
             }
 
             /* ---------------- RENDER ---------------- */
-            function render(models) {
-                gridContainer.innerHTML = "";
-
-                const frag = document.createDocumentFragment();
-
-                models.forEach((m) => frag.appendChild(createCard(m)));
-
-                gridContainer.appendChild(frag);
-
-                statsSpan.textContent = `${models.length} models`;
+            function render(list) {
+                grid.innerHTML = "";
+                list.forEach(m => grid.appendChild(card(m)));
+                stats.textContent = `${list.length} projects`;
             }
-
-            /* ---------------- APPLY SORT ---------------- */
-            function apply() {
-                render(sortModels(allModels));
-            }
-
-            /* ---------------- BUTTONS ---------------- */
-            function setupButtons() {
-                document.querySelectorAll(".filter-btn").forEach((btn) => {
-                    btn.addEventListener("click", () => {
-                        const type = btn.dataset.sort;
-
-                        if (type === "reset") {
-                            currentSort = { field: "date", order: "desc" };
-                        } else {
-                            const map = {
-                                likes: "likes",
-                                views: "views",
-                                downloads: "downloads",
-                                date: "date",
-                            };
-
-                            const field = map[type];
-
-                            if (currentSort.field === field) {
-                                currentSort.order =
-                                    currentSort.order === "desc" ? "asc" : "desc";
-                            } else {
-                                currentSort.field = field;
-                                currentSort.order = "desc";
-                            }
-                        }
-
-                        apply();
-                    });
-                });
-            }
-            /* ---------------- DROPDOWN FIX ---------------- */
-            document.addEventListener("DOMContentLoaded", () => {
-                const dropBtn = document.querySelector(".dropbtn");
-                const dropdown = document.querySelector(".dropdown");
-
-                if (!dropBtn || !dropdown) return;
-
-                dropBtn.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    dropdown.classList.toggle("active");
-                });
-
-                document.addEventListener("click", (e) => {
-                    if (!dropdown.contains(e.target)) {
-                        dropdown.classList.remove("active");
-                    }
-                });
-            });
-
 
             /* ---------------- INIT ---------------- */
             async function init() {
                 try {
-                    allModels = await fetchModels();
-                    apply();
+                    models = await fetchModels();
+                    render(sortData(models));
                 } catch (e) {
-                    gridContainer.innerHTML =
-                        "<div class='error-card'>Failed to load models</div>";
+                    console.error(e);
+
+                    grid.innerHTML = `
+                    <div class="error-card">
+                        <h3>Offline Mode Active</h3>
+                        <p>Using cached data or fallback view</p>
+                        <button class="retry-button" onclick="location.reload()">
+                            Retry
+                        </button>
+                    </div>
+                `;
                 }
             }
 
-            setupButtons();
+            /* ---------------- FILTERS ---------------- */
+            document.querySelectorAll(".filter-btn").forEach(btn => {
+                btn.onclick = () => {
+                    const t = btn.dataset.sort;
+
+                    if (t === "reset") sortMode = "date";
+                    else sortMode = t;
+
+                    render(sortData(models));
+                };
+            });
+
             init();
         })();
     </script>
+
 </body>
 </html>
