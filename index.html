@@ -279,6 +279,26 @@
                     });
                 });
             }
+            /* ---------------- DROPDOWN FIX ---------------- */
+            document.addEventListener("DOMContentLoaded", () => {
+                const dropBtn = document.querySelector(".dropbtn");
+                const dropdown = document.querySelector(".dropdown");
+
+                if (!dropBtn || !dropdown) return;
+
+                dropBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropdown.classList.toggle("active");
+                });
+
+                document.addEventListener("click", (e) => {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove("active");
+                    }
+                });
+            });
+
 
             /* ---------------- INIT ---------------- */
             async function init() {
