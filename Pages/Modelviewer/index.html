@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom 3D Viewer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+            background: #0a0f1e;
+            color: #eef4ff;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .header {
+            background: rgba(15, 25, 45, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 12px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            border-bottom: 1px solid rgba(72, 187, 255, 0.25);
+            z-index: 20;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .title h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #7dd3fc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .title p {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        .back-link {
+            color: #7dd3fc;
+            text-decoration: none;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+
+            .back-link:hover { text-decoration: underline; }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .model-input-group {
+            display: flex;
+            gap: 8px;
+            background: rgba(0,0,0,0.5);
+            padding: 4px 12px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            border: 1px solid #2d3a5e;
+        }
+
+            .model-input-group input {
+                background: transparent;
+                border: none;
+                color: white;
+                padding: 8px 6px;
+                font-size: 0.85rem;
+                width: 240px;
+                outline: none;
+                font-family: monospace;
+            }
+
+                .model-input-group input::placeholder { color: #8a9bb5; }
+
+            .model-input-group button {
+                background: #2c3e66;
+                border: none;
+                color: white;
+                padding: 6px 16px;
+                border-radius: 40px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: background 0.2s, transform 0.2s;
+            }
+
+                .model-input-group button:hover {
+                    background: #3b5a8c;
+                    transform: scale(0.97);
+                }
+
+        .env-panel {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: rgba(0,0,0,0.4);
+            padding: 6px 16px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+
+            .env-panel label, .env-panel span {
+                font-size: 0.8rem;
+                font-weight: 500;
+            }
+
+        .color-preview {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            background: #0a0f1e;
+        }
+
+        #bgColorPicker {
+            opacity: 0;
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            left: 0; top: 0;
+        }
+
+        .color-wrap {
+            position: relative;
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+        }
+
+        .env-btn {
+            background: #1e2a3a;
+            border: none;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+            .env-btn:hover { background: #2d4a6e; }
+
+        .viewer-container {
+            flex: 1;
+            position: relative;
+            background: #05080f;
+            overflow: hidden;
+        }
+
+        #api-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: #0a0f1e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 30;
+            transition: opacity 0.4s;
+        }
+
+            .loading-overlay.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #2c3e66;
+            border-top: 4px solid #5aa9dd;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .info-note {
+            position: absolute;
+            bottom: 12px;
+            right: 16px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            z-index: 25;
+            pointer-events: none;
+            font-family: monospace;
+            color: #bbb;
+        }
+
+        .error-pane {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #ff9f7c;
+            text-align: center;
+            padding: 2rem;
+        }
+
+            .error-pane button {
+                background: #2d4a6e;
+                border: none;
+                padding: 8px 20px;
+                border-radius: 30px;
+                color: white;
+                cursor: pointer;
+                font-family: inherit;
+                font-weight: 600;
+            }
+
+        @media (max-width: 780px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px;
+            }
+
+            .controls { justify-content: space-between; }
+
+            .model-input-group input { width: 180px; }
+
+            .env-panel { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="header">
+            <div class="title">
+                <a class="back-link" href="../../index.html">← Back to portfolio</a>
+                <h1 id="modelTitle">Custom Environment Viewer</h1>
+                <p>Sketchfab model in your own background & controls</p>
+            </div>
+            <div class="controls">
+                <div class="model-input-group">
+                    <input type="text" id="modelIdInput" placeholder="Sketchfab Model ID or URL">
+                    <button id="loadModelBtn" type="button">Load</button>
+                </div>
+                <div class="env-panel">
+                    <span>BG</span>
+                    <div class="color-wrap">
+                        <div class="color-preview" id="bgPreview"></div>
+                        <input type="color" id="bgColorPicker" value="#0a0f1e">
+                    </div>
+                    <button id="resetCameraBtn" class="env-btn" type="button">Reset Camera</button>
+                    <button id="toggleUIBtn" class="env-btn" type="button">Hide UI</button>
+                    <button id="autoRotateBtn" class="env-btn" type="button">Auto Rotate</button>
+                </div>
+            </div>
+        </div>
+        <div class="viewer-container">
+            <iframe id="api-frame" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+                <div id="loadingMsg">Paste a Sketchfab model ID or URL and click Load.</div>
+                <div style="font-size:12px; opacity:0.6;">Or open a project from the portfolio.</div>
+            </div>
+            <div class="info-note">Custom BG | Sketchfab Viewer API</div>
+        </div>
+    </div>
+
+    <script src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js"></script>
+
+    <script>
+    (function () {
+        let api = null;
+        let uiVisible = true;
+        let autoRotating = false;
+        let bgColor = "#0a0f1e";
+
+        const iframe = document.getElementById('api-frame');
+        const input = document.getElementById('modelIdInput');
+        const loadBtn = document.getElementById('loadModelBtn');
+        const overlay = document.getElementById('loadingOverlay');
+        const loadingMsg = document.getElementById('loadingMsg');
+        const spinner = overlay.querySelector('.spinner');
+        const bgPicker = document.getElementById('bgColorPicker');
+        const bgPreview = document.getElementById('bgPreview');
+        const resetBtn = document.getElementById('resetCameraBtn');
+        const toggleUIBtn = document.getElementById('toggleUIBtn');
+        const autoRotateBtn = document.getElementById('autoRotateBtn');
+        const modelTitle = document.getElementById('modelTitle');
+
+        function extractUid(raw) {
+            if (!raw) return null;
+            const s = String(raw).trim();
+            const patterns = [
+                /sketchfab\.com\/3d-models\/[^/?#]*-([a-f0-9]{20,})/i,
+                /sketchfab\.com\/(?:3d-models|models)\/([a-f0-9]{20,})/i,
+                /^([a-f0-9]{20,})$/i
+            ];
+            for (const p of patterns) {
+                const m = s.match(p);
+                if (m) return m[1];
+            }
+            return null;
+        }
+
+        function readParams() {
+            const hash = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
+            const fromHash = new URLSearchParams(hash);
+            const fromQuery = new URLSearchParams(location.search);
+            const get = k => fromHash.get(k) || fromQuery.get(k);
+            return {
+                uid: get('uid') || get('model'),
+                name: get('name')
+            };
+        }
+
+        function setLoading(state, message) {
+            if (message) loadingMsg.textContent = message;
+            spinner.style.display = state ? 'block' : 'none';
+            overlay.classList.toggle('hidden', !state && message === undefined);
+            if (!state && message) overlay.classList.remove('hidden');
+        }
+
+        function showError(uid, msg) {
+            iframe.style.display = 'none';
+            const wrapper = document.querySelector('.viewer-container');
+            wrapper.querySelectorAll('.error-pane').forEach(e => e.remove());
+            const pane = document.createElement('div');
+            pane.className = 'error-pane';
+            pane.innerHTML = `
+                <h3>Could not load 3D model</h3>
+                <p>${msg || 'Make sure the model is public and embeddable.'}</p>
+                <p style="font-family:monospace;opacity:.7;">UID: ${uid || '(none)'}</p>
+                <button type="button" id="retryBtn">Retry</button>
+            `;
+            wrapper.appendChild(pane);
+            pane.querySelector('#retryBtn').addEventListener('click', () => {
+                pane.remove();
+                iframe.style.display = 'block';
+                if (uid) loadModel(uid);
+            });
+        }
+
+        function hexToRgbFloat(hex) {
+            const h = hex.replace('#', '');
+            if (h.length !== 6) return [0.04, 0.06, 0.12];
+            return [
+                parseInt(h.slice(0, 2), 16) / 255,
+                parseInt(h.slice(2, 4), 16) / 255,
+                parseInt(h.slice(4, 6), 16) / 255
+            ];
+        }
+
+        function applyBg(hex) {
+            if (!api) return;
+            const [r, g, b] = hexToRgbFloat(hex);
+            api.setBackground({ color: [r, g, b, 1] });
+        }
+
+        function loadModel(uid) {
+            if (typeof Sketchfab === 'undefined') {
+                showError(uid, 'Sketchfab Viewer API script failed to load.');
+                return;
+            }
+
+            if (api) {
+                try { api.stop(); } catch (e) { console.warn(e); }
+                api = null;
+            }
+
+            iframe.style.display = 'block';
+            setLoading(true, 'Loading model…');
+
+            const client = new Sketchfab('1.12.1', iframe);
+
+            client.init(uid, {
+                autostart: 1,
+                preload: 1,
+                ui_infos: 1,
+                ui_controls: 1,
+                ui_settings: 1,
+                ui_inspector: 0,
+                ui_stop: 0,
+                ui_watermark: 0,
+                ui_annotations: 1,
+                scrollwheel: 1,
+                success: (apiInst) => {
+                    api = apiInst;
+                    api.start();
+                    api.addEventListener('viewerready', () => {
+                        applyBg(bgColor);
+                        setLoading(false);
+                        overlay.classList.add('hidden');
+                    });
+                },
+                error: () => {
+                    showError(uid, 'Sketchfab refused to embed this model.');
+                }
+            });
+        }
+
+        function loadFromInput() {
+            const uid = extractUid(input.value);
+            if (!uid) {
+                alert("Invalid Sketchfab Model ID or URL.\n\nPaste a model URL (https://sketchfab.com/3d-models/...) or the long hex ID.");
+                return;
+            }
+            input.value = uid;
+            history.replaceState(null, '', `#uid=${uid}`);
+            loadModel(uid);
+        }
+
+        bgPicker.addEventListener('input', (e) => {
+            bgColor = e.target.value;
+            bgPreview.style.backgroundColor = bgColor;
+            applyBg(bgColor);
+        });
+        bgPreview.addEventListener('click', () => bgPicker.click());
+        bgPreview.style.backgroundColor = bgColor;
+
+        resetBtn.addEventListener('click', () => {
+            if (api?.recenterCamera) api.recenterCamera();
+        });
+
+        toggleUIBtn.addEventListener('click', () => {
+            if (!api) return;
+            uiVisible = !uiVisible;
+            api.setUserInterfaceVisibility?.(uiVisible);
+            toggleUIBtn.textContent = uiVisible ? 'Hide UI' : 'Show UI';
+        });
+
+        autoRotateBtn.addEventListener('click', () => {
+            if (!api) return;
+            autoRotating = !autoRotating;
+            if (autoRotating) api.setCameraConstraints?.({});
+            api.setAutoRotate?.(autoRotating);
+            autoRotateBtn.textContent = autoRotating ? 'Stop Rotate' : 'Auto Rotate';
+        });
+
+        loadBtn.addEventListener('click', loadFromInput);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') loadFromInput();
+        });
+
+        const { uid: startUid, name: startName } = readParams();
+        if (startName) modelTitle.textContent = startName;
+
+        if (startUid) {
+            input.value = startUid;
+            loadModel(startUid);
+        } else {
+            spinner.style.display = 'none';
+        }
+    })();
+    </script>
+</body>
+</html>

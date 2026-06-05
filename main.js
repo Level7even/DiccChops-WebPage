@@ -1,202 +1,344 @@
-const base = "https://copyparty.dankserver.net/diccchops/";
+(function () {
+    const USER = "DiccChops";
+    const API = `https://api.sketchfab.com/v3/models?user=${USER}&sort_by=-publishedAt&count=24`;
 
-async function loadProjects() {
-    const html = await fetch(base).then(r => r.text());
-    const folders = extractFolders(html);
+    const CACHE_KEY = "sf_models_v5_all";
+    const CACHE_TIME = 1000 * 60 * 60 * 6;
+    const MAX_PAGES = 50;
 
-    for (const folder of folders) {
+    const grid = document.getElementById("projectGrid");
+    const stats = document.getElementById("modelStats");
+    const progress = document.querySelector(".scroll-progress");
+
+    let models = [];
+    let sortKey = "date";
+    let sortDir = "desc";
+    let activeModal = null;
+
+    /* ---------------- CACHE ---------------- */
+    function loadCache() {
         try {
-            const cfgURL = `${base}${folder}/settings.cfg`;
-            const cfgText = await fetch(cfgURL).then(r => {
-                if (!r.ok) throw new Error();
-                return r.text();
-            });
+            const raw = localStorage.getItem(CACHE_KEY);
+            if (!raw) return null;
+            const data = JSON.parse(raw);
+            if (Date.now() - data.time > CACHE_TIME) return null;
+            return data.models;
+        } catch {
+            return null;
+        }
+    }
 
-            const cfg = parseCfg(cfgText);
+    function saveCache(data) {
+        try {
+            localStorage.setItem(
+                CACHE_KEY,
+                JSON.stringify({ time: Date.now(), models: data })
+            );
+        } catch { }
+    }
 
-            const visibilityMode = cfg.visibility?.mode?.toLowerCase();
-            const isPublic = cfg.visibility?.public === "true";
-
-            if (visibilityMode === "hidden" || visibilityMode === "linkonly" || !isPublic) {
-                continue;
+    /* ---------------- FETCH ---------------- */
+    async function fetchPage(url, retry = 2) {
+        for (let i = 0; i <= retry; i++) {
+            try {
+                const res = await fetch(url, { cache: "no-store", mode: "cors" });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const json = await res.json();
+                if (!json.results) throw new Error("Bad data");
+                return json;
+            } catch (err) {
+                console.warn(`Fetch attempt ${i + 1} failed`, err);
+                if (i === retry) throw err;
+                await new Promise(r => setTimeout(r, 800 * (i + 1)));
             }
-
-            createCard(folder, cfg, base);
-
-        } catch (err) {
-            console.warn(`Skipping ${folder} (No settings.cfg)`);
-        }
-    }
-}
-
-/* --------------------------- */
-
-function extractFolders(html) {
-    const out = [];
-    const reg = /href="([^"?\/]+)\//gi;
-    let m;
-    while ((m = reg.exec(html)) !== null) {
-        if (!m[1].startsWith(".")) out.push(m[1]);
-    }
-    return [...new Set(out)];
-}
-
-/* --------------------------- */
-
-function parseCfg(text) {
-    const result = {};
-    let section = "";
-
-    text.split(/\r?\n/).forEach(line => {
-        line = line.trim();
-        if (!line || line.startsWith("#") || line.startsWith(";")) return;
-
-        if (line.startsWith("[") && line.endsWith("]")) {
-            section = line.slice(1, -1);
-            result[section] = {};
-            return;
-        }
-
-        const eq = line.indexOf("=");
-        if (eq !== -1) {
-            const key = line.slice(0, eq).trim();
-            let val = line.slice(eq + 1).trim();
-            val = val.replace(/^"|"$/g, "");
-            result[section][key] = val;
-        }
-    });
-
-    return result;
-}
-
-/* --------------------------- */
-
-async function autoDetectModel(base, folder) {
-    const html = await fetch(`${base}${folder}/`).then(r => r.text());
-    const files = [];
-    const reg = /href="([^"]+)"/gi;
-    let m;
-    while ((m = reg.exec(html)) !== null) {
-        const f = m[1];
-        if (!f.includes("/")) files.push(f);
-    }
-
-    return files.find(f =>
-        f.toLowerCase().endsWith(".glb") ||
-        f.toLowerCase().endsWith(".gltf")
-    );
-}
-
-/* ----------------------------------------------------------
-   Smooth Hover Rotation (NO SNAP, CORRECT PC DIRECTION)
------------------------------------------------------------ */
-function enableSmoothRotation(card, viewer) {
-    let targetAz = 0;
-    let targetEl = 75;
-    let currentAz = 0;
-    let currentEl = 75;
-
-    let animating = false;
-
-    function animate() {
-        currentAz += (targetAz - currentAz) * 0.12;
-        currentEl += (targetEl - currentEl) * 0.12;
-
-        viewer.cameraOrbit = `${currentAz}deg ${currentEl}deg auto`;
-
-        if (Math.abs(currentAz - targetAz) > 0.05 ||
-            Math.abs(currentEl - targetEl) > 0.05) {
-            requestAnimationFrame(animate);
-        } else {
-            animating = false;
         }
     }
 
-    card.addEventListener("mouseenter", () => {
-        viewer.autoRotate = false;
-    });
+    async function fetchModels() {
+        const cached = loadCache();
+        if (cached?.length) return cached;
 
-    card.addEventListener("mousemove", e => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
+        const all = [];
+        let url = API;
+        let pages = 0;
 
-        // FIXED: correct horizontal rotation direction for PC
-        targetAz = -(x - 0.5) * 120;
-        targetEl = 70 - y * 30;
-
-        if (!animating) {
-            animating = true;
-            requestAnimationFrame(animate);
+        while (url && pages < MAX_PAGES) {
+            const json = await fetchPage(url);
+            all.push(...json.results);
+            stats.textContent = `Loading ${all.length}…`;
+            url = json.next || null;
+            pages++;
         }
-    });
 
-    card.addEventListener("mouseleave", () => {
-        viewer.autoRotate = true;
-    });
-}
+        if (!all.length) throw new Error("No models");
+        saveCache(all);
+        return all;
+    }
 
-/* --------------------------- */
+    /* ---------------- SORT ---------------- */
+    function getMetric(m, key) {
+        if (key === "likes") return m.likeCount ?? 0;
+        if (key === "views") return m.viewCount ?? 0;
+        if (key === "downloads") {
+            return m.downloadCount
+                ?? m.archives?.gltf?.size
+                ?? m.archives?.source?.size
+                ?? 0;
+        }
+        return 0;
+    }
 
-async function createCard(folder, cfg, base) {
-    const container = document.querySelector(".grid");
+    function sortData(list) {
+        const arr = [...list];
+        const sign = sortDir === "desc" ? 1 : -1;
 
-    let model = cfg?.files?.primary;
-    if (!model) model = await autoDetectModel(base, folder);
-    if (!model) return;
+        if (sortKey === "date") {
+            return arr.sort((a, b) =>
+                sign * (new Date(b.publishedAt) - new Date(a.publishedAt))
+            );
+        }
 
-    // Always use the MP4 as the thumbnail
-    const thumb = "./Loading.mp4";
+        return arr.sort((a, b) => {
+            const diff = getMetric(b, sortKey) - getMetric(a, sortKey);
+            if (diff !== 0) return sign * diff;
+            return sign * (new Date(b.publishedAt) - new Date(a.publishedAt));
+        });
+    }
 
-    const card = document.createElement("a");
-    card.className = "card";
-    card.href = `/ModelPage/PageV1/index.html?project=${encodeURIComponent(folder)}`;
+    /* ---------------- HELPERS ---------------- */
+    function escapeHTML(str) {
+        return String(str ?? "").replace(/[&<>"']/g, c => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[c]));
+    }
 
-    // Only render the poster and loading overlay initially
-    card.innerHTML = `
-        <div class="model-wrapper">
-            <div class="loading-overlay">
-                <span>Loading...</span>
-                <div class="loading-bar"><div class="loading-bar-inner animated"></div></div>
+    /* ---------------- CARD ---------------- */
+    function card(m) {
+        const el = document.createElement("article");
+        el.className = "sketchfab-card";
+
+        const thumb = m.thumbnails?.images?.[0]?.url
+            || `https://media.sketchfab.com/models/${m.uid}/thumbnails/default.jpg`;
+
+        const name = escapeHTML(m.name);
+        const desc = escapeHTML((m.description || "").slice(0, 100));
+
+        el.innerHTML = `
+            <div class="model-preview" role="button" tabindex="0" aria-label="Open ${name} in fullscreen viewer">
+                <img class="model-thumb" src="${escapeHTML(thumb)}" alt="${name} preview" loading="lazy">
+                <div class="play-overlay" aria-hidden="true">▶</div>
             </div>
-            <div class="model-poster" style="width:100%;height:220px;background:#181818 url('${thumb}') center/cover no-repeat;"></div>
-        </div>
-        <h3>${cfg?.meta?.name || folder}</h3>
-    `;
+            <div class="card-content">
+                <h3 class="model-title">${name}</h3>
+                <p class="model-description">${desc}</p>
+                <div class="card-stats">
+                    <span title="Likes">❤️ ${m.likeCount || 0}</span>
+                    <span title="Views">👁️ ${m.viewCount || 0}</span>
+                    <span title="Downloads">⬇️ ${m.downloadCount || 0}</span>
+                </div>
+                <div class="card-actions">
+                    <a class="btn-view btn-viewer" href="./Pages/Modelviewer/index.html#uid=${encodeURIComponent(m.uid)}&name=${encodeURIComponent(m.name || '')}">Open in Viewer</a>
+                    <a class="btn-view btn-sketchfab" href="${escapeHTML(m.viewerUrl)}" target="_blank" rel="noopener">Sketchfab ↗</a>
+                </div>
+            </div>
+        `;
 
-    container.appendChild(card);
-
-    // Lazy-load model-viewer when card is visible
-    const wrapper = card.querySelector(".model-wrapper");
-    const overlay = card.querySelector(".loading-overlay");
-    const poster = card.querySelector(".model-poster");
-    let loaded = false;
-
-    const observer = new window.IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !loaded) {
-                loaded = true;
-                // Replace poster with model-viewer
-                const mv = document.createElement("model-viewer");
-                mv.setAttribute("src", `${base}${folder}/${model}`);
-                mv.setAttribute("poster", thumb);
-                mv.setAttribute("camera-controls", "");
-                mv.setAttribute("auto-rotate", "");
-                mv.setAttribute("disable-zoom", "");
-                mv.style.width = "100%";
-                mv.style.height = "220px";
-                poster.replaceWith(mv);
-                mv.addEventListener("model-visibility", () => {
-                    overlay.style.display = "none";
-                });
-                enableSmoothRotation(card, mv);
-                obs.disconnect();
+        const preview = el.querySelector(".model-preview");
+        const open = () => openModal(m.uid, m.name);
+        preview.addEventListener("click", open);
+        preview.addEventListener("keydown", e => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                open();
             }
         });
-    }, { threshold: 0.1 });
-    observer.observe(card);
-}
 
-/* --------------------------- */
+        return el;
+    }
 
-loadProjects();
+    /* ---------------- MODAL ---------------- */
+    function openModal(uid, label) {
+        closeModal();
+
+        const modal = document.createElement("div");
+        modal.className = "sf-modal";
+        modal.setAttribute("role", "dialog");
+        modal.setAttribute("aria-modal", "true");
+        modal.setAttribute("aria-label", `${label} 3D viewer`);
+
+        modal.innerHTML = `
+            <div class="sf-modal-inner">
+                <iframe
+                    src="https://sketchfab.com/models/${encodeURIComponent(uid)}/embed?autostart=1&ui_infos=0&ui_watermark=0"
+                    title="${escapeHTML(label)} 3D model"
+                    allow="autoplay; fullscreen; xr-spatial-tracking"
+                    allowfullscreen></iframe>
+                <button class="sf-modal-close" aria-label="Close viewer">Close ✕</button>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        document.body.style.overflow = "hidden";
+        activeModal = modal;
+
+        modal.querySelector(".sf-modal-close").addEventListener("click", closeModal);
+        modal.addEventListener("click", e => {
+            if (e.target === modal) closeModal();
+        });
+
+        modal.querySelector(".sf-modal-close").focus();
+    }
+
+    function closeModal() {
+        if (!activeModal) return;
+        activeModal.remove();
+        activeModal = null;
+        document.body.style.overflow = "";
+    }
+
+    document.addEventListener("keydown", e => {
+        if (e.key === "Escape" && activeModal) closeModal();
+    });
+
+    /* ---------------- RENDER ---------------- */
+    function skeleton(n = 6) {
+        let html = "";
+        for (let i = 0; i < n; i++) {
+            html += `
+                <div class="skeleton-card" aria-hidden="true">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text short"></div>
+                </div>`;
+        }
+        grid.innerHTML = html;
+    }
+
+    function render(list) {
+        grid.innerHTML = "";
+        const frag = document.createDocumentFragment();
+        list.forEach(m => frag.appendChild(card(m)));
+        grid.appendChild(frag);
+        stats.textContent = `${list.length} projects`;
+    }
+
+    /* ---------------- FILTERS ---------------- */
+    function bindFilters() {
+        const buttons = document.querySelectorAll(".filter-btn");
+
+        const paint = () => {
+            buttons.forEach(b => {
+                const k = b.dataset.sort;
+                const isActive = k === sortKey;
+                b.classList.toggle("active", isActive);
+                b.classList.toggle("dir-desc", isActive && sortDir === "desc");
+                b.classList.toggle("dir-asc", isActive && sortDir === "asc");
+
+                let ind = b.querySelector(".sort-indicator");
+                if (isActive) {
+                    if (!ind) {
+                        ind = document.createElement("span");
+                        ind.className = "sort-indicator";
+                        b.appendChild(ind);
+                    }
+                    ind.textContent = sortDir === "desc" ? " ↓" : " ↑";
+                    ind.setAttribute("aria-label",
+                        sortDir === "desc" ? "descending" : "ascending");
+                    b.setAttribute("aria-pressed", "true");
+                } else {
+                    ind?.remove();
+                    b.setAttribute("aria-pressed", "false");
+                }
+            });
+        };
+
+        buttons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const t = btn.dataset.sort;
+
+                if (t === "reset") {
+                    sortKey = "date";
+                    sortDir = "desc";
+                } else if (t === sortKey) {
+                    sortDir = sortDir === "desc" ? "asc" : "desc";
+                } else {
+                    sortKey = t;
+                    sortDir = "desc";
+                }
+
+                paint();
+                render(sortData(models));
+            });
+        });
+
+        paint();
+    }
+
+    /* ---------------- SCROLL PROGRESS ---------------- */
+    function bindScrollProgress() {
+        if (!progress) return;
+        const update = () => {
+            const h = document.documentElement;
+            const max = h.scrollHeight - h.clientHeight;
+            const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+            progress.style.width = pct + "%";
+        };
+        document.addEventListener("scroll", update, { passive: true });
+        update();
+    }
+
+    /* ---------------- DROPDOWN ---------------- */
+    function bindDropdown() {
+        const dd = document.querySelector(".dropdown");
+        if (!dd) return;
+        const btn = dd.querySelector(".dropbtn");
+        const sync = () => btn.setAttribute("aria-expanded", dd.classList.contains("active"));
+        btn.addEventListener("click", e => {
+            e.stopPropagation();
+            dd.classList.toggle("active");
+            sync();
+        });
+        document.addEventListener("click", e => {
+            if (!dd.contains(e.target)) {
+                dd.classList.remove("active");
+                sync();
+            }
+        });
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && dd.classList.contains("active")) {
+                dd.classList.remove("active");
+                sync();
+                btn.focus();
+            }
+        });
+    }
+
+    /* ---------------- INIT ---------------- */
+    async function init() {
+        skeleton();
+        bindFilters();
+        bindScrollProgress();
+        bindDropdown();
+
+        try {
+            models = await fetchModels();
+            render(sortData(models));
+        } catch (e) {
+            console.error(e);
+            grid.innerHTML = `
+                <div class="error-card">
+                    <h3>Offline Mode Active</h3>
+                    <p>Could not reach Sketchfab. Check connection and try again.</p>
+                    <button class="retry-button" type="button">Retry</button>
+                </div>
+            `;
+            grid.querySelector(".retry-button").addEventListener("click", () => location.reload());
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
+})();

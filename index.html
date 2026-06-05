@@ -2,11 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="DiccChops portfolio — 3D artwork, tools, and experiments.">
+    <meta name="theme-color" content="#0a0a0f">
     <title>DiccChops Portfolio</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://api.sketchfab.com">
+    <link rel="preconnect" href="https://media.sketchfab.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="styles.css">
@@ -14,33 +18,38 @@
 
 <body>
 
-    <div class="scroll-progress"></div>
-    <div class="bg-orbs"></div>
-    <div class="noise-overlay"></div>
+    <a class="skip-link" href="#portfolio">Skip to projects</a>
+
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <div class="bg-orbs" aria-hidden="true"></div>
+    <div class="noise-overlay" aria-hidden="true"></div>
 
     <header>
         <div class="nav-container">
             <a href="#" class="logo">DiccChops</a>
 
-            <nav class="nav-links">
+            <nav class="nav-links" aria-label="Primary">
                 <a href="#">Home</a>
                 <a href="#portfolio">Portfolio</a>
-                <a href="#">Contact</a>
+                <a href="./Pages/ContactMe/contact.html">Contact</a>
 
                 <div class="dropdown">
-                    <button class="dropbtn">Projects ▼</button>
+                    <button class="dropbtn" type="button" aria-haspopup="true" aria-expanded="false">
+                        Projects <span class="dropdown-arrow" aria-hidden="true">▼</span>
+                    </button>
 
-                    <div class="dropdown-content">
-                        <a href="./pages/ArcStats/ArcStats.html">ArcStats</a>
-                        <a href="./pages/Cammo/index.html">Camo Lab</a>
-                        <a href="./pages/Chopped/index.html">Chopped Search</a>
-                        <a href="./pages/Layered/Layered.html">Layered</a>
-                        <a href="./pages/RTSfactory/index.html">RTS Factory</a>
-                        <a href="./pages/TileSetMaker/Tileset.html">Tile Set Maker</a>
-                        <a href="./pages/Twitchapistuff/twitch-api.html">Twitch API</a>
-                        <a href="./pages/Sifi/index.html">Sifi</a>
-                        <a href="./pages/Void/index.html">Void</a>
-                        <a href="./pages/Wow/index.html">Wow</a>
+                    <div class="dropdown-content" role="menu">
+                        <a href="./Pages/ArcStats/ArcStats.html" role="menuitem">ArcStats</a>
+                        <a href="./Pages/Cammo/index.html" role="menuitem">Camo Lab</a>
+                        <a href="./Pages/Chopped/index.html" role="menuitem">Chopped Search</a>
+                        <a href="./Pages/Layered/Layered.html" role="menuitem">Layered</a>
+                        <a href="./Pages/RTSfactory/index.html" role="menuitem">RTS Factory</a>
+                        <a href="./Pages/TileSetMaker/Tileset.html" role="menuitem">Tile Set Maker</a>
+                        <a href="./Pages/Twitchapistuff/twitch-api.html" role="menuitem">Twitch API</a>
+                        <a href="./Pages/Sifi/index.html" role="menuitem">Sifi</a>
+                        <a href="./Pages/Void/index.html" role="menuitem">Void</a>
+                        <a href="./Pages/Wow/index.html" role="menuitem">Wow</a>
+                        <a href="./Pages/Modelviewer/index.html" role="menuitem">Model Viewer</a>
                     </div>
                 </div>
             </nav>
@@ -49,24 +58,26 @@
 
     <main>
         <section class="hero-section">
+            <div class="hero-glow" aria-hidden="true"></div>
             <div class="hero-content">
                 <h1>Build. <span class="gradient-text">Create.</span> Share.</h1>
                 <p>Explore 3D artwork, tools, and experiments.</p>
+                <span class="hero-badge">Live from Sketchfab</span>
             </div>
         </section>
 
-        <section id="portfolio">
+        <section id="portfolio" aria-labelledby="portfolio-title">
             <div class="section-header">
-                <h2>Featured Projects</h2>
-                <span id="modelStats">Loading...</span>
+                <h2 id="portfolio-title" class="section-title">Featured Projects</h2>
+                <span id="modelStats" class="model-stats">Loading…</span>
             </div>
 
-            <div class="filter-bar">
-                <button class="filter-btn" data-sort="likes">❤️ Likes</button>
-                <button class="filter-btn" data-sort="views">👁 Views</button>
-                <button class="filter-btn" data-sort="downloads">⬇ Downloads</button>
-                <button class="filter-btn" data-sort="date">🕒 New</button>
-                <button class="filter-btn" data-sort="reset">⟳ Reset</button>
+            <div class="filter-bar" role="toolbar" aria-label="Sort projects">
+                <button class="filter-btn" type="button" data-sort="likes">❤️ Likes</button>
+                <button class="filter-btn" type="button" data-sort="views">👁 Views</button>
+                <button class="filter-btn" type="button" data-sort="downloads">📥 Downloads</button>
+                <button class="filter-btn active" type="button" data-sort="date">🕒 New</button>
+                <button class="filter-btn" type="button" data-sort="reset">⟳ Reset</button>
             </div>
 
             <div class="grid" id="projectGrid"></div>
@@ -77,204 +88,7 @@
         <p>© 2026 DiccChops</p>
     </footer>
 
-    <script>
-        (function () {
-            const USER = "DiccChops";
-            const API = `https://api.sketchfab.com/v3/models?user=${USER}&sort_by=-publishedAt&limit=24`;
-
-            const CACHE_KEY = "sf_models_v4";
-            const CACHE_TIME = 1000 * 60 * 60 * 6; // 6 hours
-
-            const grid = document.getElementById("projectGrid");
-            const stats = document.getElementById("modelStats");
-
-            let models = [];
-            let sortMode = "date";
-
-            /* ---------------- OFFLINE CACHE ---------------- */
-            function loadCache() {
-                try {
-                    const raw = localStorage.getItem(CACHE_KEY);
-                    if (!raw) return null;
-
-                    const data = JSON.parse(raw);
-                    if (Date.now() - data.time > CACHE_TIME) return null;
-
-                    return data.models;
-                } catch {
-                    return null;
-                }
-            }
-
-            function saveCache(data) {
-                try {
-                    localStorage.setItem(
-                        CACHE_KEY,
-                        JSON.stringify({ time: Date.now(), models: data })
-                    );
-                } catch { }
-            }
-
-            /* ---------------- SMART FETCH (MOBILE SAFE) ---------------- */
-            async function fetchModels(retry = 2) {
-                const cached = loadCache();
-                if (cached?.length) return cached;
-
-                for (let i = 0; i <= retry; i++) {
-                    try {
-                        const res = await fetch(API, {
-                            cache: "no-store",
-                            mode: "cors"
-                        });
-
-                        if (!res.ok) throw new Error("API fail");
-
-                        const json = await res.json();
-
-                        if (!json.results) throw new Error("Bad data");
-
-                        saveCache(json.results);
-                        return json.results;
-
-                    } catch (err) {
-                        console.warn(`Fetch attempt ${i + 1} failed`);
-
-                        await new Promise(r => setTimeout(r, 800 * (i + 1)));
-                    }
-                }
-
-                throw new Error("All fetch attempts failed");
-            }
-
-            /* ---------------- SORT ---------------- */
-            function sortData(list) {
-                const arr = [...list];
-
-                if (sortMode === "date") {
-                    return arr.sort((a, b) =>
-                        new Date(b.publishedAt) - new Date(a.publishedAt)
-                    );
-                }
-
-                const map = {
-                    likes: "likeCount",
-                    views: "viewCount",
-                    downloads: "downloadCount"
-                };
-
-                const key = map[sortMode];
-
-                return arr.sort((a, b) =>
-                    (b[key] || 0) - (a[key] || 0)
-                );
-            }
-
-            /* ---------------- CARD ---------------- */
-            function card(m) {
-                const el = document.createElement("div");
-                el.className = "sketchfab-card";
-
-                const thumb =
-                    m.thumbnails?.images?.[0]?.url ||
-                    `https://media.sketchfab.com/models/${m.uid}/thumbnails/default.jpg`;
-
-                el.innerHTML = `
-                <div class="model-preview">
-                    <img class="model-thumb" src="${thumb}">
-                    <div class="play-overlay">▶</div>
-                </div>
-
-                <div class="card-content">
-                    <h3>${m.name}</h3>
-                    <p>${(m.description || "").slice(0, 100)}</p>
-
-                    <div class="card-stats">
-                        ❤️ ${m.likeCount || 0}
-                        👁️ ${m.viewCount || 0}
-                        ⬇️ ${m.downloadCount || 0}
-                    </div>
-
-                    <a class="btn-view" href="${m.viewerUrl}" target="_blank">Open</a>
-                </div>
-            `;
-
-                el.querySelector(".model-preview").onclick = () => openModal(m.uid);
-                return el;
-            }
-
-            /* ---------------- FULLSCREEN MODAL (NEW) ---------------- */
-            function openModal(uid) {
-                const modal = document.createElement("div");
-                modal.style = `
-                position:fixed;inset:0;z-index:9999;
-                background:rgba(0,0,0,0.9);
-                display:flex;align-items:center;justify-content:center;
-            `;
-
-                modal.innerHTML = `
-                <div style="width:95vw;height:90vh;position:relative;">
-                    <iframe
-                        src="https://sketchfab.com/models/${uid}/embed?autostart=1&ui_infos=0&ui_watermark=0"
-                        style="width:100%;height:100%;border:0;border-radius:16px;">
-                    </iframe>
-
-                    <button id="closeModal"
-                        style="position:absolute;top:-40px;right:0;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;">
-                        Close ✕
-                    </button>
-                </div>
-            `;
-
-                document.body.appendChild(modal);
-
-                modal.querySelector("#closeModal").onclick = () => modal.remove();
-                modal.onclick = (e) => {
-                    if (e.target === modal) modal.remove();
-                };
-            }
-
-            /* ---------------- RENDER ---------------- */
-            function render(list) {
-                grid.innerHTML = "";
-                list.forEach(m => grid.appendChild(card(m)));
-                stats.textContent = `${list.length} projects`;
-            }
-
-            /* ---------------- INIT ---------------- */
-            async function init() {
-                try {
-                    models = await fetchModels();
-                    render(sortData(models));
-                } catch (e) {
-                    console.error(e);
-
-                    grid.innerHTML = `
-                    <div class="error-card">
-                        <h3>Offline Mode Active</h3>
-                        <p>Using cached data or fallback view</p>
-                        <button class="retry-button" onclick="location.reload()">
-                            Retry
-                        </button>
-                    </div>
-                `;
-                }
-            }
-
-            /* ---------------- FILTERS ---------------- */
-            document.querySelectorAll(".filter-btn").forEach(btn => {
-                btn.onclick = () => {
-                    const t = btn.dataset.sort;
-
-                    if (t === "reset") sortMode = "date";
-                    else sortMode = t;
-
-                    render(sortData(models));
-                };
-            });
-
-            init();
-        })();
-    </script>
+    <script src="main.js" defer></script>
 
 </body>
 </html>
