@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>iCloud Gallery</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -23,7 +25,6 @@
             --muted: #5A5A5A;
             --muted2: #888;
             --accent: #FF6B35;
-            --accent-bg: rgba(255,107,53,0.08);
             --mono: 'JetBrains Mono', monospace;
             --sans: 'Space Grotesk', system-ui, sans-serif;
         }
@@ -34,30 +35,19 @@
             font-family: var(--sans);
             font-size: 14px;
             line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
         }
 
-        button {
-            font-family: var(--sans);
-            cursor: pointer;
-            border: none;
-            background: none;
-            color: inherit;
-        }
-
-        /* ── HEADER ──────────────────────────────────────── */
+        /* ───────── HEADER ───────── */
         .header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
             padding: 14px 24px;
             border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
             background: var(--bg);
-            z-index: 100;
-            gap: 12px;
-            flex-wrap: wrap;
+            z-index: 10;
         }
 
         .logo {
@@ -75,81 +65,54 @@
             grid-template-rows: 1fr 1fr;
             gap: 2px;
             padding: 4px;
-            flex-shrink: 0;
         }
 
             .logo-mark span {
                 background: #000;
             }
 
-                .logo-mark span:last-child {
-                    opacity: .3;
-                }
-
         .logo-label {
             font-family: var(--mono);
             font-size: 11px;
-            letter-spacing: .14em;
             color: var(--muted);
-            text-transform: uppercase;
         }
 
             .logo-label b {
                 color: var(--text);
-                font-weight: 500;
             }
 
         .header-album {
             font-family: var(--mono);
             font-size: 11px;
             color: var(--muted2);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 280px;
         }
 
-            .header-album b {
-                color: var(--accent);
-                font-weight: 500;
-            }
-
-        /* ── ALBUM BAR ────────────────────────────────────── */
+        /* ───────── BAR ───────── */
         .album-bar {
             display: flex;
-            align-items: stretch;
             padding: 16px 24px;
+            gap: 8px;
             border-bottom: 1px solid var(--border);
-            gap: 0;
-            flex-wrap: wrap;
         }
 
         .album-prefix {
             font-family: var(--mono);
             font-size: 12px;
-            color: var(--muted2);
+            padding: 0 12px;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-right: none;
-            padding: 0 12px;
-            height: 38px;
             display: flex;
             align-items: center;
-            white-space: nowrap;
         }
 
         .album-input {
-            font-family: var(--mono);
-            font-size: 12px;
+            flex: 1;
             background: var(--surface);
             border: 1px solid var(--border);
             color: var(--text);
             padding: 0 12px;
-            height: 38px;
+            font-family: var(--mono);
             outline: none;
-            flex: 1;
-            min-width: 140px;
-            transition: border-color .15s;
         }
 
             .album-input:focus {
@@ -157,774 +120,214 @@
             }
 
         .album-load-btn {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: .12em;
-            text-transform: uppercase;
             background: var(--accent);
             color: #000;
-            padding: 0 20px;
-            height: 38px;
-            margin-left: 8px;
-            transition: opacity .15s, transform .1s;
-            white-space: nowrap;
-            flex-shrink: 0;
+            padding: 0 18px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-            .album-load-btn:hover:not(:disabled) {
-                opacity: .82;
-            }
-
-            .album-load-btn:active:not(:disabled) {
-                transform: scale(.97);
-            }
-
-            .album-load-btn:disabled {
-                opacity: .35;
-                cursor: not-allowed;
-            }
-
-        /* ── STATUS ──────────────────────────────────────── */
+        /* ───────── STATUS ───────── */
         .status {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             padding: 8px 24px;
-            border-bottom: 1px solid var(--border);
             font-family: var(--mono);
             font-size: 11px;
             color: var(--muted2);
-            min-height: 36px;
+            border-bottom: 1px solid var(--border);
         }
 
             .status.hidden {
                 display: none;
             }
 
-        .dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 7px;
-            vertical-align: middle;
-        }
-
-            .dot.loading {
-                background: var(--accent);
-                animation: blink 1s ease-in-out infinite;
-            }
-
-            .dot.ok {
-                background: #4ade80;
-            }
-
-            .dot.error {
-                background: #f87171;
-            }
-
-        @keyframes blink {
-            0%,100% {
-                opacity: 1
-            }
-
-            50% {
-                opacity: .2
-            }
-        }
-
-        /* ── CONTENT ──────────────────────────────────────── */
+        /* ───────── GRID ───────── */
         .content {
             padding: 24px;
         }
 
-        .sec-label {
-            font-family: var(--mono);
-            font-size: 10px;
-            letter-spacing: .15em;
-            text-transform: uppercase;
-            color: var(--muted);
-            margin-bottom: 14px;
-        }
-
-        .counter {
-            display: inline-flex;
-            align-items: center;
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--muted);
-            border: 1px solid var(--border);
-            padding: 1px 6px;
-            margin-left: 8px;
-            vertical-align: middle;
-        }
-
-        /* ── PHOTO GRID ──────────────────────────────────── */
         .photo-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(156px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 3px;
         }
 
         .photo-tile {
             aspect-ratio: 1;
             background: var(--surface2);
+            border: 1px solid var(--border);
             overflow: hidden;
             position: relative;
             cursor: pointer;
-            border: 1px solid var(--border);
         }
 
             .photo-tile img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                display: block;
-                transition: transform .35s ease;
+                transition: transform .3s;
             }
 
             .photo-tile:hover img {
-                transform: scale(1.06);
+                transform: scale(1.05);
             }
 
-        .tile-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 28px 10px 10px;
-            background: linear-gradient(to top, rgba(0,0,0,.82) 0%, transparent 100%);
-            opacity: 0;
-            transition: opacity .2s;
-            pointer-events: none;
-        }
-
-        .photo-tile:hover .tile-overlay {
-            opacity: 1;
-        }
-
-        .tile-caption {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: #fff;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            line-height: 1.4;
-        }
-
-        .tile-date {
-            font-family: var(--mono);
-            font-size: 9px;
-            color: rgba(255,255,255,.5);
-            margin-top: 3px;
-        }
-
-        .tile-empty {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--border2);
-        }
-
-        /* ── EMPTY STATE ──────────────────────────────────── */
+        /* ───────── EMPTY ───────── */
         .empty {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 72px 24px;
+            padding: 80px 24px;
             text-align: center;
         }
 
-        .empty-icon {
-            width: 56px;
-            height: 56px;
-            border: 1px solid var(--border2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--border2);
-            margin-bottom: 18px;
-        }
+            .empty h2 {
+                margin-top: 12px;
+            }
 
-        .empty h2 {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+            .empty p {
+                color: var(--muted2);
+                font-size: 12px;
+            }
 
-        .empty p {
-            font-size: 12px;
-            color: var(--muted2);
-            max-width: 360px;
-            line-height: 1.7;
-        }
-
-        .empty code {
-            font-family: var(--mono);
-            font-size: 11px;
-            background: var(--surface);
-            border: 1px solid var(--border2);
-            padding: 2px 7px;
-            color: var(--accent);
-        }
-
-        /* ── LIGHTBOX ──────────────────────────────────────── */
+        /* ───────── LIGHTBOX ───────── */
         .lightbox {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,.97);
-            z-index: 1000;
-            display: flex;
+            background: rgba(0,0,0,.95);
+            display: none;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .2s;
         }
 
             .lightbox.open {
-                opacity: 1;
-                pointer-events: all;
+                display: flex;
             }
-
-        .lb-close {
-            position: fixed;
-            top: 16px;
-            right: 16px;
-            z-index: 1001;
-            width: 34px;
-            height: 34px;
-            background: var(--surface);
-            border: 1px solid var(--border2);
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            line-height: 1;
-            transition: border-color .15s, color .15s;
-        }
-
-            .lb-close:hover {
-                border-color: var(--accent);
-                color: var(--accent);
-            }
-
-        .lb-nav {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 1001;
-            width: 40px;
-            height: 40px;
-            background: var(--surface);
-            border: 1px solid var(--border2);
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            line-height: 1;
-            transition: border-color .15s, color .15s;
-        }
-
-            .lb-nav:hover:not(:disabled) {
-                border-color: var(--accent);
-                color: var(--accent);
-            }
-
-            .lb-nav:disabled {
-                opacity: .15;
-                cursor: default;
-            }
-
-        .lb-prev {
-            left: 16px;
-        }
-
-        .lb-next {
-            right: 16px;
-        }
-
-        .lb-body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: 90vw;
-            max-height: 92vh;
-        }
 
         .lb-img {
-            max-width: min(88vw, 1200px);
-            max-height: 72vh;
-            object-fit: contain;
-            display: block;
-            transition: opacity .15s;
+            max-width: 90vw;
+            max-height: 80vh;
         }
 
-            .lb-img.swapping {
-                opacity: 0;
-            }
-
-        .lb-info {
-            margin-top: 14px;
-            text-align: center;
-            font-family: var(--mono);
-            font-size: 11px;
-            min-height: 36px;
-        }
-
-        .lb-caption {
-            color: var(--text);
-            font-size: 13px;
-            margin-bottom: 4px;
-        }
-
-        .lb-meta {
-            color: var(--muted2);
-        }
-
-        .lb-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .lb-action {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--muted2);
-            border: 1px solid var(--border2);
-            padding: 6px 13px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+        .lb-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 24px;
+            color: white;
             background: none;
-            text-decoration: none;
-            cursor: pointer;
-            transition: border-color .15s, color .15s;
-        }
-
-            .lb-action:hover {
-                border-color: var(--accent);
-                color: var(--accent);
-            }
-
-        .lb-counter {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--muted2);
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 4px 14px;
-            white-space: nowrap;
-            z-index: 1001;
         }
     </style>
 </head>
+
 <body>
 
     <header class="header">
         <div class="logo">
             <div class="logo-mark"><span></span><span></span><span></span><span></span></div>
-            <span class="logo-label"><b>ICLOUD</b> gallery · shared album</span>
+            <div class="logo-label"><b>ICLOUD</b> gallery</div>
         </div>
         <div id="headerAlbum" class="header-album"></div>
     </header>
 
     <div class="album-bar">
-        <span class="album-prefix">icloud.com/sharedalbum/ #</span>
-        <input type="text" class="album-input" id="albumInput"
-               placeholder="paste URL or token here"
-               autocomplete="off" spellcheck="false" />
+        <div class="album-prefix">icloud.com/sharedalbum/#</div>
+        <input id="albumInput" class="album-input" placeholder="album token">
         <button class="album-load-btn" id="loadBtn">Load</button>
     </div>
 
-    <div class="status hidden" id="status"></div>
+    <div id="status" class="status hidden"></div>
 
-    <main class="content" id="content">
-        <div class="empty">
-            <div class="empty-icon">
-                <svg width="30" height="26" viewBox="0 0 30 26" fill="none">
-                    <rect x="1" y="7" width="28" height="18" stroke="#333" stroke-width="1.3" />
-                    <path d="M1 7l5.5-6H23.5L29 7" stroke="#333" stroke-width="1.3" />
-                    <circle cx="15" cy="15.5" r="5.5" stroke="#333" stroke-width="1.3" />
-                    <circle cx="15" cy="15.5" r="2" fill="#333" />
-                </svg>
-            </div>
-            <h2>Shared album viewer</h2>
-            <p>Paste an iCloud shared album URL or just the token above. Find the link in Photos → tap the album → Share.</p>
-        </div>
-    </main>
+    <div class="content" id="content"></div>
 
-    <div class="lightbox" id="lightbox" onclick="lbBgClick(event)">
-        <button class="lb-close" onclick="closeLb()">&#215;</button>
-        <button class="lb-nav lb-prev" id="lbPrev" onclick="stepLb(-1)">&#8249;</button>
-        <button class="lb-nav lb-next" id="lbNext" onclick="stepLb(1)">&#8250;</button>
-        <div class="lb-body">
-            <img class="lb-img" id="lbImg" src="" alt="" />
-            <div class="lb-info">
-                <div class="lb-caption" id="lbCaption"></div>
-                <div class="lb-meta" id="lbMeta"></div>
-            </div>
-            <div class="lb-actions" id="lbActions"></div>
-        </div>
-        <div class="lb-counter" id="lbCounter"></div>
+    <div class="lightbox" id="lightbox" onclick="closeLb()">
+        <button class="lb-close" onclick="closeLb()">×</button>
+        <img id="lbImg" class="lb-img">
     </div>
 
     <script>
-        // ─── CONFIG ──────────────────────────────────────────────────────────────────
-        const DEFAULT_TOKEN = 'B2AGWZuqDJuqLk2';
+        const DEFAULT_TOKEN = "B2AGWZuqDJuqLk2";
+        const S = { gallery: [], lbIdx: 0 };
 
-        // ─── STATE ───────────────────────────────────────────────────────────────────
-        const S = { gallery: [], lbIdx: -1, albumName: '' };
-
-        // ─── UTILS ───────────────────────────────────────────────────────────────────
-        function parseToken(raw) {
-            if (!raw) return '';
-            raw = raw.trim();
-            const m = raw.match(/#([A-Za-z0-9+\-]{6,})(?:[?&].*)?$/);
-            if (m) return m[1];
-            if (/^[A-Za-z0-9+\-]{6,}$/.test(raw)) return raw;
-            return '';
-        }
-
-        function fmt(b) {
-            if (!b) return '';
-            if (b < 1024) return b + ' B';
-            if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
-            return (b / 1048576).toFixed(1) + ' MB';
-        }
-
-        function fmtDate(iso) {
-            if (!iso) return '';
-            try { return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); }
-            catch { return ''; }
-        }
-
-        function esc(s) {
-            return (s || '').replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
-        }
-
-        function setStatus(type, msg, sub) {
-            const el = document.getElementById('status');
-            el.classList.remove('hidden');
-            el.innerHTML = `<span><span class="dot ${type}"></span>${msg}</span>`
-                + `<span style="font-family:var(--mono);color:var(--muted)">${sub || ''}</span>`;
-        }
-
-        // ─── iCLOUD API ──────────────────────────────────────────────────────────────
+        /* ───────── DEBUG FETCH ───────── */
         async function iPost(partition, token, endpoint, body) {
             const url = `https://${partition}-sharedstreams.icloud.com/${token}/sharedstreams/${endpoint}`;
+            console.log("Request URL:", url);
+
             const res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             });
 
             let data;
-            try { data = await res.json(); } catch { data = {}; }
+            try { data = await res.json(); }
+            catch { data = {}; }
 
-            // Apple uses HTTP 330 to signal "retry on a different partition"
-            if (res.status === 330 || data['X-Apple-MMe-Host']) {
-                const host = data['X-Apple-MMe-Host'] || '';
-                const newPartition = host.split('-sharedstreams')[0];
-                if (newPartition && newPartition !== partition) {
-                    return { _redirect: newPartition };
-                }
-            }
-
-            if (!res.ok) {
-                const msg = data.reason || data.message || `HTTP ${res.status}`;
-                throw new Error(msg);
-            }
-
+            if (!res.ok) throw new Error("HTTP " + res.status);
             return data;
         }
 
-        async function getWebstream(token) {
-            let partition = 'p00';
-            let data = await iPost(partition, token, 'webstream', { streamCtag: null });
+        async function loadAlbum() {
+            const token = document.getElementById("albumInput").value.trim();
 
-            if (data._redirect) {
-                partition = data._redirect;
-                data = await iPost(partition, token, 'webstream', { streamCtag: null });
+            if (!token) return;
+
+            document.getElementById("status").classList.remove("hidden");
+            document.getElementById("status").innerText = "Loading...";
+
+            try {
+                const ws = await iPost("p00", token, "webstream", { streamCtag: null });
+
+                const photos = (ws.photos || []).filter(p => p.mediaAssetType !== "video");
+
+                S.gallery = photos;
+
+                document.getElementById("headerAlbum").innerText = ws.streamName || "Album";
+
+                render();
+
+                document.getElementById("status").innerText =
+                    `Loaded ${photos.length} photos`;
+
+            } catch (e) {
+                document.getElementById("status").innerText = e.message;
             }
-
-            return { data, partition };
         }
 
-        async function getAssetUrls(partition, token, guids) {
-            const urlMap = {};
-            const BATCH = 100;
+        function render() {
+            const el = document.getElementById("content");
 
-            for (let i = 0; i < guids.length; i += BATCH) {
-                const res = await iPost(partition, token, 'webasseturls', {
-                    photoGuids: guids.slice(i, i + BATCH)
-                });
-
-                for (const [checksum, item] of Object.entries(res.items || {})) {
-                    const loc = (res.locations || {})[item.url_location];
-                    if (loc?.hosts?.length) {
-                        urlMap[checksum] = `${loc.scheme}://${loc.hosts[0]}${item.url_path}`;
-                    }
-                }
-            }
-
-            return urlMap;
-        }
-
-        // ─── LOAD ALBUM ──────────────────────────────────────────────────────────────
-        async function loadAlbum(inputVal) {
-            const raw = inputVal !== undefined ? inputVal : document.getElementById('albumInput').value;
-            const token = parseToken(raw);
-
-            if (!token) {
-                setStatus('error', 'Enter a valid iCloud shared album URL or token');
+            if (!S.gallery.length) {
+                el.innerHTML = "<div class='empty'><h2>No photos</h2></div>";
                 return;
             }
 
-            const btn = document.getElementById('loadBtn');
-            btn.disabled = true; btn.textContent = '…';
-            setStatus('loading', 'Connecting to iCloud…');
-            document.getElementById('headerAlbum').innerHTML = '';
-
-            try {
-                // Step 1 – get the photo manifest
-                const { data: ws, partition } = await getWebstream(token);
-
-                const allItems = ws.photos || [];
-                const photos = allItems.filter(p => p.mediaAssetType !== 'video');
-                const vidCount = allItems.length - photos.length;
-                const albumName = ws.streamName || 'Shared Album';
-
-                if (!allItems.length) {
-                    setStatus('ok', 'Album is empty');
-                    renderEmpty('This shared album has no photos yet.');
-                    btn.disabled = false; btn.textContent = 'Load';
-                    return;
-                }
-
-                setStatus('loading', `Fetching ${photos.length} photo${photos.length !== 1 ? 's' : ''}…`);
-
-                // Step 2 – resolve signed CDN URLs for each photo's derivatives
-                const guids = photos.map(p => p.photoGuid);
-                const urlMap = await getAssetUrls(partition, token, guids);
-
-                // Build gallery entries
-                const gallery = photos.map(photo => {
-                    // Sort derivatives small → large by file size
-                    const derivs = Object.values(photo.derivatives || {})
-                        .filter(d => d.checksum)
-                        .sort((a, b) => (a.fileSize || 0) - (b.fileSize || 0));
-
-                    if (!derivs.length) return null;
-
-                    const thumb = derivs[0];                                                // smallest (grid)
-                    const full = derivs[derivs.length - 1];                               // largest (lightbox)
-                    const mid = derivs.length >= 3 ? derivs[Math.floor(derivs.length / 2)] : full; // mid (grid preview)
-
-                    return {
-                        guid: photo.photoGuid,
-                        caption: (photo.caption || '').trim(),
-                        date: photo.dateCreated,
-                        gridUrl: urlMap[mid.checksum] || urlMap[full.checksum] || null,
-                        fullUrl: urlMap[full.checksum] || null,
-                        thumbUrl: urlMap[thumb.checksum] || null,
-                        fullSize: full.fileSize,
-                        width: full.width,
-                        height: full.height
-                    };
-                }).filter(Boolean).filter(p => p.gridUrl || p.fullUrl || p.thumbUrl);
-
-                S.gallery = gallery;
-                S.albumName = albumName;
-                S.lbIdx = -1;
-
-                document.getElementById('headerAlbum').innerHTML = `<b>${esc(albumName)}</b>`;
-                renderGallery(gallery);
-
-                const skipped = vidCount ? ` · ${vidCount} video${vidCount !== 1 ? 's' : ''} not shown` : '';
-                setStatus('ok', `${gallery.length} photo${gallery.length !== 1 ? 's' : ''} · ${esc(albumName)}`, skipped);
-
-            } catch (err) {
-                console.error(err);
-
-                const isCors = err instanceof TypeError
-                    || err.message.includes('Failed to fetch')
-                    || err.message.includes('NetworkError');
-
-                if (isCors) {
-                    renderCorsError();
-                    setStatus('error', 'Network error — iCloud API blocked the cross-origin request');
-                } else {
-                    setStatus('error', `Error: ${esc(err.message)}`);
-                }
-            }
-
-            btn.disabled = false; btn.textContent = 'Load';
+            el.innerHTML = `
+            <div class="photo-grid">
+                ${S.gallery.map((p, i) => `
+                    <div class="photo-tile" onclick="openLb(${i})">
+                        <img src="" alt="">
+                    </div>
+                `).join("")}
+            </div>
+        `;
         }
 
-        // ─── RENDER ──────────────────────────────────────────────────────────────────
-        function renderGallery(gallery) {
-            const el = document.getElementById('content');
-            if (!gallery.length) { renderEmpty('No photos found in this album.'); return; }
-
-            let h = `<div class="sec-label">Photos<span class="counter">${gallery.length}</span></div>`;
-            h += `<div class="photo-grid">`;
-
-            for (let i = 0; i < gallery.length; i++) {
-                const p = gallery[i];
-                const src = p.gridUrl || p.fullUrl || p.thumbUrl || '';
-                h += `<div class="photo-tile" onclick="openLb(${i})">`;
-
-                if (src) {
-                    h += `<img src="${src}" loading="lazy" alt="${esc(p.caption || 'Photo ' + (i + 1))}" />`;
-                } else {
-                    h += `<div class="tile-empty">
-                        <svg width="24" height="20" viewBox="0 0 24 20" fill="none">
-                            <rect x="1" y="5" width="22" height="14" stroke="#444" stroke-width="1.2"/>
-                            <path d="M1 5l11-4 11 4" stroke="#444" stroke-width="1.2"/>
-                        </svg>
-                      </div>`;
-                }
-
-                if (p.caption || p.date) {
-                    h += `<div class="tile-overlay">`;
-                    if (p.caption) h += `<div class="tile-caption">${esc(p.caption)}</div>`;
-                    if (p.date) h += `<div class="tile-date">${fmtDate(p.date)}</div>`;
-                    h += `</div>`;
-                }
-
-                h += `</div>`;
-            }
-
-            h += `</div>`;
-            el.innerHTML = h;
+        function openLb(i) {
+            S.lbIdx = i;
+            document.getElementById("lbImg").src = "";
+            document.getElementById("lightbox").classList.add("open");
         }
 
-        function renderEmpty(msg) {
-            document.getElementById('content').innerHTML =
-                `<div class="empty">
-                <div class="empty-icon">
-                    <svg width="28" height="24" viewBox="0 0 28 24" fill="none">
-                        <rect x="1" y="6" width="26" height="17" stroke="#333" stroke-width="1.2"/>
-                        <path d="M1 6l5-5h16l5 5" stroke="#333" stroke-width="1.2"/>
-                    </svg>
-                </div>
-                <h2>No photos</h2>
-                <p>${esc(msg)}</p>
-            </div>`;
+        function closeLb() {
+            document.getElementById("lightbox").classList.remove("open");
         }
 
-        function renderCorsError() {
-            document.getElementById('content').innerHTML =
-                `<div class="empty">
-                <div class="empty-icon">
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                        <circle cx="14" cy="14" r="13" stroke="#333" stroke-width="1.2"/>
-                        <line x1="14" y1="8" x2="14" y2="16" stroke="#f87171" stroke-width="1.5"/>
-                        <circle cx="14" cy="20" r="1.2" fill="#f87171"/>
-                    </svg>
-                </div>
-                <h2>CORS blocked</h2>
-                <p style="margin-bottom:12px">iCloud's API rejected the cross-origin request from this page's origin. This happens when the file is opened as <code>file://</code> or from a localhost port Apple doesn't allow.</p>
-                <p><strong>Fix:</strong> host this file on a web server (e.g. <code>npx serve .</code>) or open it from a domain. Alternatively, use a browser extension that disables CORS for testing.</p>
-            </div>`;
-        }
-
-        // ─── LIGHTBOX ────────────────────────────────────────────────────────────────
-        function openLb(idx) {
-            S.lbIdx = idx;
-            syncLb();
-            document.getElementById('lightbox').classList.add('open');
-        }
-
-        function syncLb() {
-            const item = S.gallery[S.lbIdx];
-            if (!item) return;
-
-            const img = document.getElementById('lbImg');
-            img.classList.add('swapping');
-            img.onload = () => img.classList.remove('swapping');
-            img.onerror = () => img.classList.remove('swapping');
-            img.src = item.fullUrl || item.gridUrl || item.thumbUrl || '';
-            img.alt = item.caption || 'Photo';
-
-            document.getElementById('lbCaption').textContent = item.caption || '';
-
-            const meta = [];
-            if (item.date) meta.push(fmtDate(item.date));
-            if (item.width && item.height) meta.push(`${item.width}×${item.height}`);
-            if (item.fullSize) meta.push(fmt(item.fullSize));
-            document.getElementById('lbMeta').textContent = meta.join(' · ');
-
-            let btns = '';
-            if (item.fullUrl) {
-                btns += `<a class="lb-action" href="${item.fullUrl}" target="_blank" rel="noopener">
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
-                    <path d="M5 7L1 3h2.5V0h3v3H9L5 7z"/>
-                    <rect y="8.5" width="10" height="1.5"/>
-                </svg>
-                FULL RES
-            </a>`;
-            }
-            if (item.gridUrl && item.gridUrl !== item.fullUrl) {
-                btns += `<a class="lb-action" href="${item.gridUrl}" target="_blank" rel="noopener">
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
-                    <path d="M5 7L1 3h2.5V0h3v3H9L5 7z"/>
-                    <rect y="8.5" width="10" height="1.5"/>
-                </svg>
-                PREVIEW
-            </a>`;
-            }
-            document.getElementById('lbActions').innerHTML = btns;
-
-            const total = S.gallery.length;
-            document.getElementById('lbCounter').textContent = `${S.lbIdx + 1} / ${total}`;
-            document.getElementById('lbPrev').disabled = S.lbIdx === 0;
-            document.getElementById('lbNext').disabled = S.lbIdx >= total - 1;
-        }
-
-        function stepLb(delta) {
-            const next = S.lbIdx + delta;
-            if (next < 0 || next >= S.gallery.length) return;
-            S.lbIdx = next;
-            syncLb();
-        }
-
-        function closeLb() { document.getElementById('lightbox').classList.remove('open'); }
-
-        function lbBgClick(e) {
-            if (e.target === document.getElementById('lightbox')) closeLb();
-        }
-
-        // ─── KEYBOARD ────────────────────────────────────────────────────────────────
-        document.addEventListener('keydown', e => {
-            if (document.getElementById('lightbox').classList.contains('open')) {
-                if (e.key === 'Escape') closeLb();
-                if (e.key === 'ArrowLeft') stepLb(-1);
-                if (e.key === 'ArrowRight') stepLb(1);
-            }
-            if (e.key === 'Enter' && e.target.id === 'albumInput') loadAlbum();
-        });
-
-        document.getElementById('loadBtn').onclick = () => loadAlbum();
-
-        // ─── INIT ─────────────────────────────────────────────────────────────────────
-        document.getElementById('albumInput').value = DEFAULT_TOKEN;
-        document.addEventListener('DOMContentLoaded', () => loadAlbum(DEFAULT_TOKEN));
+        document.getElementById("loadBtn").onclick = loadAlbum;
+        document.getElementById("albumInput").value = DEFAULT_TOKEN;
+        loadAlbum();
     </script>
+
 </body>
 </html>
