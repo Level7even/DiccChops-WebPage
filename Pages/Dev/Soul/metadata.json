@@ -1,0 +1,6 @@
+{
+  "name": "Soul Ledger & Trade",
+  "description": "An ethereal multiplayer environment where players can answer cryptic personality questions to manifest their unique soul cards, store them, and enter proposals to trade souls on a real-time ledger.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

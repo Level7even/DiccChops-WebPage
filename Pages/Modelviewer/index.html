@@ -2,13 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom 3D Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Custom 3D Viewer | Sketchfab Studio</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: #0a0f1e;
             color: #eef4ff;
             overflow: hidden;
@@ -23,24 +27,25 @@
             width: 100%;
         }
 
+        /* Modern glass header */
         .header {
             background: rgba(15, 25, 45, 0.85);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
             padding: 12px 24px;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
             gap: 15px;
-            border-bottom: 1px solid rgba(72, 187, 255, 0.25);
+            border-bottom: 1px solid rgba(72, 187, 255, 0.3);
             z-index: 20;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
         .title h1 {
             font-size: 1.3rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #fff, #7dd3fc);
+            background: linear-gradient(135deg, #ffffff, #7dd3fc);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
@@ -57,9 +62,13 @@
             text-decoration: none;
             font-size: 0.8rem;
             margin-right: 12px;
+            transition: opacity 0.2s;
         }
 
-            .back-link:hover { text-decoration: underline; }
+            .back-link:hover {
+                text-decoration: underline;
+                opacity: 0.8;
+            }
 
         .controls {
             display: flex;
@@ -71,12 +80,18 @@
         .model-input-group {
             display: flex;
             gap: 8px;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.55);
             padding: 4px 12px;
             border-radius: 60px;
             backdrop-filter: blur(4px);
             border: 1px solid #2d3a5e;
+            transition: all 0.2s;
         }
+
+            .model-input-group:focus-within {
+                border-color: #5aa9dd;
+                box-shadow: 0 0 6px rgba(90, 169, 221, 0.3);
+            }
 
             .model-input-group input {
                 background: transparent;
@@ -84,35 +99,42 @@
                 color: white;
                 padding: 8px 6px;
                 font-size: 0.85rem;
-                width: 240px;
+                width: 260px;
                 outline: none;
                 font-family: monospace;
             }
 
-                .model-input-group input::placeholder { color: #8a9bb5; }
+                .model-input-group input::placeholder {
+                    color: #8a9bb5;
+                    font-family: 'Inter', monospace;
+                }
 
             .model-input-group button {
                 background: #2c3e66;
                 border: none;
                 color: white;
-                padding: 6px 16px;
+                padding: 6px 18px;
                 border-radius: 40px;
                 cursor: pointer;
                 font-weight: 600;
-                transition: background 0.2s, transform 0.2s;
+                transition: all 0.2s ease;
             }
 
                 .model-input-group button:hover {
                     background: #3b5a8c;
-                    transform: scale(0.97);
+                    transform: scale(0.96);
+                }
+
+                .model-input-group button:active {
+                    transform: scale(0.94);
                 }
 
         .env-panel {
             display: flex;
             gap: 12px;
             align-items: center;
-            background: rgba(0,0,0,0.4);
-            padding: 6px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 18px;
             border-radius: 60px;
             backdrop-filter: blur(4px);
         }
@@ -122,44 +144,60 @@
                 font-weight: 500;
             }
 
-        .color-preview {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 2px solid white;
+        .color-wrap {
+            position: relative;
+            display: inline-block;
+            width: 30px;
+            height: 30px;
             cursor: pointer;
-            background: #0a0f1e;
         }
+
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.8);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+            cursor: pointer;
+        }
+
+            .color-preview:hover {
+                transform: scale(1.05);
+            }
 
         #bgColorPicker {
             opacity: 0;
             position: absolute;
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             cursor: pointer;
-            left: 0; top: 0;
-        }
-
-        .color-wrap {
-            position: relative;
-            display: inline-block;
-            width: 28px;
-            height: 28px;
+            left: 0;
+            top: 0;
+            border-radius: 50%;
         }
 
         .env-btn {
             background: #1e2a3a;
             border: none;
             color: white;
-            padding: 6px 14px;
+            padding: 6px 16px;
             border-radius: 30px;
             font-size: 0.75rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            backdrop-filter: blur(2px);
         }
 
-            .env-btn:hover { background: #2d4a6e; }
+            .env-btn:hover {
+                background: #2d4a6e;
+                transform: translateY(-1px);
+            }
+
+            .env-btn:active {
+                transform: translateY(1px);
+            }
 
         .viewer-container {
             flex: 1;
@@ -175,87 +213,155 @@
             display: block;
         }
 
+        /* Loading Overlay Modern */
         .loading-overlay {
             position: absolute;
             inset: 0;
-            background: #0a0f1e;
+            background: rgba(10, 15, 30, 0.92);
+            backdrop-filter: blur(12px);
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            gap: 16px;
+            gap: 20px;
             z-index: 30;
-            transition: opacity 0.4s;
+            transition: opacity 0.35s ease, visibility 0.35s;
+            opacity: 1;
+            visibility: visible;
         }
 
             .loading-overlay.hidden {
                 opacity: 0;
+                visibility: hidden;
                 pointer-events: none;
             }
 
         .spinner {
-            width: 48px;
-            height: 48px;
+            width: 50px;
+            height: 50px;
             border: 4px solid #2c3e66;
             border-top: 4px solid #5aa9dd;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 0.9s linear infinite;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-message {
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            background: rgba(0,0,0,0.5);
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.9rem;
         }
 
         .info-note {
             position: absolute;
-            bottom: 12px;
-            right: 16px;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            padding: 5px 12px;
-            border-radius: 20px;
+            bottom: 14px;
+            right: 18px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(10px);
+            padding: 6px 14px;
+            border-radius: 40px;
             font-size: 0.7rem;
             z-index: 25;
             pointer-events: none;
             font-family: monospace;
-            color: #bbb;
+            color: #ccc;
+            font-weight: 500;
         }
 
+        /* Error Pane */
         .error-pane {
+            position: absolute;
+            inset: 0;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             align-items: center;
             justify-content: center;
-            height: 100%;
-            color: #ff9f7c;
+            background: rgba(10, 15, 30, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 35;
+            color: #ffae8c;
             text-align: center;
             padding: 2rem;
         }
 
+            .error-pane h3 {
+                font-size: 1.5rem;
+                font-weight: 600;
+            }
+
+            .error-pane p {
+                max-width: 400px;
+                opacity: 0.85;
+            }
+
             .error-pane button {
                 background: #2d4a6e;
                 border: none;
-                padding: 8px 20px;
-                border-radius: 30px;
+                padding: 10px 28px;
+                border-radius: 40px;
                 color: white;
                 cursor: pointer;
-                font-family: inherit;
                 font-weight: 600;
+                font-size: 0.9rem;
+                transition: 0.2s;
             }
+
+                .error-pane button:hover {
+                    background: #3e6a98;
+                    transform: scale(0.98);
+                }
+
+        /* small toast for feedback */
+        .toast-message {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e2f3fcc;
+            backdrop-filter: blur(16px);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            z-index: 100;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            font-weight: 500;
+            border: 1px solid #5aa9dd66;
+        }
 
         @media (max-width: 780px) {
             .header {
                 flex-direction: column;
                 align-items: stretch;
-                padding: 12px;
+                padding: 12px 16px;
             }
 
-            .controls { justify-content: space-between; }
+            .controls {
+                justify-content: space-between;
+            }
 
-            .model-input-group input { width: 180px; }
+            .model-input-group input {
+                width: 180px;
+            }
 
-            .env-panel { flex-wrap: wrap; }
+            .env-panel {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .title h1 {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -263,224 +369,416 @@
     <div class="app">
         <div class="header">
             <div class="title">
-                <a class="back-link" href="../../index.html">← Back to portfolio</a>
+                <a class="back-link" href="../../index.html" aria-label="Back to Portfolio">← Back to portfolio</a>
                 <h1 id="modelTitle">Custom Environment Viewer</h1>
-                <p>Sketchfab model in your own background & controls</p>
+                <p>Sketchfab model • Custom BG • Full Controls</p>
             </div>
             <div class="controls">
                 <div class="model-input-group">
-                    <input type="text" id="modelIdInput" placeholder="Sketchfab Model ID or URL">
-                    <button id="loadModelBtn" type="button">Load</button>
+                    <input type="text" id="modelIdInput" placeholder="Model ID or Sketchfab URL" spellcheck="false">
+                    <button id="loadModelBtn" aria-label="Load 3D model">Load</button>
                 </div>
                 <div class="env-panel">
-                    <span>BG</span>
-                    <div class="color-wrap">
+                    <span>🎨 BG</span>
+                    <div class="color-wrap" aria-label="Background color picker">
                         <div class="color-preview" id="bgPreview"></div>
                         <input type="color" id="bgColorPicker" value="#0a0f1e">
                     </div>
-                    <button id="resetCameraBtn" class="env-btn" type="button">Reset Camera</button>
-                    <button id="toggleUIBtn" class="env-btn" type="button">Hide UI</button>
-                    <button id="autoRotateBtn" class="env-btn" type="button">Auto Rotate</button>
+                    <button id="resetCameraBtn" class="env-btn" aria-label="Reset camera">📷 Reset</button>
+                    <button id="toggleUIBtn" class="env-btn" aria-label="Toggle UI">🔘 Hide UI</button>
+                    <button id="autoRotateBtn" class="env-btn" aria-label="Auto rotate">🔄 Auto Rotate</button>
                 </div>
             </div>
         </div>
         <div class="viewer-container">
-            <iframe id="api-frame" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
+            <iframe id="api-frame" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen title="Sketchfab 3D Viewer"></iframe>
             <div class="loading-overlay" id="loadingOverlay">
                 <div class="spinner"></div>
-                <div id="loadingMsg">Paste a Sketchfab model ID or URL and click Load.</div>
-                <div style="font-size:12px; opacity:0.6;">Or open a project from the portfolio.</div>
+                <div class="loading-message" id="loadingMsg">✨ Paste a Sketchfab model ID or URL and click Load.</div>
+                <div style="font-size:12px; opacity:0.5;">Supports public models | Custom background sync</div>
             </div>
-            <div class="info-note">Custom BG | Sketchfab Viewer API</div>
+            <div class="info-note">🎛️ Custom BG | Sketchfab API</div>
         </div>
     </div>
 
     <script src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js"></script>
-
     <script>
-    (function () {
-        let api = null;
-        let uiVisible = true;
-        let autoRotating = false;
-        let bgColor = "#0a0f1e";
+        (function () {
+            // ---------- DOM elements ----------
+            const iframe = document.getElementById('api-frame');
+            const input = document.getElementById('modelIdInput');
+            const loadBtn = document.getElementById('loadModelBtn');
+            const overlay = document.getElementById('loadingOverlay');
+            const loadingMsgSpan = document.getElementById('loadingMsg');
+            const bgPicker = document.getElementById('bgColorPicker');
+            const bgPreview = document.getElementById('bgPreview');
+            const resetBtn = document.getElementById('resetCameraBtn');
+            const toggleUIBtn = document.getElementById('toggleUIBtn');
+            const autoRotateBtn = document.getElementById('autoRotateBtn');
+            const modelTitleSpan = document.getElementById('modelTitle');
 
-        const iframe = document.getElementById('api-frame');
-        const input = document.getElementById('modelIdInput');
-        const loadBtn = document.getElementById('loadModelBtn');
-        const overlay = document.getElementById('loadingOverlay');
-        const loadingMsg = document.getElementById('loadingMsg');
-        const spinner = overlay.querySelector('.spinner');
-        const bgPicker = document.getElementById('bgColorPicker');
-        const bgPreview = document.getElementById('bgPreview');
-        const resetBtn = document.getElementById('resetCameraBtn');
-        const toggleUIBtn = document.getElementById('toggleUIBtn');
-        const autoRotateBtn = document.getElementById('autoRotateBtn');
-        const modelTitle = document.getElementById('modelTitle');
+            // ---------- State ----------
+            let api = null;                 // Sketchfab API instance
+            let uiVisible = true;          // current UI visibility state
+            let autoRotating = false;      // auto-rotate state
+            let bgColor = "#0a0f1e";       // current background color
+            let currentModelUid = null;    // loaded model uid
+            let isLoading = false;          // prevent concurrent loads
 
-        function extractUid(raw) {
-            if (!raw) return null;
-            const s = String(raw).trim();
-            const patterns = [
-                /sketchfab\.com\/3d-models\/[^/?#]*-([a-f0-9]{20,})/i,
-                /sketchfab\.com\/(?:3d-models|models)\/([a-f0-9]{20,})/i,
-                /^([a-f0-9]{20,})$/i
-            ];
-            for (const p of patterns) {
-                const m = s.match(p);
-                if (m) return m[1];
+            // ---------- Helper: Toast ----------
+            function showToast(message, duration = 2500) {
+                let existingToast = document.querySelector('.toast-message');
+                if (existingToast) existingToast.remove();
+                const toast = document.createElement('div');
+                toast.className = 'toast-message';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 400);
+                }, duration);
             }
-            return null;
-        }
 
-        function readParams() {
-            const hash = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
-            const fromHash = new URLSearchParams(hash);
-            const fromQuery = new URLSearchParams(location.search);
-            const get = k => fromHash.get(k) || fromQuery.get(k);
-            return {
-                uid: get('uid') || get('model'),
-                name: get('name')
-            };
-        }
+            // ---------- Extract UID from various Sketchfab formats ----------
+            function extractUid(rawInput) {
+                if (!rawInput) return null;
+                const str = String(rawInput).trim();
+                // Direct 32-character hex ID (Sketchfab typical length: 32 chars, but allow 20+)
+                if (/^[a-f0-9]{20,}$/i.test(str)) return str.toLowerCase();
 
-        function setLoading(state, message) {
-            if (message) loadingMsg.textContent = message;
-            spinner.style.display = state ? 'block' : 'none';
-            overlay.classList.toggle('hidden', !state && message === undefined);
-            if (!state && message) overlay.classList.remove('hidden');
-        }
+                const patterns = [
+                    /sketchfab\.com\/3d-models\/(?:[a-z0-9-]+-)?([a-f0-9]{20,})/i,
+                    /sketchfab\.com\/models\/([a-f0-9]{20,})/i,
+                    /sketchfab\.com\/(?:3d-models|models)\/([a-f0-9]{20,})(?:\?|$)/i,
+                    /sketchfab\.com\/3d-models\/([a-f0-9]{20,})/i
+                ];
+                for (const pattern of patterns) {
+                    const match = str.match(pattern);
+                    if (match && match[1]) return match[1].toLowerCase();
+                }
+                return null;
+            }
 
-        function showError(uid, msg) {
-            iframe.style.display = 'none';
-            const wrapper = document.querySelector('.viewer-container');
-            wrapper.querySelectorAll('.error-pane').forEach(e => e.remove());
-            const pane = document.createElement('div');
-            pane.className = 'error-pane';
-            pane.innerHTML = `
-                <h3>Could not load 3D model</h3>
-                <p>${msg || 'Make sure the model is public and embeddable.'}</p>
-                <p style="font-family:monospace;opacity:.7;">UID: ${uid || '(none)'}</p>
-                <button type="button" id="retryBtn">Retry</button>
-            `;
-            wrapper.appendChild(pane);
-            pane.querySelector('#retryBtn').addEventListener('click', () => {
-                pane.remove();
+            // ------ Hex to RGB Float (0..1) for Sketchfab BG ------
+            function hexToRgbFloat(hex) {
+                let h = hex.replace('#', '');
+                if (h.length === 3) h = h.split('').map(c => c + c).join('');
+                if (h.length !== 6) return [0.04, 0.06, 0.12];
+                const r = parseInt(h.slice(0, 2), 16) / 255;
+                const g = parseInt(h.slice(2, 4), 16) / 255;
+                const b = parseInt(h.slice(4, 6), 16) / 255;
+                return [r, g, b];
+            }
+
+            // Apply background color to active API
+            function applyBackgroundColor() {
+                if (!api) return;
+                try {
+                    const [r, g, b] = hexToRgbFloat(bgColor);
+                    api.setBackground({ color: [r, g, b, 1.0] });
+                } catch (e) { console.warn("BG apply error", e); }
+            }
+
+            // Clear error overlay if present
+            function removeErrorPane() {
+                const existingError = document.querySelector('.error-pane');
+                if (existingError) existingError.remove();
                 iframe.style.display = 'block';
-                if (uid) loadModel(uid);
-            });
-        }
-
-        function hexToRgbFloat(hex) {
-            const h = hex.replace('#', '');
-            if (h.length !== 6) return [0.04, 0.06, 0.12];
-            return [
-                parseInt(h.slice(0, 2), 16) / 255,
-                parseInt(h.slice(2, 4), 16) / 255,
-                parseInt(h.slice(4, 6), 16) / 255
-            ];
-        }
-
-        function applyBg(hex) {
-            if (!api) return;
-            const [r, g, b] = hexToRgbFloat(hex);
-            api.setBackground({ color: [r, g, b, 1] });
-        }
-
-        function loadModel(uid) {
-            if (typeof Sketchfab === 'undefined') {
-                showError(uid, 'Sketchfab Viewer API script failed to load.');
-                return;
             }
 
-            if (api) {
-                try { api.stop(); } catch (e) { console.warn(e); }
-                api = null;
+            // Show error message inside container (replaces loading/iframe visually)
+            function showError(uid, errorMsg) {
+                setLoading(false);
+                removeErrorPane();
+                const container = document.querySelector('.viewer-container');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-pane';
+                errorDiv.setAttribute('aria-live', 'assertive');
+                errorDiv.innerHTML = `
+                    <h3>⚠️ Failed to load model</h3>
+                    <p>${escapeHtml(errorMsg) || "Model may be private, removed, or not embeddable."}</p>
+                    <p style="font-family:monospace; font-size:0.8rem;">UID: ${escapeHtml(uid || '—')}</p>
+                    <button id="retryErrorBtn" aria-label="Retry loading">⟳ Retry</button>
+                `;
+                container.appendChild(errorDiv);
+                const retryBtn = errorDiv.querySelector('#retryErrorBtn');
+                retryBtn.addEventListener('click', () => {
+                    if (uid) {
+                        removeErrorPane();
+                        loadModel(uid);
+                    } else {
+                        showToast("No valid model ID to retry", 2000);
+                    }
+                });
+                iframe.style.display = 'none';
             }
 
-            iframe.style.display = 'block';
-            setLoading(true, 'Loading model…');
+            // simple escape to prevent injection
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, function (m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+            }
 
-            const client = new Sketchfab('1.12.1', iframe);
+            // loading overlay control
+            function setLoading(loading, customMessage = null) {
+                isLoading = loading;
+                if (customMessage) loadingMsgSpan.textContent = customMessage;
+                if (loading) {
+                    overlay.classList.remove('hidden');
+                    const spinnerElem = overlay.querySelector('.spinner');
+                    if (spinnerElem) spinnerElem.style.display = 'block';
+                } else {
+                    overlay.classList.add('hidden');
+                }
+            }
 
-            client.init(uid, {
-                autostart: 1,
-                preload: 1,
-                ui_infos: 1,
-                ui_controls: 1,
-                ui_settings: 1,
-                ui_inspector: 0,
-                ui_stop: 0,
-                ui_watermark: 0,
-                ui_annotations: 1,
-                scrollwheel: 1,
-                success: (apiInst) => {
-                    api = apiInst;
-                    api.start();
-                    api.addEventListener('viewerready', () => {
-                        applyBg(bgColor);
+            // Sync UI state after API ready (visibility + auto-rotate)
+            function syncUiAndRotationAfterLoad() {
+                if (!api) return;
+                try {
+                    // Restore UI visibility
+                    api.setUserInterfaceVisibility?.(uiVisible);
+                    // Restore auto-rotate state
+                    api.setAutoRotate?.(autoRotating);
+                    // Sync background after load
+                    applyBackgroundColor();
+                } catch (e) { console.warn("sync error", e); }
+            }
+
+            // Update URL hash with current UID without triggering reload loops
+            function updateUrlHash(uid, modelName) {
+                if (!uid) return;
+                const newHash = `uid=${uid}` + (modelName ? `&name=${encodeURIComponent(modelName)}` : '');
+                // avoid unnecessary history spam
+                const currentHash = location.hash.slice(1);
+                if (currentHash !== newHash) {
+                    history.replaceState(null, '', `#${newHash}`);
+                }
+            }
+
+            // load actual model using Sketchfab API
+            function loadModel(uid, customName = null) {
+                if (!uid) {
+                    showToast("❌ Invalid model identifier", 2000);
+                    return;
+                }
+                if (isLoading) {
+                    showToast("⏳ Already loading a model, please wait...", 1500);
+                    return;
+                }
+
+                // Clean up previous error pane and ensure iframe visible
+                removeErrorPane();
+                iframe.style.display = 'block';
+
+                // Stop previous API if exists
+                if (api) {
+                    try {
+                        api.stop();
+                    } catch (e) { /* ignore */ }
+                    api = null;
+                }
+
+                setLoading(true, `📦 Loading model ${uid.slice(0, 8)}…`);
+                currentModelUid = uid;
+
+                // For success/error callbacks, ensure that the loaded model matches expected UID (avoid race)
+                let loadCompleted = false;
+
+                // Initialize Sketchfab client
+                if (typeof Sketchfab === 'undefined') {
+                    setLoading(false);
+                    showError(uid, "Sketchfab Viewer API script not loaded. Check network.");
+                    return;
+                }
+
+                const client = new Sketchfab('1.12.1', iframe);
+                client.init(uid, {
+                    autostart: 1,
+                    preload: 1,
+                    ui_infos: 1,
+                    ui_controls: 1,
+                    ui_settings: 1,
+                    ui_inspector: 0,
+                    ui_stop: 0,
+                    ui_watermark: 0,        // watermark disabled for cleaner view
+                    ui_annotations: 1,
+                    scrollwheel: 1,
+                    success: (apiInstance) => {
+                        if (currentModelUid !== uid) {
+                            // race condition: newer load started, ignore this callback
+                            apiInstance.stop();
+                            return;
+                        }
+                        api = apiInstance;
+                        api.start();
+
+                        // Wait for viewer to be fully ready
+                        api.addEventListener('viewerready', () => {
+                            if (currentModelUid !== uid) return;
+                            // set final title
+                            if (customName) {
+                                modelTitleSpan.textContent = customName;
+                            } else {
+                                modelTitleSpan.textContent = `3D Model · ${uid.slice(0, 12)}`;
+                            }
+                            syncUiAndRotationAfterLoad();
+                            setLoading(false);
+                            updateUrlHash(uid, customName);
+                            loadCompleted = true;
+                            showToast("✅ Model loaded | Use controls to explore", 2500);
+                        });
+
+                        // Additional fallback if viewerready never fires (but usually works)
+                        setTimeout(() => {
+                            if (!loadCompleted && currentModelUid === uid) {
+                                syncUiAndRotationAfterLoad();
+                                setLoading(false);
+                                loadCompleted = true;
+                            }
+                        }, 2000);
+                    },
+                    error: (err) => {
+                        if (currentModelUid !== uid) return;
+                        console.error("Sketchfab error:", err);
                         setLoading(false);
-                        overlay.classList.add('hidden');
-                    });
-                },
-                error: () => {
-                    showError(uid, 'Sketchfab refused to embed this model.');
+                        showError(uid, "Model cannot be embedded. Ensure it's public and allows embedding.");
+                    }
+                });
+            }
+
+            // ---------- Helper for input loading (extract + trigger) ----------
+            function loadFromInput() {
+                const raw = input.value.trim();
+                const uid = extractUid(raw);
+                if (!uid) {
+                    showToast("❌ Could not detect Sketchfab model ID. Use URL or 32-char ID.", 3000);
+                    return;
+                }
+                input.value = uid;   // prettify
+                loadModel(uid);
+            }
+
+            // ---------- Read URL parameters (hash & query) ----------
+            function readUrlParams() {
+                const hash = location.hash.startsWith('#') ? location.hash.slice(1) : '';
+                const query = new URLSearchParams(location.search);
+                const hashParams = new URLSearchParams(hash);
+                const getParam = (key) => hashParams.get(key) || query.get(key);
+                return {
+                    uid: getParam('uid') || getParam('model'),
+                    name: getParam('name')
+                };
+            }
+
+            // ---------- Handle browser navigation (hashchange) ----------
+            function onHashChange() {
+                const { uid, name } = readUrlParams();
+                if (uid && uid !== currentModelUid) {
+                    // avoid reloading same model if already loaded
+                    if (input.value !== uid) input.value = uid;
+                    loadModel(uid, name || null);
+                } else if (!uid && currentModelUid) {
+                    // no uid in URL, but we keep current model - just reset title maybe
+                    modelTitleSpan.textContent = "Custom Environment Viewer";
+                }
+            }
+
+            // ---------- Background Color Events ----------
+            bgPreview.style.backgroundColor = bgColor;
+            bgPicker.addEventListener('input', (e) => {
+                bgColor = e.target.value;
+                bgPreview.style.backgroundColor = bgColor;
+                applyBackgroundColor();
+                // optional: store in localStorage or URL but not necessary
+            });
+            bgPreview.addEventListener('click', () => bgPicker.click());
+
+            // ---------- Camera Reset ----------
+            resetBtn.addEventListener('click', () => {
+                if (api && typeof api.recenterCamera === 'function') {
+                    api.recenterCamera();
+                    showToast("🎥 Camera reset", 1200);
+                } else if (api) {
+                    showToast("Camera reset not available", 1000);
+                } else {
+                    showToast("No model loaded", 1000);
                 }
             });
-        }
 
-        function loadFromInput() {
-            const uid = extractUid(input.value);
-            if (!uid) {
-                alert("Invalid Sketchfab Model ID or URL.\n\nPaste a model URL (https://sketchfab.com/3d-models/...) or the long hex ID.");
-                return;
+            // ---------- Toggle UI (annotations + controls) ----------
+            toggleUIBtn.addEventListener('click', () => {
+                if (!api) {
+                    showToast("Load a model first", 1200);
+                    return;
+                }
+                uiVisible = !uiVisible;
+                try {
+                    api.setUserInterfaceVisibility(uiVisible);
+                    toggleUIBtn.textContent = uiVisible ? "🔘 Hide UI" : "🔘 Show UI";
+                    showToast(uiVisible ? "UI visible" : "UI hidden", 1000);
+                } catch (e) {
+                    showToast("UI toggle failed", 1000);
+                }
+            });
+
+            // ---------- Auto Rotate ----------
+            autoRotateBtn.addEventListener('click', () => {
+                if (!api) {
+                    showToast("Load a model before toggling auto-rotate", 1500);
+                    return;
+                }
+                autoRotating = !autoRotating;
+                try {
+                    api.setAutoRotate(autoRotating);
+                    autoRotateBtn.textContent = autoRotating ? "⏹️ Stop Rotate" : "🔄 Auto Rotate";
+                    showToast(autoRotating ? "Auto-rotate ON" : "Auto-rotate OFF", 1000);
+                } catch (e) {
+                    autoRotating = !autoRotating; // revert state if fail
+                    showToast("Auto-rotate not supported", 1000);
+                }
+            });
+
+            // ---------- Event listeners for load & enter ----------
+            loadBtn.addEventListener('click', loadFromInput);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') loadFromInput();
+            });
+
+            // Intercept iframe errors (just in case)
+            iframe.addEventListener('error', () => {
+                if (currentModelUid && !isLoading) {
+                    showError(currentModelUid, "Iframe failed to load viewer.");
+                }
+            });
+
+            // ---------- Initial load from URL or default ----------
+            const { uid: startUid, name: startName } = readUrlParams();
+            if (startUid) {
+                input.value = startUid;
+                loadModel(startUid, startName || undefined);
+            } else {
+                // idle state: remove spinner message
+                setLoading(false);
+                loadingMsgSpan.textContent = "✨ Ready — paste a Sketchfab model ID or URL";
+                overlay.classList.add('hidden');
             }
-            input.value = uid;
-            history.replaceState(null, '', `#uid=${uid}`);
-            loadModel(uid);
-        }
 
-        bgPicker.addEventListener('input', (e) => {
-            bgColor = e.target.value;
-            bgPreview.style.backgroundColor = bgColor;
-            applyBg(bgColor);
-        });
-        bgPreview.addEventListener('click', () => bgPicker.click());
-        bgPreview.style.backgroundColor = bgColor;
+            // watch hash changes for shareable links
+            window.addEventListener('hashchange', () => {
+                onHashChange();
+            });
 
-        resetBtn.addEventListener('click', () => {
-            if (api?.recenterCamera) api.recenterCamera();
-        });
-
-        toggleUIBtn.addEventListener('click', () => {
-            if (!api) return;
-            uiVisible = !uiVisible;
-            api.setUserInterfaceVisibility?.(uiVisible);
-            toggleUIBtn.textContent = uiVisible ? 'Hide UI' : 'Show UI';
-        });
-
-        autoRotateBtn.addEventListener('click', () => {
-            if (!api) return;
-            autoRotating = !autoRotating;
-            if (autoRotating) api.setCameraConstraints?.({});
-            api.setAutoRotate?.(autoRotating);
-            autoRotateBtn.textContent = autoRotating ? 'Stop Rotate' : 'Auto Rotate';
-        });
-
-        loadBtn.addEventListener('click', loadFromInput);
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') loadFromInput();
-        });
-
-        const { uid: startUid, name: startName } = readParams();
-        if (startName) modelTitle.textContent = startName;
-
-        if (startUid) {
-            input.value = startUid;
-            loadModel(startUid);
-        } else {
-            spinner.style.display = 'none';
-        }
-    })();
+            // extra: if user manually changes input and clicks load, also update URL in loadModel already.
+            // Also apply BG if needed after model loads again.
+            // expose debug state (optional)
+            window.__viewerDebug = { getApi: () => api };
+        })();
     </script>
 </body>
 </html>

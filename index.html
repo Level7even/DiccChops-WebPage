@@ -3,19 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="DiccChops portfolio — 3D artwork, tools, and experiments.">
+    <meta name="description" content="DiccChops portfolio — 3D artwork, tools, and experiments. Explore interactive models and creative projects.">
     <meta name="theme-color" content="#0a0a0f">
-    <title>DiccChops Portfolio</title>
+    <meta name="color-scheme" content="dark">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="DiccChops Portfolio">
+    <meta property="og:description" content="3D artwork, tools, and experiments powered by Sketchfab.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630?text=DiccChops+3D">
+    <meta property="og:url" content="https://diccchops.dev">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <title>DiccChops · 3D Portfolio & Experiments</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://api.sketchfab.com">
     <link rel="preconnect" href="https://media.sketchfab.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="styles.css">
-</head> 
-
+</head>
 <body>
 
     <a class="skip-link" href="#portfolio">Skip to projects</a>
@@ -26,15 +35,15 @@
 
     <header>
         <div class="nav-container">
-            <a href="#" class="logo">DiccChops</a>
+            <a href="#" class="logo" aria-label="Home">DiccChops</a>
 
-            <nav class="nav-links" aria-label="Primary">
+            <nav class="nav-links" aria-label="Primary navigation">
                 <a href="#">Home</a>
                 <a href="#portfolio">Portfolio</a>
                 <a href="./Pages/ContactMe/contact.html">Contact</a>
 
-                <div class="dropdown">
-                    <button class="dropbtn" type="button" aria-haspopup="true" aria-expanded="false">
+                <div class="dropdown" data-dropdown>
+                    <button class="dropbtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Projects menu">
                         Projects <span class="dropdown-arrow" aria-hidden="true">▼</span>
                     </button>
 
@@ -49,8 +58,10 @@
                         <a href="./Pages/Sifi/index.html" role="menuitem">Sifi</a>
                         <a href="./Pages/Void/index.html" role="menuitem">Void</a>
                         <a href="./Pages/Wow/index.html" role="menuitem">Wow</a>
+                        <a href="./Pages/Soul/index.html" role="menuitem">Soul</a>
                         <a href="./Pages/Modelviewer/index.html" role="menuitem">Model Viewer</a>
-                        <a href="./Pages/Calli/index.html" role="menuitem">Calli</a>
+                        <a href="./Pages/3dPrompt/index.html" role="menuitem">3dPrompt</a>
+                        <a href="./Pages/Inf/index.html" role="menuitem">Inf</a>
                     </div>
                 </div>
             </nav>
@@ -86,10 +97,62 @@
     </main>
 
     <footer>
-        <p>© 2026 DiccChops</p>
+        <p>© 2026 DiccChops · All 3D models hosted on Sketchfab</p>
+        <a href="./Pages/Dev/Soul/index.html" role="menuitem">👻</a>
     </footer>
 
-    <script src="main.js" defer></script>
+    <!-- Back to Top Button (improved UX) -->
+    <button class="back-to-top" aria-label="Back to top" title="Scroll to top">↑</button>
 
+    <script src="main.js" defer></script>
+    <script>
+        // Enhanced dropdown: hover & focus fallback, plus keep JS compatibility
+        (function () {
+            const dropdown = document.querySelector('[data-dropdown]');
+            if (dropdown) {
+                const btn = dropdown.querySelector('.dropbtn');
+                const content = dropdown.querySelector('.dropdown-content');
+
+                // Toggle active class on button click (to maintain existing JS pattern)
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isActive = dropdown.classList.toggle('active');
+                    btn.setAttribute('aria-expanded', isActive);
+                });
+
+                // Close when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove('active');
+                        btn.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+                // Keyboard: close on Escape
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && dropdown.classList.contains('active')) {
+                        dropdown.classList.remove('active');
+                        btn.setAttribute('aria-expanded', 'false');
+                        btn.focus();
+                    }
+                });
+            }
+
+            // Back to Top button logic
+            const backBtn = document.querySelector('.back-to-top');
+            if (backBtn) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 500) {
+                        backBtn.classList.add('visible');
+                    } else {
+                        backBtn.classList.remove('visible');
+                    }
+                });
+                backBtn.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENDLESS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: #080808;
+            font-family: 'Space Mono', 'Courier New', monospace;
+        }
+
+        .card {
+            width: 100vw;
+            height: 100dvh;
+            min-height: 500px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1), transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+            .card.in {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        .card-num {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            opacity: 0.32;
+            z-index: 5;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .card-art {
+            flex: 1;
+            min-height: 0;
+            padding: 44px 44px 0;
+        }
+
+            .card-art svg {
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+
+        .card-foot {
+            padding: 16px 44px 30px;
+        }
+
+        .card-eyebrow {
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            opacity: 0.42;
+            margin-bottom: 5px;
+        }
+
+        .card-title {
+            font-size: clamp(20px, 3.5vw, 36px);
+            font-weight: 700;
+            letter-spacing: 0.09em;
+            line-height: 1;
+        }
+
+        #brand {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            color: #fff;
+            mix-blend-mode: difference;
+            z-index: 100;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        #sentinel {
+            height: 2px;
+        }
+
+        @media (max-width: 600px) {
+            .card-art {
+                padding: 24px 22px 0;
+            }
+
+            .card-foot {
+                padding: 14px 22px 24px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .card {
+                transition: opacity 0.2s;
+                transform: none;
+            }
+
+                .card.in {
+                    transform: none;
+                }
+        }
+    </style>
+</head>
+<body>
+    <div id="brand">ENDLESS</div>
+    <div id="root"></div>
+    <div id="sentinel"></div>
+
+    <script>
+/* ??? PRNG — Mulberry32 ?????????????????????????????????????????????????????? */
+function mkRng(seed) {
+  // Avalanche the seed first so close seeds diverge immediately
+  let s = (seed ^ 0xDEADBEEF) >>> 0;
+  s = (Math.imul(s ^ (s >>> 16), 0x45d9f3b)) >>> 0;
+  s ^= s >>> 16;
+  return () => {
+    s += 0x6D2B79F5; s |= 0;
+    let v = Math.imul(s ^ (s >>> 15), 1 | s);
+    v = v + Math.imul(v ^ (v >>> 7), 61 | v) ^ v;
+    return ((v ^ (v >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const ri = (r, lo, hi) => Math.floor(r() * (hi - lo)) + lo;
+const rc = (r, arr)    => arr[ri(r, 0, arr.length)];
+
+/* ??? PALETTES — 24 hand-picked, no glass, no purple-cyan ??????????????????? */
+const PALETTES = [
+  { bg: '#080808', fg: '#efefef', a: '#FF3D00', b: '#FFD600' },   // fire
+  { bg: '#080808', fg: '#efefef', a: '#00E676', b: '#1DE9B6' },   // acid mint
+  { bg: '#F0EBE1', fg: '#1a1a1a', a: '#CC3300', b: '#222255' },   // cream/brick
+  { bg: '#080808', fg: '#efefef', a: '#40C4FF', b: '#E0E0E0' },   // blueprint
+  { bg: '#0D1F2D', fg: '#E0EAF0', a: '#29B6F6', b: '#84FFFF' },   // midnight
+  { bg: '#100800', fg: '#F0E0C0', a: '#FF6B00', b: '#FFC400' },   // amber
+  { bg: '#080808', fg: '#d0d0d0', a: '#D0D0D0', b: '#666666' },   // photocopy
+  { bg: '#F5F5F5', fg: '#111111', a: '#111111', b: '#888888' },   // inverse mono
+  { bg: '#080808', fg: '#efefef', a: '#FF1744', b: '#FFEA00' },   // warning
+  { bg: '#051A0A', fg: '#C8F0D0', a: '#69FF47', b: '#CCFF90' },   // matrix
+  { bg: '#080808', fg: '#efefef', a: '#FFD740', b: '#FF6D00' },   // gold/orange
+  { bg: '#EDE8DC', fg: '#2C2C54', a: '#474787', b: '#CC3300' },   // navy/rust
+  { bg: '#080808', fg: '#efefef', a: '#F48FB1', b: '#FFCDD2' },   // rose
+  { bg: '#E4DFD4', fg: '#111111', a: '#00478A', b: '#C0392B' },   // americana
+  { bg: '#0A0A0A', fg: '#cccccc', a: '#C6F135', b: '#8BC34A' },   // sour lime
+  { bg: '#1C1B22', fg: '#E4E0F0', a: '#E94560', b: '#9B59B6' },   // darkroom
+  { bg: '#080808', fg: '#efefef', a: '#64FFDA', b: '#A7FFEB' },   // deep sea
+  { bg: '#150500', fg: '#FFE0C0', a: '#FF5252', b: '#FF9100' },   // lava
+  { bg: '#F2F0EA', fg: '#1a1a1a', a: '#4A90D9', b: '#D4521B' },   // day/rust
+  { bg: '#0A0014', fg: '#E8E0FF', a: '#CF6DFF', b: '#7C4DFF' },   // ultraviolet
+  { bg: '#080808', fg: '#efefef', a: '#00BFA5', b: '#1DE9B6' },   // deep teal
+  { bg: '#F8F4EC', fg: '#1a1a1a', a: '#CC0000', b: '#003366' },   // editorial
+  { bg: '#080808', fg: '#efefef', a: '#FFAB40', b: '#FF6E40' },   // tangerine
+  { bg: '#0E0A00', fg: '#F5E9CC', a: '#F5D776', b: '#C9943A' },   // old gold
+];
+
+/* ??? WORD BANKS ?????????????????????????????????????????????????????????????? */
+const WA = [
+  'VOID','NULL','DARK','COLD','PRIME','DEEP','HARD','DEAD','SLOW','FAST',
+  'LOST','LAST','SHARP','FLAT','DENSE','THIN','PALE','RAW','DIM','BARE',
+  'FIXED','OPEN','NEAR','STILL','HALF','LONG','PURE','WIDE','SOFT','HIGH',
+  'LOW','BLANK','LATE','CLEAN','ROUGH','QUIET','SOLID','SPLIT'
+];
+const WB = [
+  'OBJECT','FIELD','ZONE','SIGNAL','FORM','STATE','MASS','POINT','PLANE','AXIS',
+  'FRAME','UNIT','NODE','GATE','BAND','LOOP','MESH','CORE','WAVE','CELL',
+  'RING','LINE','MARK','DRIFT','GRID','PULSE','LAYER','SLOPE','BODY','TRACE',
+  'SHARD','ECHO','SEAM','FOLD','DEPTH','BLOCK','PATH','PITCH'
+];
+
+/* ??? SVG HELPERS ????????????????????????????????????????????????????????????? */
+const NS = 'http://www.w3.org/2000/svg';
+const SW = 800, SH = 560;
+
+function se(tag, attrs) {
+  const e = document.createElementNS(NS, tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, String(v));
+  return e;
+}
+
+/* ??? ART TYPE NAMES ?????????????????????????????????????????????????????????? */
+const TYPE_NAMES = ['RADIAL', 'MONDRIAN', 'ORBITAL', 'LATTICE', 'FLOW', 'CRYSTAL', 'MINIMAL', 'SIGNAL'];
+
+/* ???????????????????????????????????????????????????????????????????????????????
+   ART RENDERERS — each takes a card object and returns an SVG <g> element
+   Seeds are per-renderer so changing art type doesn't shift palette/title
+   ??????????????????????????????????????????????????????????????????????????? */
+
+function drawRadial(card) {
+  const r = mkRng(card.idx * 7919 + 3);
+  const { pal } = card;
+  const cx = SW / 2, cy = SH / 2;
+  const cols = [pal.a, pal.b, pal.fg];
+  const g = se('g');
+
+  const numRings = ri(r, 0, 4);
+  for (let i = 0; i < numRings; i++) {
+    g.appendChild(se('circle', {
+      cx, cy, r: SH * (0.06 + r() * 0.43),
+      fill: 'none', stroke: cols[i % 3],
+      'stroke-width': 0.4 + r() * 2,
+      opacity: 0.18 + r() * 0.38
+    }));
+  }
+
+  const n = ri(r, 22, 76);
+  const hasDots = r() > 0.45;
+  const twist = (r() - 0.5) * 0.4;
+
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 + r() * 0.18 + twist * Math.sin((i / n) * Math.PI * 6);
+    const len = SH * (0.10 + r() * 0.46);
+    const col = cols[ri(r, 0, 3)];
+    const sw = 0.3 + r() * 2.8;
+    const op = 0.18 + r() * 0.82;
+    const x2 = cx + Math.cos(a) * len;
+    const y2 = cy + Math.sin(a) * len;
+    g.appendChild(se('line', { x1: cx, y1: cy, x2, y2, stroke: col, 'stroke-width': sw, opacity: op }));
+    if (hasDots && r() > 0.35) {
+      g.appendChild(se('circle', { cx: x2, cy: y2, r: sw * 1.7, fill: col, opacity: op }));
+    }
+  }
+
+  g.appendChild(se('circle', { cx, cy, r: 3 + r() * 6, fill: pal.a }));
+  return g;
+}
+
+function drawMondrian(card) {
+  const r = mkRng(card.idx * 6263 + 7);
+  const { pal } = card;
+  const g = se('g');
+  const borderWidth = 3 + r() * 6;
+  const borderColor = pal.fg;
+  const rects = [];
+
+  function split(x, y, w, h, depth) {
+    if (depth <= 0 || w < 38 || h < 38) {
+      const v = r();
+      rects.push({ x, y, w, h, fill: v < 0.38 ? pal.bg : v < 0.62 ? pal.a : v < 0.80 ? pal.b : pal.fg });
+      return;
+    }
+    if (r() > 0.5 && w > 80) {
+      const s = w * (0.18 + r() * 0.64);
+      split(x, y, s, h, depth - 1);
+      split(x + s, y, w - s, h, depth - 1);
+    } else if (h > 80) {
+      const s = h * (0.18 + r() * 0.64);
+      split(x, y, w, s, depth - 1);
+      split(x, y + s, w, h - s, depth - 1);
+    } else {
+      const v = r();
+      rects.push({ x, y, w, h, fill: v < 0.38 ? pal.bg : v < 0.62 ? pal.a : v < 0.80 ? pal.b : pal.fg });
+    }
+  }
+
+  split(0, 0, SW, SH, ri(r, 3, 5));
+  for (const rect of rects) {
+    g.appendChild(se('rect', {
+      x: rect.x, y: rect.y, width: rect.w, height: rect.h,
+      fill: rect.fill, stroke: borderColor, 'stroke-width': borderWidth
+    }));
+  }
+  return g;
+}
+
+function drawOrbital(card) {
+  const r = mkRng(card.idx * 5381 + 11);
+  const { pal } = card;
+  const cx = SW / 2, cy = SH / 2;
+  const cols = [pal.a, pal.b, pal.fg];
+  const g = se('g');
+  const n = ri(r, 5, 16);
+
+  for (let i = 0; i < n; i++) {
+    const rx = SW * (0.05 + r() * 0.45);
+    const ry = SH * (0.05 + r() * 0.45);
+    const rot = r() * 180;
+    const col = cols[i % 3];
+    const sw = 0.4 + r() * 3;
+    const dotted = r() > 0.65;
+
+    g.appendChild(se('ellipse', {
+      cx, cy, rx, ry,
+      fill: 'none', stroke: col, 'stroke-width': sw,
+      'stroke-dasharray': dotted ? `${4 + r() * 8} ${4 + r() * 8}` : 'none',
+      opacity: 0.18 + r() * 0.82,
+      transform: `rotate(${rot}, ${cx}, ${cy})`
+    }));
+
+    if (r() > 0.50) {
+      const nd = ri(r, 3, 14);
+      const angle = rot * Math.PI / 180;
+      for (let d = 0; d < nd; d++) {
+        const t = (d / nd) * Math.PI * 2;
+        const dx = rx * Math.cos(t);
+        const dy = ry * Math.sin(t);
+        g.appendChild(se('circle', {
+          cx: cx + dx * Math.cos(angle) - dy * Math.sin(angle),
+          cy: cy + dx * Math.sin(angle) + dy * Math.cos(angle),
+          r: 1.5 + r() * 4, fill: pal.a
+        }));
+      }
+    }
+  }
+
+  g.appendChild(se('circle', { cx, cy, r: 2 + r() * 5, fill: pal.a }));
+  return g;
+}
+
+function drawLattice(card) {
+  const r = mkRng(card.idx * 4049 + 13);
+  const { pal } = card;
+  const cols = [pal.a, pal.b, pal.fg];
+  const g = se('g');
+  const numCols = ri(r, 8, 24);
+  const numRows = ri(r, 6, 14);
+  const cellW = SW / numCols;
+  const cellH = SH / numRows;
+  const shape = ri(r, 0, 4);
+  const freqX = 0.6 + r() * 2.8;
+  const freqY = 0.6 + r() * 2.8;
+  const phase = r() * Math.PI * 2;
+
+  for (let row = 0; row < numRows; row++) {
+    for (let col = 0; col < numCols; col++) {
+      const nx = col / numCols, ny = row / numRows;
+      const t = (Math.sin(nx * freqX * Math.PI * 2 + phase) * Math.cos(ny * freqY * Math.PI) + 1) / 2;
+      const sz = (0.05 + 0.95 * t) * Math.min(cellW, cellH) * 0.46;
+      const color = cols[Math.min(Math.floor(t * 3), 2)];
+      const op = 0.10 + 0.90 * t;
+      const px = (col + 0.5) * cellW;
+      const py = (row + 0.5) * cellH;
+
+      if (shape === 0) {
+        g.appendChild(se('circle', { cx: px, cy: py, r: sz, fill: color, opacity: op }));
+      } else if (shape === 1) {
+        g.appendChild(se('rect', { x: px - sz, y: py - sz, width: sz * 2, height: sz * 2, fill: color, opacity: op }));
+      } else if (shape === 2) {
+        g.appendChild(se('polygon', {
+          points: `${px},${py - sz} ${px + sz},${py} ${px},${py + sz} ${px - sz},${py}`,
+          fill: color, opacity: op
+        }));
+      } else {
+        const hw = sz * 0.38;
+        g.appendChild(se('rect', { x: px - sz, y: py - hw, width: sz * 2, height: hw * 2, fill: color, opacity: op }));
+        g.appendChild(se('rect', { x: px - hw, y: py - sz, width: hw * 2, height: sz * 2, fill: color, opacity: op }));
+      }
+    }
+  }
+  return g;
+}
+
+function drawFlow(card) {
+  const r = mkRng(card.idx * 2833 + 17);
+  const { pal } = card;
+  const cols = [pal.a, pal.b, pal.fg];
+  const g = se('g');
+  const n = ri(r, 10, 32);
+
+  for (let i = 0; i < n; i++) {
+    const y0 = SH * (i / n) + (r() - 0.5) * (SH / n) * 1.4;
+    const vari = SH * (0.08 + r() * 0.36);
+    g.appendChild(se('path', {
+      d: `M 0 ${y0} C ${SW * r()} ${y0 + (r() - 0.5) * vari}, ${SW * r()} ${y0 + (r() - 0.5) * vari}, ${SW} ${y0}`,
+      fill: 'none',
+      stroke: cols[ri(r, 0, 3)],
+      'stroke-width': 0.3 + r() * 4.5,
+      opacity: 0.12 + r() * 0.88,
+      'stroke-linecap': 'round'
+    }));
+  }
+  return g;
+}
+
+function drawCrystal(card) {
+  const r = mkRng(card.idx * 3547 + 19);
+  const { pal } = card;
+  const cx = SW / 2, cy = SH / 2;
+  const cols = [pal.a, pal.b, pal.fg];
+  const g = se('g');
+  const sides = ri(r, 3, 9);
+  const layers = ri(r, 4, 9);
+  const rotBase = r() * Math.PI;
+  const rotStep = Math.PI / sides * (0.5 + r());
+
+  for (let li = 0; li < layers; li++) {
+    const rad = Math.min(SW, SH) * (0.03 + (li / layers) * 0.46);
+    const rot = rotBase + li * rotStep;
+    const col = cols[li % 3];
+    const pts = Array.from({ length: sides }, (_, si) => {
+      const a = rot + (si / sides) * Math.PI * 2;
+      const jitter = 0.84 + r() * 0.28;
+      return `${cx + Math.cos(a) * rad * jitter},${cy + Math.sin(a) * rad * jitter}`;
+    }).join(' ');
+    g.appendChild(se('polygon', {
+      points: pts,
+      fill: li === 0 ? col : 'none',
+      'fill-opacity': 0.07,
+      stroke: col,
+      'stroke-width': 0.4 + r() * 2.8,
+      opacity: 0.18 + r() * 0.75
+    }));
+  }
+
+  const numSpokes = ri(r, 4, 9);
+  for (let i = 0; i < numSpokes; i++) {
+    const a = (i / numSpokes) * Math.PI * 2 + rotBase;
+    const len = Math.min(SW, SH) * (0.05 + r() * 0.16);
+    g.appendChild(se('line', {
+      x1: cx, y1: cy,
+      x2: cx + Math.cos(a) * len, y2: cy + Math.sin(a) * len,
+      stroke: pal.a, 'stroke-width': 0.5 + r() * 1.8, opacity: 0.45 + r() * 0.55
+    }));
+  }
+
+  g.appendChild(se('circle', { cx, cy, r: 2.5 + r() * 5, fill: pal.a }));
+  return g;
+}
+
+function drawMinimal(card) {
+  const r = mkRng(card.idx * 1471 + 23);
+  const { pal } = card;
+  const cx = SW / 2, cy = SH / 2;
+  const g = se('g');
+  const type = ri(r, 0, 5);
+  const col = r() > 0.5 ? pal.a : pal.b;
+
+  if (type === 0) {
+    for (let i = 0, n = ri(r, 1, 3); i < n; i++) {
+      const rad = Math.min(SW, SH) * (0.12 + r() * 0.32);
+      g.appendChild(se('circle', {
+        cx: cx + (r() - 0.5) * SW * 0.3,
+        cy: cy + (r() - 0.5) * SH * 0.3,
+        r: rad,
+        fill: i === 0 ? col : 'none', 'fill-opacity': 0.10,
+        stroke: i === 0 ? pal.a : pal.b, 'stroke-width': 1.5 + r() * 10
+      }));
+    }
+  } else if (type === 1) {
+    for (let i = 0, n = ri(r, 1, 3); i < n; i++) {
+      const rw = SW * (0.20 + r() * 0.50);
+      const rh = SH * (0.18 + r() * 0.50);
+      g.appendChild(se('rect', {
+        x: cx - rw / 2 + (r() - 0.5) * SW * 0.22,
+        y: cy - rh / 2 + (r() - 0.5) * SH * 0.22,
+        width: rw, height: rh,
+        fill: i === 0 ? col : 'none', 'fill-opacity': 0.10,
+        stroke: i === 0 ? pal.a : pal.b, 'stroke-width': 1.5 + r() * 10
+      }));
+    }
+  } else if (type === 2) {
+    const n = ri(r, 2, 7);
+    for (let i = 0; i < n; i++) {
+      const y = SH * (0.15 + (i / (n - 1 || 1)) * 0.70);
+      g.appendChild(se('line', {
+        x1: SW * 0.04, y1: y, x2: SW * 0.96, y2: y,
+        stroke: i % 2 === 0 ? pal.a : pal.b,
+        'stroke-width': 1.5 + r() * 16,
+        opacity: 0.35 + r() * 0.65
+      }));
+    }
+  } else if (type === 3) {
+    const rad = Math.min(SW, SH) * (0.16 + r() * 0.28);
+    const startA = r() * Math.PI * 2;
+    const sweep = Math.PI * (0.20 + r() * 1.6);
+    const x1 = cx + Math.cos(startA) * rad;
+    const y1 = cy + Math.sin(startA) * rad;
+    const x2 = cx + Math.cos(startA + sweep) * rad;
+    const y2 = cy + Math.sin(startA + sweep) * rad;
+    g.appendChild(se('path', {
+      d: `M ${x1} ${y1} A ${rad} ${rad} 0 ${sweep > Math.PI ? 1 : 0} 1 ${x2} ${y2}`,
+      fill: 'none', stroke: col, 'stroke-width': 2.5 + r() * 16, 'stroke-linecap': 'round'
+    }));
+  } else {
+    const sides = ri(r, 3, 7);
+    const rad = Math.min(SW, SH) * (0.18 + r() * 0.28);
+    const rot = r() * Math.PI * 2;
+    const pts = Array.from({ length: sides }, (_, i) => {
+      const a = rot + (i / sides) * Math.PI * 2;
+      return `${cx + Math.cos(a) * rad},${cy + Math.sin(a) * rad}`;
+    }).join(' ');
+    g.appendChild(se('polygon', {
+      points: pts,
+      fill: r() < 0.20 ? col : 'none', 'fill-opacity': 0.10,
+      stroke: col, 'stroke-width': 1.5 + r() * 10
+    }));
+  }
+
+  if (r() > 0.32) {
+    g.appendChild(se('circle', {
+      cx: SW * (0.06 + r() * 0.88),
+      cy: SH * (0.06 + r() * 0.88),
+      r: 3 + r() * 10, fill: pal.b, opacity: 0.40 + r() * 0.60
+    }));
+  }
+  return g;
+}
+
+function drawSignal(card) {
+  const r = mkRng(card.idx * 2153 + 29);
+  const { pal } = card;
+  const cols = [pal.a, pal.b, pal.fg];
+  const g = se('g');
+  const n = ri(r, 4, 9);
+  const PTS = 160;
+
+  for (let wi = 0; wi < n; wi++) {
+    const y0 = SH * (0.08 + (wi / n) * 0.84);
+    const amp1 = SH * (0.02 + r() * 0.13);
+    const amp2 = amp1 * (0.20 + r() * 0.60);
+    const f1 = 0.6 + r() * 5;
+    const f2 = 0.6 + r() * 3;
+    const ph1 = r() * Math.PI * 2;
+    const ph2 = r() * Math.PI * 2;
+
+    const d = Array.from({ length: PTS }, (_, pi) => {
+      const t = pi / (PTS - 1);
+      const x = t * SW;
+      const y = y0
+        + Math.sin(t * f1 * Math.PI * 2 + ph1) * amp1
+        + Math.sin(t * f2 * Math.PI * 2 + ph2) * amp2;
+      return `${pi === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
+    }).join(' ');
+
+    g.appendChild(se('path', {
+      d, fill: 'none',
+      stroke: cols[wi % 3],
+      'stroke-width': 0.4 + r() * 3.5,
+      opacity: 0.18 + r() * 0.82
+    }));
+  }
+  return g;
+}
+
+const RENDERERS = [
+  drawRadial, drawMondrian, drawOrbital, drawLattice,
+  drawFlow, drawCrystal, drawMinimal, drawSignal
+];
+
+/* ??? CARD BUILDER ???????????????????????????????????????????????????????????? */
+function buildCard(idx) {
+  // Separate seed for metadata so art-renderer seeds don't interfere
+  const r = mkRng(idx * 1000003 + 31337);
+  const pal = PALETTES[ri(r, 0, PALETTES.length)];
+  const type = idx % 8;
+  const title = `${rc(r, WA)} ${rc(r, WB)}`;
+  const card = { idx, pal, type };
+
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.style.background = pal.bg;
+  div.style.color = pal.fg;
+
+  // Card number (top right)
+  const num = document.createElement('div');
+  num.className = 'card-num';
+  num.textContent = String(idx + 1).padStart(4, '0');
+  num.style.color = pal.fg;
+  div.appendChild(num);
+
+  // Art canvas
+  const artDiv = document.createElement('div');
+  artDiv.className = 'card-art';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${SW} ${SH}`);
+  svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+  svg.style.cssText = 'width:100%;height:100%;display:block';
+  svg.appendChild(se('rect', { width: SW, height: SH, fill: pal.bg }));
+  svg.appendChild(RENDERERS[type](card));
+  artDiv.appendChild(svg);
+  div.appendChild(artDiv);
+
+  // Footer
+  const foot = document.createElement('div');
+  foot.className = 'card-foot';
+
+  const eyebrow = document.createElement('div');
+  eyebrow.className = 'card-eyebrow';
+  eyebrow.textContent = `${TYPE_NAMES[type]} — ${String(idx + 1).padStart(4, '0')}`;
+  eyebrow.style.color = pal.a;
+
+  const titleEl = document.createElement('div');
+  titleEl.className = 'card-title';
+  titleEl.textContent = title;
+
+  foot.appendChild(eyebrow);
+  foot.appendChild(titleEl);
+  div.appendChild(foot);
+
+  return div;
+}
+
+/* ??? INFINITE SCROLL ENGINE ?????????????????????????????????????????????????? */
+const root = document.getElementById('root');
+const sentinel = document.getElementById('sentinel');
+let nextIdx = 0;
+
+// Fade-in as cards enter viewport
+const fadeObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in');
+      fadeObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.04 });
+
+function loadBatch(count = 3) {
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < count; i++) {
+    frag.appendChild(buildCard(nextIdx++));
+  }
+  root.appendChild(frag);
+  root.querySelectorAll('.card:not(.observed)').forEach(c => {
+    c.classList.add('observed');
+    fadeObserver.observe(c);
+  });
+}
+
+// Load more cards before hitting the sentinel
+new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) loadBatch(3);
+}, { rootMargin: '600px' }).observe(sentinel);
+
+// Initial batch
+loadBatch(4);
+    </script>
+</body>
+</html>

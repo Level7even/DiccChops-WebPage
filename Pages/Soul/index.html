@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soul Ledger · Public Soul Registry</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #03030f;
+            color: #f0f0ff;
+            padding: 2rem 1rem;
+        }
+
+            body::before {
+                content: "";
+                position: fixed;
+                inset: -50%;
+                background: radial-gradient(circle at 30% 20%, rgba(0, 255, 255, 0.2), transparent 40%), radial-gradient(circle at 80% 70%, rgba(255, 0, 255, 0.2), transparent 45%);
+                animation: drift 25s infinite alternate;
+                z-index: -2;
+            }
+
+            body::after {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(120, 200, 255, 0.03) 3px);
+                z-index: -1;
+            }
+
+        @keyframes drift {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1.2) rotate(3deg);
+                opacity: 1;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .panel {
+            background: rgba(8, 8, 28, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 32px;
+            padding: 24px;
+            width: 380px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #aaffff, #ffaaff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 28px;
+            border: 1px solid rgba(0,255,255,0.3);
+            background: #0a0a1a;
+            color: white;
+            outline: none;
+        }
+
+        button {
+            background: linear-gradient(95deg, cyan, #ff44cc);
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            button:hover {
+                transform: translateY(-2px);
+            }
+
+        .soul-card {
+            background: radial-gradient(ellipse at 30% 20%, rgba(10, 20, 45, 0.9), rgba(2, 5, 15, 0.95));
+            border-radius: 48px;
+            border: 1px solid cyan;
+            padding: 24px;
+            width: 420px;
+            animation: floatGlow 4s infinite alternate;
+            transition: 0.3s;
+        }
+
+        @keyframes floatGlow {
+            0% {
+                transform: translateY(0px);
+                box-shadow: 0 10px 30px rgba(0,255,200,0.2);
+            }
+
+            100% {
+                transform: translateY(-6px);
+                box-shadow: 0 25px 45px rgba(0,255,200,0.4);
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .stat {
+            background: rgba(0, 20, 35, 0.6);
+            border-radius: 20px;
+            padding: 10px;
+        }
+
+        .power-bar {
+            height: 6px;
+            background: #223344;
+            border-radius: 10px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .power-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, cyan, magenta);
+            transition: width 0.8s;
+        }
+
+        .fortune {
+            background: rgba(0,0,0,0.5);
+            padding: 12px;
+            border-radius: 24px;
+            font-style: italic;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .attribute {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            margin: 4px;
+        }
+
+        .lookup-section {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 40px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 32px;
+            padding: 24px;
+            backdrop-filter: blur(8px);
+        }
+
+        .soul-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .soul-entry {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 12px;
+            width: 240px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .soul-entry:hover {
+                background: rgba(0, 255, 255, 0.3);
+                transform: scale(1.02);
+            }
+
+        hr {
+            border-color: cyan;
+            margin: 15px 0;
+        }
+
+        .status {
+            font-size: 0.8rem;
+            margin-top: 12px;
+        }
+
+        .error {
+            color: #ff8888;
+        }
+
+        .success {
+            color: #88ff88;
+        }
+
+        @media (max-width: 900px) {
+            .panel, .soul-card {
+                width: 100%;
+                max-width: 420px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="panel">
+            <div class="logo">[ SOUL LEDGER ]</div>
+            <p style="margin-bottom: 20px; opacity:0.8;">Claim your unique soul card. Your email is the key.</p>
+            <label>Full Name</label>
+            <input type="text" id="fullname" placeholder="Morgan Starweaver">
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="soul@eternal.org">
+            <button onclick="claimSoul()">>> AWAKEN SOUL CARD <<</button>
+            <div id="claimStatus" class="status"></div>
+            <hr>
+            <button onclick="syncToGoogleSheet()" style="background: #2a6f5c;">[ UPLOAD TO PUBLIC LEDGER ]</button>
+            <button onclick="resetAllData()" style="background: #442222; margin-top:8px;">[ RESET LOCAL DATA ]</button>
+            <p style="font-size:0.7rem; margin-top:12px; opacity:0.6;">* Public ledger syncs with Google Sheet. Your soul becomes visible to all.</p>
+        </div>
+
+        <div class="soul-card" id="soulCard">
+            <div style="text-align:center;">
+                <div style="font-size:2rem; font-weight:800;" id="cardName">-- VOID --</div>
+                <div style="margin-top:8px; padding:4px 16px; display:inline-block; border-radius:40px; background:rgba(0,255,255,0.2);" id="cardRarity">UNKNOWN</div>
+            </div>
+            <div style="margin:20px auto; width:120px; height:120px; border-radius:50%; background:radial-gradient(circle, cyan, magenta); display:flex; align-items:center; justify-content:center; animation: pulse 3s infinite;">
+                <span style="font-size:3rem;">*</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat"><div class="stat-label">SOUL POWER</div><div id="cardPower" class="stat-value">--%</div><div class="power-bar"><div class="power-fill" id="powerFill"></div></div></div>
+                <div class="stat"><div class="stat-label">SOUL ID</div><div id="cardSoulId" class="stat-value">----</div></div>
+                <div class="stat"><div class="stat-label">ESSENCE</div><div id="cardEssence" class="stat-value">---</div></div>
+                <div class="stat"><div class="stat-label">SIGIL</div><div id="cardSigil" class="stat-value">----</div></div>
+            </div>
+            <div class="fortune" id="fortuneText">"Awaiting awakening..."</div>
+            <div id="attributes"></div>
+            <div style="font-size:0.7rem; text-align:center; margin-top:16px;">Lineage: <span id="cardLineage">GENESIS</span> | <span id="cardDate">--</span></div>
+        </div>
+
+        <div class="lookup-section">
+            <h3>PUBLIC SOUL LEDGER</h3>
+            <p>All claimed souls (from Google Sheet). Click any entry to see details.</p>
+            <input type="text" id="searchInput" placeholder="Search by name or soul ID..." style="width:100%; margin-bottom:12px;">
+            <button onclick="fetchPublicLedger()">[ REFRESH LEDGER ]</button>
+            <div id="ledgerList" class="soul-list">
+                <div style="color:gray;">Loading public ledger...</div>
+            </div>
+            <div id="lookupStatus" class="status"></div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        // Replace with your actual Google Apps Script Web App URL
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznE-BT71tJqFf8BBYmRBp6yAFC0Sqt1MTbjnlwTloVLoNIzxIQd8gukiA38MSWVvF9/exec";
+        const SECRET_TOKEN = "1099769977";
+
+        // ==================== LOCAL STORAGE ====================
+        const STORAGE_KEY = "soulLedgerUsers";
+
+        function getLocalSouls() {
+            let data = localStorage.getItem(STORAGE_KEY);
+            if (!data) return [];
+            try { return JSON.parse(data); } catch (e) { return []; }
+        }
+
+        function saveLocalSouls(souls) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(souls));
+        }
+
+        function getRarity(power) {
+            if (power >= 99) return "DIVINE";
+            if (power >= 95) return "MYTHIC";
+            if (power >= 85) return "LEGENDARY";
+            if (power >= 70) return "EPIC";
+            if (power >= 50) return "RARE";
+            return "COMMON";
+        }
+
+        const essencePool = ["Stardust", "Void Flame", "Crystalline", "Echo Weaver", "Nebula Heart", "Silent Eclipse", "Radiant Ash", "Dreamshard", "Abyssal Spark"];
+        const sigilPrefix = ["Lunaris", "Ignis", "Umbra", "Astrum", "Fatum", "Caligo", "Vigil", "Origo"];
+        const fortunePool = [
+            "The stars whisper your true name across the void.",
+            "A hidden door opens when you least expect it.",
+            "Your soul carries the echo of ancient kings.",
+            "Destiny weaves a garland of cyan flame around you.",
+            "The ledger shows a great turning point before the next moon.",
+            "You are the keeper of an untold legend."
+        ];
+        const traitPool = ["Eternal Echo", "Fate-Touched", "Mana-Forged", "Chronicle Walker", "Soulbound", "Visionary", "Oracle's Grace", "Flux Weaver"];
+
+        function randomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        function generateMystics() {
+            return {
+                essence: randomFrom(essencePool),
+                sigil: randomFrom(sigilPrefix) + "-" + Math.floor(Math.random() * 900 + 100),
+                fortune: randomFrom(fortunePool),
+                traits: [randomFrom(traitPool), randomFrom(traitPool)].slice(0, 2)
+            };
+        }
+
+        function renderCard(soul) {
+            if (!soul) {
+                document.getElementById("cardName").innerText = "-- VOID --";
+                document.getElementById("cardRarity").innerText = "UNKNOWN";
+                document.getElementById("cardPower").innerText = "--%";
+                document.getElementById("powerFill").style.width = "0%";
+                document.getElementById("cardSoulId").innerText = "----";
+                document.getElementById("cardEssence").innerText = "---";
+                document.getElementById("cardSigil").innerText = "----";
+                document.getElementById("fortuneText").innerHTML = '"Awaiting awakening..."';
+                document.getElementById("attributes").innerHTML = "";
+                document.getElementById("cardDate").innerText = "--";
+                document.getElementById("cardLineage").innerText = "GENESIS";
+                return;
+            }
+            document.getElementById("cardName").innerText = soul.name || "Nameless";
+            document.getElementById("cardRarity").innerText = soul.rarity;
+            let power = soul.power || 0;
+            document.getElementById("cardPower").innerText = power + "%";
+            document.getElementById("powerFill").style.width = power + "%";
+            let shortId = (soul.soulId || "xxxx").substring(0, 8).toUpperCase();
+            document.getElementById("cardSoulId").innerText = shortId;
+            document.getElementById("cardEssence").innerText = soul.essence || "Astral";
+            document.getElementById("cardSigil").innerText = soul.sigil || "NONE";
+            document.getElementById("fortuneText").innerHTML = '"' + (soul.fortune || 'The ledger whispers.') + '"';
+            document.getElementById("cardDate").innerText = soul.created || "unknown";
+            document.getElementById("cardLineage").innerText = soul.lineage || "GENESIS";
+            let attrsHtml = "";
+            if (soul.traits) soul.traits.forEach(t => { attrsHtml += `<span class="attribute">* ${t} *</span>`; });
+            document.getElementById("attributes").innerHTML = attrsHtml;
+        }
+
+        function claimSoul() {
+            let name = document.getElementById("fullname").value.trim();
+            let email = document.getElementById("email").value.trim().toLowerCase();
+            let statusDiv = document.getElementById("claimStatus");
+            if (!name) { statusDiv.innerHTML = '<span class="error">[ERROR] Enter name.</span>'; return; }
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                statusDiv.innerHTML = '<span class="error">[ERROR] Valid email required.</span>';
+                return;
+            }
+
+            let souls = getLocalSouls();
+            let existing = souls.find(s => s.email === email);
+            if (existing) {
+                renderCard(existing);
+                statusDiv.innerHTML = '<span class="error">[DENIED] Email already claimed locally. Card restored.</span>';
+                return;
+            }
+
+            let power = Math.floor(Math.random() * 100) + 1;
+            let rarity = getRarity(power);
+            let soulId = crypto.randomUUID();
+            let mystics = generateMystics();
+            let newSoul = {
+                name: name,
+                email: email,
+                soulId: soulId,
+                power: power,
+                rarity: rarity,
+                created: new Date().toLocaleString(),
+                essence: mystics.essence,
+                sigil: mystics.sigil,
+                fortune: mystics.fortune,
+                traits: mystics.traits,
+                lineage: "GENESIS"
+            };
+            souls.push(newSoul);
+            saveLocalSouls(souls);
+            renderCard(newSoul);
+            statusDiv.innerHTML = '<span class="success">[SUCCESS] Soul forged! Click "UPLOAD TO PUBLIC LEDGER" to share.</span>';
+            document.cookie = "soul_email=" + encodeURIComponent(email) + "; max-age=31536000; path=/";
+        }
+
+        function resetAllData() {
+            localStorage.removeItem(STORAGE_KEY);
+            document.cookie = "soul_email=; max-age=0; path=/";
+            document.getElementById("fullname").value = "";
+            document.getElementById("email").value = "";
+            renderCard(null);
+            document.getElementById("claimStatus").innerHTML = '<span class="success">[RESET] Local data cleared.</span>';
+        }
+
+        function loadLastSoul() {
+            let souls = getLocalSouls();
+            if (souls.length) renderCard(souls[souls.length - 1]);
+            let cookieEmail = getCookie("soul_email");
+            if (cookieEmail && document.getElementById("email").value === "") document.getElementById("email").value = cookieEmail;
+        }
+
+        function getCookie(name) {
+            let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? decodeURIComponent(match[2]) : null;
+        }
+
+        // ==================== JSONP for GET requests ====================
+        function jsonp(url, callbackName, onSuccess) {
+            const script = document.createElement('script');
+            script.src = `${url}&callback=${callbackName}`;
+            window[callbackName] = function (data) {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                onSuccess(data);
+            };
+            script.onerror = function () {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                onSuccess({ error: "JSONP request failed" });
+            };
+            document.body.appendChild(script);
+        }
+
+        function fetchPublicLedger() {
+            const container = document.getElementById("ledgerList");
+            if (!GOOGLE_SCRIPT_URL) {
+                container.innerHTML = '<div style="color:orange;">[SETUP REQUIRED] Set GOOGLE_SCRIPT_URL.</div>';
+                return;
+            }
+            const callbackName = "jsonp_callback_" + Date.now();
+            jsonp(`${GOOGLE_SCRIPT_URL}?action=getAll&callback=${callbackName}`, callbackName, (data) => {
+                if (data.error) {
+                    container.innerHTML = `<div class="error">Failed to load ledger: ${data.error}</div>`;
+                } else {
+                    displaySoulList(data.souls || []);
+                }
+            });
+        }
+
+        // ==================== POST with no-cors (works for writing) ====================
+        async function syncToGoogleSheet() {
+            let souls = getLocalSouls();
+            let statusDiv = document.getElementById("claimStatus");
+            if (!souls.length) {
+                statusDiv.innerHTML = '<span class="error">No soul claimed yet. Claim first.</span>';
+                return;
+            }
+            let mySoul = souls[souls.length - 1];
+            if (!GOOGLE_SCRIPT_URL) {
+                statusDiv.innerHTML = '<span class="error">[ERROR] Google Script URL not configured.</span>';
+                return;
+            }
+
+            let payload = {
+                token: SECRET_TOKEN,
+                action: "addSoul",
+                name: mySoul.name,
+                email: mySoul.email,
+                soulId: mySoul.soulId,
+                power: mySoul.power,
+                rarity: mySoul.rarity,
+                essence: mySoul.essence,
+                sigil: mySoul.sigil,
+                fortune: mySoul.fortune,
+                created: mySoul.created
+            };
+
+            try {
+                statusDiv.innerHTML = '<span class="status">Uploading to public ledger...</span>';
+                // Use no-cors to bypass CORS; the request will be sent but response is opaque.
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                // Since we can't read the response, assume success.
+                statusDiv.innerHTML = '<span class="success">[UPLOADED] Soul sent to public ledger (may take a moment).</span>';
+                setTimeout(() => fetchPublicLedger(), 2000);
+            } catch (err) {
+                statusDiv.innerHTML = '<span class="error">Network error: ' + err.message + '</span>';
+            }
+        }
+
+        function displaySoulList(soulsArray) {
+            let searchTerm = document.getElementById("searchInput").value.toLowerCase();
+            let filtered = soulsArray.filter(s => s.name.toLowerCase().includes(searchTerm) || s.soulId.toLowerCase().includes(searchTerm));
+            let container = document.getElementById("ledgerList");
+            if (!filtered.length) {
+                container.innerHTML = '<div>No souls match your search.</div>';
+                return;
+            }
+            let html = "";
+            filtered.forEach(s => {
+                html += `<div class="soul-entry" onclick="viewSoulDetails('${escapeHtml(s.soulId)}')">
+                                        <b>${escapeHtml(s.name)}</b><br>
+                                        ID: ${s.soulId.substring(0, 8)}...<br>
+                                        Rarity: ${s.rarity} | Power: ${s.power}%
+                                    </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        async function viewSoulDetails(soulId) {
+            // Also use JSONP for single soul lookup
+            const callbackName = "jsonp_soul_" + Date.now();
+            jsonp(`${GOOGLE_SCRIPT_URL}?action=get&soulId=${encodeURIComponent(soulId)}&callback=${callbackName}`, callbackName, (soul) => {
+                if (soul.error) {
+                    alert("Could not load details: " + soul.error);
+                } else {
+                    alert(`Name: ${soul.name}\nSoul ID: ${soul.soulId}\nPower: ${soul.power}%\nRarity: ${soul.rarity}\nEssence: ${soul.essence}\nFortune: ${soul.fortune}\nClaimed: ${soul.created}`);
+                }
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m];
+            });
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            loadLastSoul();
+            fetchPublicLedger();
+            document.getElementById("searchInput").addEventListener("input", () => fetchPublicLedger());
+        });
+    </script>
+</body>
+</html>

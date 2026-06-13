@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Helvetica Neue", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Playfair Display", "Georgia", serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-cosmic-bg: #050508;
+  --color-cosmic-card: rgba(255, 255, 255, 0.03);
+}
+
+@layer utilities {
+  /* Glass card styling */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .glass-card-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .glass-card-hover:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(124, 58, 237, 0.3);
+    box-shadow: 0 10px 40px rgba(124, 58, 237, 0.1);
+  }
+
+  /* Mysterious glowing shadows for soul cards */
+  .border-amber-400Shadow {
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.1);
+  }
+  .border-indigo-400Shadow {
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    box-shadow: 0 0 30px rgba(129, 140, 248, 0.1);
+  }
+  .border-red-500Shadow {
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    box-shadow: 0 0 30px rgba(244, 63, 94, 0.1);
+  }
+  .border-rose-900Shadow {
+    border: 1px solid rgba(225, 29, 72, 0.3);
+    box-shadow: 0 0 30px rgba(225, 29, 72, 0.1);
+  }
+  .border-teal-300Shadow {
+    border: 1px solid rgba(45, 212, 191, 0.3);
+    box-shadow: 0 0 30px rgba(45, 212, 191, 0.1);
+  }
+  .border-emerald-500Shadow {
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.1);
+  }
+  .border-violet-500Shadow {
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    box-shadow: 0 0 30px rgba(124, 58, 237, 0.1);
+  }
+  .border-zinc-700Shadow {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.03);
+  }
+}
+
+/* Pulsing atmospheric nebulas */
+@keyframes atmosphericGlow {
+  0%, 100% {
+    opacity: 0.12;
+    transform: scale(1) translate(0px, 0px);
+  }
+  50% {
+    opacity: 0.22;
+    transform: scale(1.1) translate(20px, -15px);
+  }
+}
+
+.aurora-bg-1 {
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.22) 0%, rgba(5, 5, 8, 0) 70%);
+  animation: atmosphericGlow 14s ease-in-out infinite alternate;
+}
+
+.aurora-bg-2 {
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.15) 0%, rgba(5, 5, 8, 0) 70%);
+  animation: atmosphericGlow 20s ease-in-out infinite alternate-reverse;
+}
+
+/* Soul orb glows */
+.soul-orb-glow {
+  position: relative;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(124, 58, 237, 0.25) 0%, transparent 70%);
+}
+
+.soul-orb-glow::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, #7c3aed 45%, transparent 80%);
+  filter: blur(4px);
+  opacity: 0.85;
+  box-shadow: 0 0 50px rgba(124, 58, 237, 0.618);
+  animation: pulseOrb 4s ease-in-out infinite alternate;
+}
+
+@keyframes pulseOrb {
+  0% {
+    transform: translate(-50%, -50%) scale(0.95);
+    box-shadow: 0 0 45px rgba(124, 58, 237, 0.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 0 70px rgba(124, 58, 237, 0.8);
+    opacity: 0.95;
+  }
+}
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+.scroll-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
